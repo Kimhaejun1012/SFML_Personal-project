@@ -3,6 +3,7 @@
 #include "TextGo.h"
 #include "TileMap.h"
 #include "Player.h"
+#include "Element.h"
 
 SceneDev1::SceneDev1() : Scene(SceneId::Dev1)
 {
@@ -29,7 +30,7 @@ void SceneDev1::Init()
 
 	tileMap = (TileMap*)AddGo(new TileMap("mapsprite/tile.png", "Tile Map"));
 	player = (Player*)AddGo(new Player());
-
+	element = (Element*)AddGo(new Element("mapsprite/element1.png", "element1"));
 
 
 	for (auto go : gameObjects)
@@ -39,6 +40,9 @@ void SceneDev1::Init()
 
 	tileMap->Load("map/map1.csv");
 	tileMap->SetOrigin(Origins::MC);
+	element->SetPosition(player->GetPosition());
+	element->SetOrigin(Origins::BC);
+	element->sortLayer = 100;
 }
 
 void SceneDev1::Release()
@@ -54,10 +58,10 @@ void SceneDev1::Enter()
 {
 	Scene::Enter();
 	auto size = FRAMEWORK.GetWindowSize();
-	worldView.setCenter(tileMap->GetPosition());
+	//worldView.setCenter(tileMap->GetPosition());
 
-	uiView.setSize(size);
-	uiView.setCenter(player->GetPosition());
+	//uiView.setSize(size);
+	//uiView.setCenter(player->GetPosition());
 }
 
 void SceneDev1::Exit()
@@ -68,6 +72,7 @@ void SceneDev1::Exit()
 void SceneDev1::Update(float dt)
 {
 	Scene::Update(dt);
+	worldView.setCenter(player->GetPosition());
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Escape))
 	{
 		SCENE_MGR.ChangeScene(SceneId::Dev2);

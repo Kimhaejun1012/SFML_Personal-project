@@ -2,12 +2,15 @@
 #include "Scene.h"
 class TileMap;
 class Player;
+class Element;
 
 class SceneDev1 : public Scene
 {
 protected:
+
 	TileMap* tileMap = nullptr;
 	Player* player;
+	Element* element;
 
 public:
 	SceneDev1();

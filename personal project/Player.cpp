@@ -31,7 +31,7 @@ void Player::Reset()
 {
 	animation.Play("Idle");
 	SetOrigin(origin);
-	SetPosition({ 0, 0 });
+	SetPosition({ 0, 500 });
 	SetFlipX(false);
 }
 
