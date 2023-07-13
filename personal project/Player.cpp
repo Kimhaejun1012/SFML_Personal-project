@@ -23,12 +23,6 @@ void Player::Init()
 	SetOrigin(Origins::BC);
 
 
-	floor.setFillColor(sf::Color::Green);
-	floor.setPosition({ 0,0 });
-	floor.setOutlineColor(sf::Color::Magenta);
-	floor.setOutlineThickness(100);
-	Utils::SetOrigin(floor, Origins::BC);
-	floor.setSize(sf::Vector2f{ 500, 500 });
 	sprite.setScale(0.5f, 0.5f);
 
 }
@@ -143,6 +137,5 @@ void Player::SetFlipX(bool filp)
 
 void Player::Draw(sf::RenderWindow& window)
 {
-	window.draw(floor);
 	SpriteGo::Draw(window);
 }

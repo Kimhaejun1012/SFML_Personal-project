@@ -13,7 +13,6 @@ void SceneDev1::Init()
 {
 	Release();
 
-	//Player* player = (Player*)AddGo(new Player());
 
 	sf::Vector2f size = FRAMEWORK.GetWindowSize();
 	worldView.setSize(size);
@@ -29,6 +28,7 @@ void SceneDev1::Init()
 	sceneName->text.setString(L"µ¥ºê 1");
 
 	tileMap = (TileMap*)AddGo(new TileMap("mapsprite/tile.png", "Tile Map"));
+	player = (Player*)AddGo(new Player());
 
 
 
@@ -53,8 +53,11 @@ void SceneDev1::Release()
 void SceneDev1::Enter()
 {
 	Scene::Enter();
-
+	auto size = FRAMEWORK.GetWindowSize();
 	worldView.setCenter(tileMap->GetPosition());
+
+	uiView.setSize(size);
+	uiView.setCenter(player->GetPosition());
 }
 
 void SceneDev1::Exit()

@@ -1,0 +1,8 @@
+"RESOURCE_TYPES (0: 텍스처, 1: 폰트, 2: 사운드 클립, 3. 애니메이션 클립)",RESOURCE_PATH
+1,fonts/Noto_Sans_KR/NotoSansKR-Bold.otf
+0,mapsprite/tile.png
+3,tables/Idle.csv
+3,tables/Move.csv
+3,tables/Up.csv
+3,tables/Down.csv
+0,graphics/RubySheet.png
