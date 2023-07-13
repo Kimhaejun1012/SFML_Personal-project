@@ -29,6 +29,8 @@ void Player::Init()
 	floor.setOutlineThickness(100);
 	Utils::SetOrigin(floor, Origins::BC);
 	floor.setSize(sf::Vector2f{ 500, 500 });
+	sprite.setScale(0.5f, 0.5f);
+
 }
 
 void Player::Reset()
@@ -129,10 +131,6 @@ bool Player::GetFlipX() const
 	return filpX;
 }
 
-bool Player::GetFlipY() const
-{
-	return filpY;
-}
 
 void Player::SetFlipX(bool filp)
 {
@@ -143,17 +141,8 @@ void Player::SetFlipX(bool filp)
 	sprite.setScale(scale);
 }
 
-void Player::SetFlipY(bool filp)
-{
-	filpY = filp;
-
-	sf::Vector2f scale = sprite.getScale();
-	scale.x = !filpY ? abs(scale.y) : -abs(scale.y);
-	sprite.setScale(scale);
-}
-
 void Player::Draw(sf::RenderWindow& window)
 {
-//	window.draw(floor);
+	window.draw(floor);
 	SpriteGo::Draw(window);
 }

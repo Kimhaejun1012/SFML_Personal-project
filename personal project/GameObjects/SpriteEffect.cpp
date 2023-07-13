@@ -1,7 +1,5 @@
 #include "stdafx.h"
 #include "SpriteEffect.h"
-#include "SceneMgr.h"
-#include "Utils.h"
 
 SpriteEffect::SpriteEffect(const std::string& textureId, const std::string& n)
 	: SpriteGo(textureId, n)

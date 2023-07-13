@@ -7,6 +7,8 @@ private:
 	static std::mt19937 gen;
 
 public:
+	static bool IsExistFile(const std::string& filePath);
+
 	static int RandomRange(int min, int maxExclude);
 	static float RandomRange(float min, float max);
 	static sf::Vector2f RandomOnCircle(float radius);

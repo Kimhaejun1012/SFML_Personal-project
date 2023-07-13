@@ -14,13 +14,13 @@ protected:
 	SceneId currentSceneId = SceneId::None;
 	Scene* currentScene = nullptr;
 
-	SceneId startSceneId = SceneId::Game;
+	SceneId startSceneId = SceneId::Dev1;
 
 public:
 	void Init();
 	void Release();
 
-	void UpdateEvent(float dt);
+	void Update(float dt);
 	void Draw(sf::RenderWindow& window);
 
 	void ChangeScene(SceneId id);

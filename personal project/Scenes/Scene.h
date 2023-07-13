@@ -12,8 +12,6 @@ protected:
 
 	std::string resourceListPath;
 
-	//std::vector<std::tuple<ResourceTypes, std::string>> resources;
-
 	std::list<GameObject*> gameObjects; 
 	std::list<GameObject*> removeGameObjects;
 

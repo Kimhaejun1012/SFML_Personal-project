@@ -1,11 +1,10 @@
 #include "stdafx.h"
 #include "Scene.h"
 #include "GameObject.h"
-#include "ResourceMgr.h"
-#include "Framework.h"
 
 Scene::Scene(SceneId id) : sceneId(id), window(FRAMEWORK.GetWindow())
 {
+
 }
 
 Scene::~Scene()
@@ -92,7 +91,6 @@ sf::Vector2f Scene::UiPosPosToScreen(sf::Vector2f uiPos)
 
 void Scene::Enter()
 {
-	// scripits/[SceneId]ResourceList.csv
 	RESOURCE_MGR.LoadFromCSV(resourceListPath);
 
 	for (auto go : gameObjects)

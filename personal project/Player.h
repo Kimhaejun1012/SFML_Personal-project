@@ -16,7 +16,6 @@ protected:
 	float gravity = 500.f;
 
 	bool filpX = false;
-	bool filpY = false;
 	bool isGround = true;
 
 	bool adasd = false;
@@ -31,9 +30,7 @@ public:
 	virtual void Update(float dt) override;
 
 	bool GetFlipX() const;
-	bool GetFlipY() const;
 	void SetFlipX(bool filp);
-	void SetFlipY(bool filp);
 
 	virtual void Draw(sf::RenderWindow& window) override;
 

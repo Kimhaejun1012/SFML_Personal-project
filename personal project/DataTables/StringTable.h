@@ -5,6 +5,7 @@ class StringTable : public DataTable
 {
 protected:
 	std::vector<std::unordered_map<std::string, std::string>> tables;
+	std::vector<std::unordered_map<std::string, std::string>> wtables;
 
 public:
 	StringTable() : DataTable(DataTable::Ids::String), tables((int)Languages::COUNT) {}

@@ -35,7 +35,8 @@ enum class ResourceTypes
 enum class SceneId
 {
 	None = -1,
-	Game,
+	Dev1,
+	Dev2,
 	Count,
 };
 

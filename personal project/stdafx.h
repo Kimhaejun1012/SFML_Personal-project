@@ -3,6 +3,7 @@
 #define _USE_MATH_DEFINES
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 #include <list>
@@ -20,3 +21,10 @@
 
 #include "Defines.h"
 #include "Variables.h"
+#include "Utils.h"
+#include "StringTable.h"
+#include "Framework.h"
+#include "DataTableMgr.h"
+#include "InputMgr.h"
+#include "ResourceMgr.h"
+#include "SceneMgr.h"

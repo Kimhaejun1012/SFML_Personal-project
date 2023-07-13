@@ -7,7 +7,6 @@ ResourceMgr::~ResourceMgr()
 	for (auto pair : mapTexture)
 	{
 		delete std::get<0>(pair.second);
-
 	}
 	mapTexture.clear();
 	for (auto pair : mapFont)
@@ -30,11 +29,11 @@ ResourceMgr::~ResourceMgr()
 void ResourceMgr::Init()
 {
 	LoadFromCSV("scripts/DefaultResourceList.csv", true);
-
+	defaultFont = GetFont(defaultFontId);
 }
 
 void ResourceMgr::UnLoadAll()
-{	
+{
 	{
 		auto it = mapTexture.begin();
 		while (it != mapTexture.end())
@@ -95,11 +94,16 @@ void ResourceMgr::UnLoadAll()
 			}
 		}
 	}
-
 }
 
 void ResourceMgr::LoadFromCSV(const std::string path, bool isDefault)
 {
+	if (!Utils::IsExistFile(path))
+	{
+		std::cout << "ERR: Not Exist " << path << std::endl;
+		return;
+	}
+
 	rapidcsv::Document doc(path);
 	std::vector<int> types = doc.GetColumn<int>(0);
 	std::vector<std::string> paths = doc.GetColumn<std::string>(1);
@@ -107,7 +111,6 @@ void ResourceMgr::LoadFromCSV(const std::string path, bool isDefault)
 	{
 		Load((ResourceTypes)types[i], paths[i], isDefault);
 	}
-
 }
 
 void ResourceMgr::Load(ResourceTypes t, const std::string path, bool isDefault)
@@ -121,7 +124,7 @@ void ResourceMgr::Load(ResourceTypes t, const std::string path, bool isDefault)
 		{
 			auto texture = new sf::Texture();
 			texture->loadFromFile(path);
-			mapTexture.insert({ path, {texture, isDefault} });
+			mapTexture.insert({ path, { texture, isDefault} });
 		}
 	}
 	break;
@@ -132,7 +135,7 @@ void ResourceMgr::Load(ResourceTypes t, const std::string path, bool isDefault)
 		{
 			auto font = new sf::Font();
 			font->loadFromFile(path);
-			mapFont.insert({ path, {font,isDefault } });
+			mapFont.insert({ path, { font, isDefault } });
 		}
 	}
 	break;
@@ -143,7 +146,7 @@ void ResourceMgr::Load(ResourceTypes t, const std::string path, bool isDefault)
 		{
 			auto sb = new sf::SoundBuffer();
 			sb->loadFromFile(path);
-			mapSoundBuffer.insert({ path, {sb, isDefault} });
+			mapSoundBuffer.insert({ path, { sb, isDefault } });
 		}
 	}
 	break;
@@ -154,20 +157,12 @@ void ResourceMgr::Load(ResourceTypes t, const std::string path, bool isDefault)
 		{
 			auto clip = new AnimationClip();
 			clip->LoadFromFile(path);
-			mapAnimationClip.insert({ path, {clip,isDefault} });
+			mapAnimationClip.insert({ path, { clip, isDefault } });
 		}
 	}
 	break;
 	}
 }
-
-//void ResourceMgr::Load(const std::vector<std::tuple<ResourceTypes, std::string>>& array)
-//{
-//	for (const auto& tuple : array)
-//	{
-//		Load(std::get<0>(tuple), std::get<1>(tuple));
-//	}
-//}
 
 void ResourceMgr::Unload(ResourceTypes t, const std::string id)
 {
@@ -185,7 +180,7 @@ void ResourceMgr::Unload(ResourceTypes t, const std::string id)
 			}
 			else
 			{
-				std::cout << "에러 : 리소스 디폴트" << std::endl;
+				std::cout << "ERR: Default Resrouce" << std::endl;
 			}
 		}
 	}
@@ -195,8 +190,15 @@ void ResourceMgr::Unload(ResourceTypes t, const std::string id)
 		auto it = mapFont.find(id);
 		if (it != mapFont.end())
 		{
-			delete std::get<0>(it->second);
-			mapFont.erase(it);
+			if (!std::get<1>(it->second))
+			{
+				delete std::get<0>(it->second);
+				mapFont.erase(it);
+			}
+			else
+			{
+				std::cout << "ERR: Default Resrouce" << std::endl;
+			}
 		}
 	}
 	break;
@@ -205,13 +207,16 @@ void ResourceMgr::Unload(ResourceTypes t, const std::string id)
 		auto it = mapSoundBuffer.find(id);
 		if (it != mapSoundBuffer.end())
 		{
-			delete std::get<0>(it->second);
-			mapSoundBuffer.erase(it);
+			if (!std::get<1>(it->second))
+			{
+				delete std::get<0>(it->second);
+				mapSoundBuffer.erase(it);
+			}
+			else
+			{
+				std::cout << "ERR: Default Resrouce" << std::endl;
+			}
 		}
-		//else
-		//{
-		//	std:cout<<
-		//}
 	}
 	break;
 	case ResourceTypes::AnimationClip:
@@ -219,21 +224,20 @@ void ResourceMgr::Unload(ResourceTypes t, const std::string id)
 		auto it = mapAnimationClip.find(id);
 		if (it != mapAnimationClip.end())
 		{
-			delete std::get<0>(it->second);
-			mapAnimationClip.erase(it);
+			if (!std::get<1>(it->second))
+			{
+				delete std::get<0>(it->second);
+				mapAnimationClip.erase(it);
+			}
+			else
+			{
+				std::cout << "ERR: Default Resrouce" << std::endl;
+			}
 		}
 	}
 	break;
 	}
 }
-
-//void ResourceMgr::Unload(const std::vector<std::tuple<ResourceTypes, std::string>>& array)
-//{
-//	for (const auto& tuple : array)
-//	{
-//		Unload(std::get<0>(tuple), std::get<1>(tuple));
-//	}
-//}
 
 sf::Texture* ResourceMgr::GetTexture(const std::string& id)
 {
@@ -252,7 +256,7 @@ sf::Font* ResourceMgr::GetFont(const std::string& id)
 	{
 		return std::get<0>(it->second);
 	}
-	return nullptr;
+	return GetDeaultFont();
 }
 
 sf::SoundBuffer* ResourceMgr::GetSoundBuffer(const std::string& id)
@@ -274,3 +278,4 @@ AnimationClip* ResourceMgr::GetAnimationClip(const std::string& id)
 	}
 	return nullptr;
 }
+

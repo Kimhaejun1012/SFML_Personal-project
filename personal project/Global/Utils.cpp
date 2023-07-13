@@ -4,6 +4,12 @@
 std::random_device Utils::rd;
 std::mt19937 Utils::gen(Utils::rd());
 
+bool Utils::IsExistFile(const std::string& filePath)
+{
+	std::ifstream file(filePath);
+	return file.good();
+}
+
 int Utils::RandomRange(int min, int maxExclude)
 {
 	std::uniform_int_distribution<> dist(min, maxExclude - 1);
@@ -83,7 +89,7 @@ sf::Vector2f Utils::Lerp(const sf::Vector2f& a, const sf::Vector2f& b, float t, 
 {
 	if (clamping)
 	{
-		t = Utils::Clamp(t, 0.f , 1.f);
+		t = Utils::Clamp(t, 0.f, 1.f);
 	}
 	return  a + Utils::Normalize(b - a) * (Utils::Distance(a, b) * t);;
 }

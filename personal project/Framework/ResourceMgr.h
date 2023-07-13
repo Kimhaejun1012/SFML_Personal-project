@@ -8,6 +8,9 @@ class ResourceMgr : public Singleton<ResourceMgr>
 protected:
 	ResourceMgr() = default;
 	virtual ~ResourceMgr() override;
+	
+	std::string defaultFontId = "fonts/Noto_Sans_KR/NotoSansKR-Bold.otf";
+	sf::Font* defaultFont = nullptr;
 
 	std::map<std::string, std::tuple<sf::Texture*, bool>> mapTexture;
 	std::map<std::string, std::tuple<sf::Font*, bool>> mapFont;
@@ -17,19 +20,18 @@ protected:
 public:
 
 	void Init();
+
 	void UnLoadAll();
 	void LoadFromCSV(const std::string path, bool isDefault = false);
 	void Load(ResourceTypes t, const std::string path, bool isDefault = false);
-	//void Load(const std::vector<std::tuple<ResourceTypes, std::string>>& array);
-
 	void Unload(ResourceTypes t, const std::string path);
-	//void Unload(const std::vector<std::tuple<ResourceTypes, std::string>>& array);
-
 
 	sf::Texture* GetTexture(const std::string& id);
 	sf::Font* GetFont(const std::string& id);
 	sf::SoundBuffer* GetSoundBuffer(const std::string& id);
 	AnimationClip* GetAnimationClip(const std::string& id);
+
+	sf::Font* GetDeaultFont() { return defaultFont; }
 };
 
 #define RESOURCE_MGR (ResourceMgr::Instance())

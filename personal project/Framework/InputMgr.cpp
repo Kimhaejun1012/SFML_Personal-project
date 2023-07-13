@@ -1,7 +1,5 @@
 #include "stdafx.h"
 #include "InputMgr.h"
-#include "Framework.h"
-#include "Utils.h"
 
 InputMgr::InputMgr()
 {
@@ -48,7 +46,7 @@ void InputMgr::Update(float dt)
 	}
 }
 
-void InputMgr::UpdateEvent(const sf::Event& ev)
+void InputMgr::Update(const sf::Event& ev)
 {
 	switch (ev.type)
 	{

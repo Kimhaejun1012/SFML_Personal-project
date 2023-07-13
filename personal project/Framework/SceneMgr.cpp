@@ -1,8 +1,7 @@
 #include "stdafx.h"
 #include "SceneMgr.h"
-#include "SceneGame.h"
-#include "DataTableMgr.h"
-#include "StringTable.h"
+#include "SceneDev1.h"
+#include "SceneDev2.h"
 
 void SceneMgr::Init()
 {
@@ -11,7 +10,8 @@ void SceneMgr::Init()
 		Release();
 	}
 
-	scenes.push_back(new SceneGame());
+	scenes.push_back(new SceneDev1());
+	scenes.push_back(new SceneDev2());
 
 	for (auto scene : scenes)
 	{
@@ -43,7 +43,7 @@ void SceneMgr::Release()
 	currentScene = nullptr;
 }
 
-void SceneMgr::UpdateEvent(float dt)
+void SceneMgr::Update(float dt)
 {
 	currentScene->Update(dt);
 }
