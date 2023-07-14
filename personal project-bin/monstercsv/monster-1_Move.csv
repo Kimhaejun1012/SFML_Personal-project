@@ -1,0 +1,10 @@
+ID,FPS,LOOPTYPE,,
+Monster1Move,10,1,,
+,,,,
+TEXTURE ID,LEFT,TOP,WIDTH,HEIGHT
+graphics/enemy-1.png,0,100,100,100
+graphics/enemy-1.png,100,100,100,100
+graphics/enemy-1.png,200,100,100,100
+graphics/enemy-1.png,300,100,100,100
+graphics/enemy-1.png,400,100,100,100
+graphics/enemy-1.png,500,100,100,100

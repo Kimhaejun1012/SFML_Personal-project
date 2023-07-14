@@ -1,11 +1,23 @@
 #pragma once
 #include "SpriteGo.h"
 
+class Player;
 
 class Element : public SpriteGo
 {
 
+public:
+	enum class Types
+	{
+		Element1,
+		Element2,
+		Element3,
+	};
+
+
 protected:
+	Types elementType;
+
 
 public:
 	Element(const std::string& textureId = "", const std::string& n = "");

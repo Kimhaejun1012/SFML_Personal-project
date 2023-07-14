@@ -3,6 +3,7 @@
 #include "InputMgr.h"
 #include "Framework.h"
 #include "ResourceMgr.h"
+#include "SceneDev1.h"
 
 void Player::Init()
 {
@@ -22,9 +23,6 @@ void Player::Init()
 
 	SetOrigin(Origins::BC);
 
-
-	sprite.setScale(0.5f, 0.5f);
-
 }
 
 void Player::Reset()
@@ -33,91 +31,87 @@ void Player::Reset()
 	SetOrigin(origin);
 	SetPosition({ 0, 500 });
 	SetFlipX(false);
+	sprite.setScale(0.5f, 0.5f);
 }
 
 void Player::Update(float dt)
 {
 
 	animation.Update(dt);
-	float h = INPUT_MGR.GetAxis(Axis::Horizontal);
-	float w = INPUT_MGR.GetAxis(Axis::Vertical);
+	direction.x = INPUT_MGR.GetAxis(Axis::Horizontal);
+	direction.y= INPUT_MGR.GetAxis(Axis::Vertical);
 	// 플립
-	if (h != 0.f)
+	if (direction.x != 0.f)
 	{
-		bool flip = h > 0.f;
+		bool flip = direction.x > 0.f;
 		if (GetFlipX() != flip)
 		{
 			SetFlipX(flip);
 		}
 	}
 
-	// 점프
-
 	// 이동
-	velocity.x = h * speed;
-	velocity.y = w * speed;
-	position += velocity * dt;
 
-	// 바닥 충돌 처리
-	//if (position.y > 0.f)
-	//{
-	//	isGround = true;
-	//	position.y = 0.f;
-	//	velocity.y = 0.f;
-	//}
+		velocity.x = direction.x * speed;
+		velocity.y = direction.y * speed;
+		position += velocity * dt;
 
 
-	//대각 이상함 
+		SetPosition(position);
 
-	SetPosition(position);
-
-	// 에니메이션
-	if (animation.GetCurrentClipId() == "Idle" || animation.GetCurrentClipId() == "Up" || animation.GetCurrentClipId() == "Down" )
-	{
-		if (h != 0.f)
+		//sprite.getGlobalBounds().intersects(wallBounds,playerwall);
+		//if (!wallBounds.contains(position))
+		if(sprite.getGlobalBounds().intersects(wallBounds))
 		{
-			animation.Play("Move");
+			//std::cout << "충돌함" << std::endl;
+			position = Utils::Clamp(position, wallBoundsLT, wallBoundsRB);
 		}
-	}
-	else if (animation.GetCurrentClipId() == "Move")
-	{
-		if (h == 0.f)
-		{
-			animation.Play("Idle");
-		}
-	}
 
-	if ((animation.GetCurrentClipId() == "Idle" || animation.GetCurrentClipId() == "Down" || animation.GetCurrentClipId() == "Move") && h==0)
-	{
-		//animation.GetCurrentClipId() = "Up";
-		if (w < 0.f)
+		// 에니메이션
+		if (animation.GetCurrentClipId() == "Idle" || animation.GetCurrentClipId() == "Up" || animation.GetCurrentClipId() == "Down")
 		{
-			animation.Play("Up");
+			if (direction.x != 0.f)
+			{
+				animation.Play("Move");
+			}
 		}
-	}
-	else if (animation.GetCurrentClipId() == "Up")
-	{
-		if (w == 0.f)
+		else if (animation.GetCurrentClipId() == "Move")
 		{
-			animation.Play("Idle");
+			if (direction.x == 0.f)
+			{
+				animation.Play("Idle");
+			}
 		}
-	}
-	if ((animation.GetCurrentClipId() == "Idle" || animation.GetCurrentClipId() == "Up" || animation.GetCurrentClipId() == "Move")&& h == 0)
-	{
-		if (w > 0.f)
-		{
-			animation.Play("Down");
-		}
-	}
-	else if (animation.GetCurrentClipId() == "Down")
-	{
-		if (w == 0.f)
-		{
-			animation.Play("Idle");
-		}
-	}
 
-
+		if ((animation.GetCurrentClipId() == "Idle" || animation.GetCurrentClipId() == "Down" || animation.GetCurrentClipId() == "Move") && direction.x == 0)
+		{
+			//animation.GetCurrentClipId() = "Up";
+			if (direction.y < 0.f)
+			{
+				animation.Play("Up");
+			}
+		}
+		else if (animation.GetCurrentClipId() == "Up")
+		{
+			if (direction.y == 0.f)
+			{
+				animation.Play("Idle");
+			}
+		}
+		if ((animation.GetCurrentClipId() == "Idle" || animation.GetCurrentClipId() == "Up" || animation.GetCurrentClipId() == "Move") && direction.x == 0)
+		{
+			if (direction.y > 0.f)
+			{
+				animation.Play("Down");
+			}
+		}
+		else if (animation.GetCurrentClipId() == "Down")
+		{
+			if (direction.y == 0.f)
+			{
+				animation.Play("Idle");
+			}
+		}
 }
 
 bool Player::GetFlipX() const
@@ -138,4 +132,12 @@ void Player::SetFlipX(bool filp)
 void Player::Draw(sf::RenderWindow& window)
 {
 	SpriteGo::Draw(window);
+}
+
+
+void Player::SetWallBounds(const sf::FloatRect& bounds)
+{
+	wallBounds = bounds;
+	wallBoundsLT = { wallBounds.left + 56 , wallBounds.top + 270 };
+	wallBoundsRB = { wallBounds.left + wallBounds.width - 56, wallBounds.top + wallBounds.height - 270};
 }

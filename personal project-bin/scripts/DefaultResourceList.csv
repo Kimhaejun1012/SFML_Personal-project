@@ -8,3 +8,16 @@
 0,map/map1element.csv
 0,graphics/RubySheet.png
 0,mapsprite/element1.png
+0,map/mapStructure.csv
+0,mapstructure/left.png
+0,mapstructure/left_down.png
+0,mapstructure/left_up.png
+0,mapstructure/right.png
+0,mapstructure/right_down.png
+0,mapstructure/right_up.png
+0,mapstructure/grass_down.png
+0,mapstructure/grass_up.png
+0,mapstructure/maze_edge.png
+0,mapstructure/grass_up2.png
+0,mapstructure/edge_close.png
+0,mapstructure/mapmap.png

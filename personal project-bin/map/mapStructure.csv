@@ -1,0 +1,13 @@
+ID,MapStructure
+0,mapstructure/left.png
+1,mapstructure/left_down.png
+2,mapstructure/left_up.png
+3,mapstructure/right.png
+4,mapstructure/right_down.png
+5,mapstructure/right_up.png
+6,mapstructure/grass_down.png
+7,mapstructure/grass_up.png
+8,mapstructure/maze_edge.png
+9,mapstructure/grass_up2.png
+10,mapstructure/edge_close.png
+11,mapstructure/mapmap.png

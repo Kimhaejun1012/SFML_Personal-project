@@ -3,14 +3,21 @@
 class TileMap;
 class Player;
 class Element;
+class MapStructure;
+
 
 class SceneDev1 : public Scene
 {
 protected:
 
+	sf::FloatRect tileSize;
 	TileMap* tileMap = nullptr;
 	Player* player;
 	Element* element;
+
+	MapStructure* mapmap;
+
+	sf::FloatRect wallBounds;
 
 public:
 	SceneDev1();
@@ -24,5 +31,9 @@ public:
 
 	virtual void Update(float dt) override;
 	virtual void Draw(sf::RenderWindow& window) override;
+
+	void AddStructure();
+	void IsStructure();
+	void MapFR();
 };
 

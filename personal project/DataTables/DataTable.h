@@ -7,7 +7,7 @@ public:
 	{
 		None = -1,
 		String,
-		Zombie,
+		Monster,
 	};
 
 	DataTable(const DataTable& other) = delete;
@@ -19,7 +19,7 @@ protected:
 public:
 	DataTable(DataTable::Ids id) : tableId(id) {}
 	virtual ~DataTable() {}
-
+	
 	virtual bool Load() = 0;
 	virtual void Release() = 0;
 };
