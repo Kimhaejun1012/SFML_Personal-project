@@ -16,8 +16,6 @@ protected:
 
 	float accel = 500.f;
 	float speed = 500.f;
-	float JumpForce = -250.f;
-	float gravity = 500.f;
 
 	bool filpX = false;
 

@@ -178,7 +178,6 @@
     </ClCompile>
     <ClCompile Include="Framework\ResourceMgr.cpp" />
     <ClCompile Include="MapStructure.cpp" />
-    <ClCompile Include="MapStructureTable.cpp" />
     <ClCompile Include="Monster.cpp" />
     <ClCompile Include="MonsterTable.cpp" />
     <ClCompile Include="Player.cpp">
@@ -213,7 +212,6 @@
     <ClInclude Include="Framework\ResourceMgr.h" />
     <ClInclude Include="Global\Utils.h" />
     <ClInclude Include="MapStructure.h" />
-    <ClInclude Include="MapStructureTable.h" />
     <ClInclude Include="Monster.h" />
     <ClInclude Include="MonsterTable.h" />
     <ClInclude Include="Player.h">

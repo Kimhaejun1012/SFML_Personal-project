@@ -1,5 +1,5 @@
 ID,FPS,LOOPTYPE,,
-Monster2Atack,10,1,,
+Monster2attack,10,1,,
 ,,,,
 TEXTURE ID,LEFT,TOP,WIDTH,HEIGHT
 graphics/enemy-2.png,0,300,100,100

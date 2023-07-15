@@ -93,9 +93,6 @@
     <ClCompile Include="MapStructure.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="MapStructureTable.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Monster.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -192,9 +189,6 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="MapStructure.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="MapStructureTable.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Monster.h">

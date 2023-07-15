@@ -4,7 +4,7 @@
 
 struct MonsterInfo
 {
-	Monster::Types zombieType;
+	Monster::Types monsterType;
 
 	std::string textureId;
 	float speed;

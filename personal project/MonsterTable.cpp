@@ -16,7 +16,7 @@ const MonsterInfo& MonsterTable::Get(Monster::Types id)
 
 bool MonsterTable::Load()
 {
-	std::string monsterfile = "tables/ZombieTypes.csv";
+	std::string monsterfile = "tables/MonsterTypes.csv";
 	MonsterInfo monsterinfo;
 
 	rapidcsv::Document doc(monsterfile);
@@ -29,7 +29,7 @@ bool MonsterTable::Load()
 
 	for (int i = 0; i < ids.size(); ++i)
 	{
-		monsterinfo.zombieType = (Monster::Types)ids[i];
+		monsterinfo.monsterType = (Monster::Types)ids[i];
 		monsterinfo.textureId = zombieID[i];
 		monsterinfo.speed = zombieSpeed[i];
 		monsterinfo.maxHP = zombieHP[i];

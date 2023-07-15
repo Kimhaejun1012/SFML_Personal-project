@@ -34,6 +34,6 @@ public:
 
 	void AddStructure();
 	void IsStructure();
-	void MapFR();
+	void Scene1MonsterSetting(int count);
 };
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "SpriteGo.h"
+#include "AnimationController.h"
 
 class Player;
 
@@ -8,22 +9,22 @@ class Monster : public SpriteGo
 public:
 	enum class Types
 	{
-		Bloater,
-		Chaser,
-		Crawler,
+		Monster1,
+		Monster2,
+		Monster3,
 	};
 	static const int TotalTypes = 3;
 
 protected:
-	Types zombieType;
-
+	AnimationController animation;
+	Types monsterType;
 	sf::Vector2f look;
 	sf::Vector2f direction;
 	float speed = 0.f;
 	int maxHp = 0;
 	int damage = 0;
 	int hp = 0;
-	float attackRate = 0.f;		// ±³¼ö´Ô
+	float attackRate = 0.f;
 	float attackTimer = 0.f;
 
 	float damageTick = 0.f;

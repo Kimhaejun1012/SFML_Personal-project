@@ -4,7 +4,6 @@
 #include "DataTable.h"
 #include "SceneDev1.h"
 #include "Scene.h"
-#include "MapStructureTable.h"
 
 
 MapStructure::MapStructure(const std::string& textureId, const std::string& n) : SpriteGo(textureId, n)
