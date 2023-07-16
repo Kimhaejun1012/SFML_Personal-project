@@ -138,3 +138,9 @@ float Utils::Angle(const sf::Vector2f& dir)
 {
 	return (float)(atan2(dir.y, dir.x) * (180.f / M_PI));
 }
+
+sf::Vector2f Utils::DirectionFromAngle(float angle)
+{
+	float radians = angle * (M_PI / 180.f);
+	return sf::Vector2f(std::cos(radians), std::sin(radians));
+}

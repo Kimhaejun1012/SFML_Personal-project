@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include "DataTableMgr.h"
 #include "StringTable.h"
-
+#include "MonsterTable.h"
 void DataTableMgr::LoadAll()
 {
+	tables.insert({ DataTable::Ids::Monster, new MonsterTable() });
 	tables.insert({ DataTable::Ids::String, new StringTable() });
 
 	for (auto pair : tables)

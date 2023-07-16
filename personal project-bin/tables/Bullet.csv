@@ -1,0 +1,7 @@
+ID,FPS,LOOPTYPE,,
+Bullet,10,1,,
+,,,,
+TEXTURE ID,LEFT,TOP,WIDTH,HEIGHT
+graphics/Bullet1.png,0,0,128,128
+graphics/Bullet2.png,0,0,128,128
+graphics/Bullet3.png,0,0,128,128

@@ -4,7 +4,7 @@
 
 SceneDev2::SceneDev2() : Scene(SceneId::Dev2)
 {
-	resourceListPath = "scripts/DefaultResourceList.csv";
+	//resourceListPath = "scripts/DefaultResourceList.csv";
 }
 
 void SceneDev2::Init()
