@@ -13,7 +13,7 @@ protected:
 	sf::Vector2f attack = { 0.f,0.f };
 	float speed = 0.f;
 	float range = 2000.f;
-	int damage = 10;
+	int damage = 100;
 	//Player* player;
 	Monster* monster;
 	const std::list<Monster*>* monsters;

@@ -20,11 +20,11 @@ protected:
 	TileMap* tileMap = nullptr;
 	Player* player;
 	Element* element;
-	
+	bool nextScene;
 	SpriteGo* mapmap;
 	Monster* monster;
 	sf::FloatRect wallBounds;
-
+	SpriteGo* nextdoor;
 	int monsterCount = 0;
 
 public:
@@ -45,6 +45,7 @@ public:
 
 	const std::list<Monster*>* GetMonsterList() const;
 
+	void NextScene();
 	template<typename T>
 	void ClearObjectPool(ObjectPool<T>& pool);
 	//void CreateMonster(int count);

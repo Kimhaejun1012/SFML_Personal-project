@@ -62,6 +62,7 @@ void Player::Update(float dt)
 	direction.y= INPUT_MGR.GetAxis(Axis::Vertical);
 
 	PlayerMove(dt);
+	LookMonster();
 	Shoot();
 }
 
@@ -134,11 +135,15 @@ void Player::Shoot()
 
 void Player::LookMonster()
 {
-	sf::Vector2f playerScreenPos = SCENE_MGR.GetCurrScene()->WorldPosToScreen(position);
+	//sf::Vector2f playerScreenPos = SCENE_MGR.GetCurrScene()->WorldPosToScreen(position);
 	if (direction == sf::Vector2f(0.f, 0.f))
 	{
-		monsterlook = Utils::Normalize(monster->GetPosition() - playerScreenPos);
+		monsterlook = Utils::Normalize(monster->GetPosition() - GetPosition());
 		sprite.setRotation(Utils::Angle(monsterlook));
+	}
+	else
+	{
+		sprite.setRotation(0.f);
 	}
 }
 
@@ -224,4 +229,14 @@ void Player::ClearBullet()
 		scene->RemoveGo(bullet);
 	}
 	poolBullets.Clear();
+}
+
+void Player::SetMonster(Monster* monster)
+{
+	this->monster = monster;
+}
+
+void Player::SetMonsterList(const std::list<Monster*>* list)
+{
+	monsters = list;
 }

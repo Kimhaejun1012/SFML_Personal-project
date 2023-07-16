@@ -1,6 +1,15 @@
 #include "stdafx.h"
 #include "SceneDev2.h"
 #include "TextGo.h"
+#include "TileMap.h"
+//#include "Player.h"
+#include "Element.h"
+//#include "MapStructure.h"
+//#include "Monster.h"
+//#include "DataTable.h"
+//#include "DataTableMgr.h"
+//#include "Monster.h"
+//#include "Bullet.h"
 
 SceneDev2::SceneDev2() : Scene(SceneId::Dev2)
 {
@@ -23,6 +32,8 @@ void SceneDev2::Init()
 	sceneName->text.setCharacterSize(25);
 	sceneName->text.setFillColor(sf::Color::White);
 	sceneName->text.setString(L"µ¥ºê 2");
+
+	mapmap = (SpriteGo*)AddGo(new SpriteGo("mapstructure/mapmap.png", "mapmap"));
 
 	for (auto go : gameObjects)
 	{

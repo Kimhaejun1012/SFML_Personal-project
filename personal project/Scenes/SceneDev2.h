@@ -1,9 +1,20 @@
 #pragma once
 #include "Scene.h"
+#include "ObjectPool.h"
+
+class TileMap;
+class Player;
+class Element;
+class MapStructure;
+class Monster;
+class SpriteGo;
+class Bullet;
+
 class SceneDev2 : public Scene
 {
 protected:
 
+	SpriteGo* mapmap;
 public:
 	SceneDev2();
 	virtual ~SceneDev2() override = default;

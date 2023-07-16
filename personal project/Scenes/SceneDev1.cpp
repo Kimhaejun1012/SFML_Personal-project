@@ -42,8 +42,9 @@ void SceneDev1::Init()
 	tileMap = (TileMap*)AddGo(new TileMap("mapsprite/tile.png", "Tile Map"));
 	mapmap = (SpriteGo*)AddGo(new SpriteGo("mapstructure/mapmap.png", "mapmap"));
 	element = (Element*)AddGo(new Element("mapsprite/element1.png", "element1"));
+	nextdoor = (SpriteGo*)AddGo(new SpriteGo("mapstructure/LayerDoor_1.png", "door"));
 	player = (Player*)AddGo(new Player());
-	monster = (Monster*)AddGo(new Monster());
+	//monster = (Monster*)AddGo(new Monster());
 	//애초에 그림 어떻게 띄우더라 csv로
 	//지형지물을 1,2,3,4,5 다 쓸건데
 	//장애물 충돌이 되는 혹은 데미지를 입는
@@ -63,6 +64,9 @@ void SceneDev1::Init()
 	//element->sortLayer = 101;
 	mapmap->SetPosition(0, 0);
 	mapmap->SetOrigin(Origins::MC);
+	nextdoor->SetPosition(-19.f, tileSize.top-37);
+	nextdoor->SetOrigin(Origins::MC);
+	nextdoor->SetActive(false);
 	//CreateMonster(2);
 	poolMonsters.OnCreate = [this](Monster* monster) {
 
@@ -71,6 +75,7 @@ void SceneDev1::Init()
 		monster->SetPlayer(player);
 	};
 	poolMonsters.Init();
+
 }
 
 void SceneDev1::Release()
@@ -91,6 +96,7 @@ void SceneDev1::Enter()
 	//uiView.setSize(size);
 	//uiView.setCenter(player->GetPosition());
 	SpawnMonsters(2, player->GetPosition());
+
 	wallBounds = mapmap->sprite.getGlobalBounds();
 	player->SetWallBounds(wallBounds);
 }
@@ -106,8 +112,8 @@ void SceneDev1::Update(float dt)
 {
 	Scene::Update(dt);
 	worldView.setCenter(player->GetPosition());
-	
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Escape))
+	NextScene();
+	if (nextScene && player->sprite.getGlobalBounds().intersects(nextdoor->sprite.getGlobalBounds()))
 	{
 		SCENE_MGR.ChangeScene(SceneId::Dev2);
 	}
@@ -144,12 +150,13 @@ void SceneDev1::SpawnMonsters(int count, sf::Vector2f center)
 		//Zombie* zombie = zombiePool.front();
 		//zombiePool.pop_front();
 		Monster* monster = poolMonsters.Get();
+		player->SetMonster(monster);
 		//zombie->SetActive(true);
 
 		sf::Vector2f pos;
 		do
 		{
-			pos = center + Utils::RandomInCircle(3.f);
+			pos = center + Utils::RandomInCircle(300.f);
 		} while (Utils::Distance(center, pos) < 100.f && 3 > 100.f);
 
 		monster->SetPosition(pos);
@@ -158,6 +165,7 @@ void SceneDev1::SpawnMonsters(int count, sf::Vector2f center)
 		//zombie->Reset();
 		AddGo(monster);
 		monsterCount++;
+		std::cout << "몬스터 생성" << std::endl;
 	}
 }
 
@@ -180,10 +188,20 @@ void SceneDev1::OnDieMonster(Monster* monster)
 	RemoveGo(monster);
 	poolMonsters.Return(monster);
 	monsterCount--;
-
+	std::cout << "몬스터 죽음" << monsterCount << std::endl;
 }
 
 const std::list<Monster*>* SceneDev1::GetMonsterList() const
 {
 	return &poolMonsters.GetUseList();
 }
+
+void SceneDev1::NextScene()
+{
+	if (monsterCount == 0)
+	{
+		nextScene = true;
+		nextdoor->SetActive(true);
+	}
+}
+

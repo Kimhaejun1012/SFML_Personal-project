@@ -12,8 +12,8 @@ protected:
 	AnimationController animation;
 	sf::Vector2f velocity;
 	sf::Vector2f direction;
-
-	sf::Vector2f monsterlook;
+	const std::list<Monster*>* monsters;
+	sf::Vector2f monsterlook = { 0,0 };
 	Monster* monster;
 	sf::FloatRect playerwall;
 
@@ -23,7 +23,7 @@ protected:
 	float tick = 0.5f;
 	bool filpX = false;
 	bool increaseDamage;
-	int bulletDamage = 10;
+	int bulletDamage = 100;
 	ObjectPool<Bullet> poolBullets;
 	sf::FloatRect wallBounds;
 	sf::Vector2f wallBoundsLT;
@@ -51,4 +51,7 @@ public:
 	void MoveStop();
 	void PlayerMove(float dt);
 	void ClearBullet();
+	//void GetMonsterList(Monster* monster);
+	void SetMonster(Monster* monster);
+	void SetMonsterList(const std::list<Monster*>* list);
 };

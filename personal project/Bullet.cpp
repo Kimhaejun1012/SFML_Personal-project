@@ -31,7 +31,7 @@ void Bullet::Release()
 void Bullet::Reset()
 {
 	SpriteGo::Reset();
-	damage = 10;
+	damage = 100;
 	animation.Play("Bullet");
 	sprite.setRotation(0.f);
 	SetPosition(0.f, 0.f);
@@ -97,7 +97,7 @@ void Bullet::HitMonster()
 			}
 		}
 	}
-	std::cout << "몬스터 충돌 안됨" << std::endl;
+	//std::cout << "몬스터 충돌 안됨" << std::endl;
 }
 
 void Bullet::SetDamage(int number)
