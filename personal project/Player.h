@@ -5,18 +5,20 @@
 
 class Bullet;
 class Monster;
-
+class UIButton;
 class Player : public SpriteGo
 {
 protected:
 	AnimationController animation;
 	sf::Vector2f velocity;
 	sf::Vector2f direction;
-	const std::list<Monster*>* monsters;
+	std::list<Monster*> monsters;
 	sf::Vector2f monsterlook = { 0,0 };
 	Monster* monster;
 	sf::FloatRect playerwall;
-
+	int maxexp = 100;
+	int exp = 0;
+	UIButton* uibutton;
 	int bulletCount;
 	float accel = 500.f;
 	float speed = 500.f;
@@ -25,10 +27,13 @@ protected:
 	bool increaseDamage;
 	int bulletDamage = 100;
 	ObjectPool<Bullet> poolBullets;
+	Bullet* bullet;
 	sf::FloatRect wallBounds;
 	sf::Vector2f wallBoundsLT;
 	sf::Vector2f wallBoundsRB;
 
+	int MaxHp = 100;
+	int Hp = 0;
 
 public:
 	Player(const std::string& textureId = "", const std::string& n = "")
@@ -48,10 +53,22 @@ public:
 	sf::Vector2f GetDirection();
 	void Shoot();
 	void LookMonster();
-	void MoveStop();
 	void PlayerMove(float dt);
 	void ClearBullet();
 	//void GetMonsterList(Monster* monster);
 	void SetMonster(Monster* monster);
-	void SetMonsterList(const std::list<Monster*>* list);
+	void SetMonsterList(const std::list<Monster*> list);
+	void RemoveMonster(Monster* monster);
+	void OnHitted(int damage);
+	int GetHp() const;
+	int ExpExp();
+	void GetExp(int exp);
+	int GetMaxExp();
+	void LevelUp();
+	bool isplaying = true;
+	bool isAlive = true;
+	void IncreaseBullet();
+	void IncreaseAttack();
+	void IncreaseSpeed();
 };
+

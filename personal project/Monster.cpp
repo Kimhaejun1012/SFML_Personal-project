@@ -24,8 +24,7 @@ void Monster::Init()
 	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/monster-1_Attack.csv"));
 	animation.SetTarget(&sprite);
 	SetOrigin(Origins::BC);
-
-	SetPosition(0, 0);
+	//SetPosition(0, 0);
 	
 }
 
@@ -37,9 +36,9 @@ void Monster::Release()
 void Monster::Reset()
 {
 	SpriteGo::Reset();
-	animation.Play("monster1Move");
+	animation.Play("monster1Idle");
 	SetOrigin(origin);
-	SetPosition({ 0, 0 });
+	//SetPosition({ 0, 0 });
 	hp = maxHp;
 	attackTimer = attackRate;
 }
@@ -48,9 +47,34 @@ void Monster::Update(float dt)
 {
 	animation.Update(dt);
 	SpriteGo::Update(dt);
-	
+
 	if (player == nullptr)
 		return;
+
+	look = direction = Utils::Normalize(player->GetPosition() - position);
+	float distance = Utils::Distance(player->GetPosition(), position);
+	if (distance > 150.f)
+	{
+		position += direction * (speed+ plusespeed) * dt;
+		sprite.setPosition(position);
+		if (animation.GetCurrentClipId() != "monster1Move")
+		animation.Play("monster1Move");
+	}
+	else
+	{
+		if (animation.GetCurrentClipId() != "monster1Attack")
+		animation.Play("monster1Attack");
+		HitPlayer(dt);
+		//std::cout << player->GetHp() << std::endl;
+	}
+	if (distance < 300.f)
+	{
+		plusespeed = 200;
+	}
+	//if (distance < 300.f)
+	//{
+	//	speed = 300;
+	//}
 }
 
 void Monster::Draw(sf::RenderWindow& window)
@@ -110,6 +134,15 @@ void Monster::FollowPlayer(float dt)
 
 void Monster::HitPlayer(float dt)
 {
+
+	attackTimer += dt;
+	if (attackTimer > attackRate)
+	{
+		attackTimer = 0.f;
+		// 플레이어 피격
+		player->OnHitted(damage);
+
+	}
 }
 
 //const std::list<Monster*>* Monster::GetMonsterList() const

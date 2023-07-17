@@ -1,10 +1,12 @@
 #pragma once
 #include "SpriteGo.h"
+class Player;
 
 class UIButton : public SpriteGo
 {
 protected:
 	bool isHover = false;
+	Player* player;
 
 public:
 	UIButton(const std::string& textureId = "", const std::string& n = "");
@@ -18,7 +20,10 @@ public:
 	virtual void Draw(sf::RenderWindow& window) override;
 
 	sf::Text text;
-
+	void IncreaseBullet();
+	void IncreaseAttact();
+	void IncreaseSpeed();
+	void SetPlayer(Player* player);
 	std::function<void()> OnClick;
 	std::function<void()> OnEnter;
 	std::function<void()> OnExit;

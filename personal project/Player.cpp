@@ -4,6 +4,7 @@
 #include "Bullet.h"
 #include "Monster.h"
 #include "Scene.h"
+#include "UIButton.h"
 
 //몬스터 안죽음, 몬스터한테 안나감, 몬스터 닿아도 안사라짐
 
@@ -26,7 +27,7 @@ void Player::Init()
 
 	animation.SetTarget(&sprite);
 	SetOrigin(Origins::BC);
-	bulletCount = 25;
+	bulletCount = 1;
 }
 
 void Player::Release()
@@ -43,7 +44,7 @@ void Player::Reset()
 	SetPosition({ 0, 500 });
 	SetFlipX(false);
 	sprite.setScale(0.5f, 0.5f);
-
+	Hp = MaxHp;
 	for (auto bullet : poolBullets.GetUseList())
 	{
 		SCENE_MGR.GetCurrScene()->RemoveGo(bullet);
@@ -104,52 +105,65 @@ void Player::Shoot()
 	Scene* scene = SCENE_MGR.GetCurrScene();
 	SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
 	//SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
-	if (direction == sf::Vector2f(0.f, 0.f) && tick < 0.1f)
+	if (direction == sf::Vector2f(0.f, 0.f) && tick < 0.1f && !monsters.empty())
 	{
+
 		tick = 0.5f;
 		int count = 0;
-		Bullet*bullet = poolBullets.Get();
-		if (increaseDamage)
+		while (count != bulletCount)
 		{
-			increaseDamage = false;
+			Bullet* bullet = poolBullets.Get();
+			if (increaseDamage)
+			{
+				increaseDamage = false;
+			}
+			bullet->SetDamage(bulletDamage);
+
+			float modifiedAngle = Utils::Angle(monsterlook);  // 기존 각도 계산
+			//float additionalAngle = (count % 2 == 1) ? 15.f * count : -15.f * count;  // 추가 각도 계산
+			float additionalAngle = -15 + (30 / bulletCount * count); //(count == 0) ? 0.f : ((count % 2 == 1) ? 15.f * count : -15.f * count);
+			//float additionalAngle =  (360 / bulletCount * count);
+			float finalAngle = modifiedAngle + additionalAngle;  // 기존 각도와 추가 각도 합산
+			sf::Vector2f fireDirection = Utils::DirectionFromAngle(finalAngle);  // 총알 발사 각도 계산
+
+			bullet->Fire(GetPosition(), fireDirection, 800.f);
+
+			if (scene != nullptr)
+			{
+				bullet->SetMonsterList(sceneDev1->GetMonsterList());
+				scene->AddGo(bullet);
+			}
+			count++;
 		}
-		bullet->SetDamage(bulletDamage);
-
-		float modifiedAngle = Utils::Angle(monsterlook);  // 기존 각도 계산
-		//float additionalAngle = (count % 2 == 1) ? 15.f * count : -15.f * count;  // 추가 각도 계산
-		float additionalAngle = -15 + (30 / bulletCount * count); //(count == 0) ? 0.f : ((count % 2 == 1) ? 15.f * count : -15.f * count);
-		//float additionalAngle =  (360 / bulletCount * count);
-		float finalAngle = modifiedAngle + additionalAngle;  // 기존 각도와 추가 각도 합산
-		sf::Vector2f fireDirection = Utils::DirectionFromAngle(finalAngle);  // 총알 발사 각도 계산
-
-		bullet->Fire(GetPosition(), fireDirection, 500.f);
-
-		if (scene != nullptr)
-		{
-			bullet->SetMonsterList(sceneDev1->GetMonsterList());
-			scene->AddGo(bullet);
-		}
-		count++;
 	}
 }
 
 void Player::LookMonster()
 {
+	//플레이어에 있은 죽은 몬스터 빼줘야함
+	//auto minValue = *std::min_element(monsters.begin(), monsters.end());
+	//플레이어랑 몬스터랑 거리를 계산해서 작은값을 리턴해주는 람다식을 짜자
 	//sf::Vector2f playerScreenPos = SCENE_MGR.GetCurrScene()->WorldPosToScreen(position);
 	if (direction == sf::Vector2f(0.f, 0.f))
 	{
-		monsterlook = Utils::Normalize(monster->GetPosition() - GetPosition());
-		sprite.setRotation(Utils::Angle(monsterlook));
+		//float minValue = *std::min_element(monsters.begin(), monsters.end());
+		float closestDistance = std::numeric_limits<float>::max();
+		sf::Vector2f closestMonster = { 0.f, 0.f };
+		for (const auto& monster : monsters) {
+			float distance = Utils::Distance(monster->GetPosition(), GetPosition());
+			if (distance < closestDistance) {
+				closestMonster = monster->GetPosition();
+				closestDistance = distance;
+				//std::cout << closestDistance << std::endl;
+			}
+		}
+		monsterlook = Utils::Normalize(closestMonster - GetPosition());
+		//sprite.setRotation(Utils::Angle(monsterlook));
 	}
 	else
 	{
 		sprite.setRotation(0.f);
 	}
-}
-
-void Player::MoveStop()
-{
-	direction == sf::Vector2f(0.f, 0.f);
 }
 
 void Player::PlayerMove(float dt)
@@ -236,7 +250,100 @@ void Player::SetMonster(Monster* monster)
 	this->monster = monster;
 }
 
-void Player::SetMonsterList(const std::list<Monster*>* list)
+void Player::SetMonsterList(const std::list<Monster*> list)
 {
 	monsters = list;
+}
+
+void Player::RemoveMonster(Monster* monster)
+{
+	monsters.remove(monster);
+}
+
+void Player::OnHitted(int damage)
+{
+	if (!isAlive)
+		return;
+	Hp = std::max(Hp - damage, 0);
+	if (Hp == 0)
+	{
+		isAlive = false;
+		std::cout << "플레이어 죽음" << std::endl;
+	}
+}
+
+int Player::GetHp() const
+{
+	return Hp;
+}
+
+int Player::ExpExp()
+{
+	return exp;
+}
+
+void Player::GetExp(int exp)
+{
+	bool isexp = true;
+	if(isexp)
+	this->exp += exp;
+	isexp = false;
+}
+
+int Player::GetMaxExp()
+{
+	return maxexp;
+}
+
+void Player::LevelUp()
+{
+	if (exp > maxexp)
+	{
+		isplaying = false;
+	}
+
+	if (!isplaying)
+	{
+		Scene* scene = SCENE_MGR.GetCurrScene();
+		UIButton* testbutton1 = (UIButton*)scene->AddGo(new UIButton("upgrade/doubleArrow.png",""));
+		UIButton* testbutton2 = (UIButton*)scene->AddGo(new UIButton("upgrade/doubleAttack.png",""));
+		UIButton* testbutton3 = (UIButton*)scene->AddGo(new UIButton("upgrade/doubleSpeed.png",""));
+		testbutton1->SetOrigin(Origins::MC);
+		testbutton1->sortLayer = 100;
+		testbutton1->SetPosition(-200, 0.f);
+		testbutton2->SetOrigin(Origins::MC);
+		testbutton2->sortLayer = 100;
+		testbutton2->SetPosition(0, 0.f);
+		testbutton3->SetOrigin(Origins::MC);
+		testbutton3->sortLayer = 100;
+		testbutton3->SetPosition(200, 0.f);
+		testbutton1->OnClick = [testbutton1]() {
+			testbutton1->IncreaseBullet();
+			std::cout << "1클릭" << std::endl;
+
+		};
+		testbutton2->OnClick = [testbutton2]() {
+			testbutton2->IncreaseAttact();
+			std::cout << "2클릭" << std::endl;
+		};
+		testbutton3->OnClick = [testbutton3]() {
+			testbutton3->IncreaseSpeed();
+			std::cout << "3클릭" << std::endl;
+		};
+	}
+}
+
+void Player::IncreaseBullet()
+{
+	bulletCount += 2;
+}
+
+void Player::IncreaseAttack()
+{
+	bulletDamage += 30;
+}
+
+void Player::IncreaseSpeed()
+{
+	speed += 300;
 }

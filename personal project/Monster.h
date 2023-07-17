@@ -22,7 +22,7 @@ protected:
 	Types monsterType;
 	sf::Vector2f look;
 	sf::Vector2f direction;
-
+	float plusespeed = 0;
 	float speed = 0.f;
 	int maxHp = 0;
 	int damage = 0;

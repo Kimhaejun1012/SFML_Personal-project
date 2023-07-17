@@ -1,4 +1,4 @@
 type,speed,maxHp,damage,attackRate
-0,40.f,100,10,2.f
+0,40.f,100,10,1.f
 1,70.f,75,5,0.5f
 2,20.f,50,7,1.f

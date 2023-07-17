@@ -8,13 +8,22 @@ class Element;
 class MapStructure;
 class Monster;
 class SpriteGo;
-class Bullet;
+//class Bullet;
 
 class SceneDev2 : public Scene
 {
 protected:
-
+	ObjectPool<Monster> poolMonsters;
+	sf::FloatRect tileSize;
+	TileMap* tileMap = nullptr;
+	Player* player;
+	Element* element;
+	bool nextScene;
 	SpriteGo* mapmap;
+	Monster* monster;
+	sf::FloatRect wallBounds;
+	SpriteGo* nextdoor;
+	int monsterCount = 0;
 public:
 	SceneDev2();
 	virtual ~SceneDev2() override = default;

@@ -20,6 +20,7 @@ void Bullet::Init()
 	SpriteGo::Init();
 	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("tables/Bullet.csv"));
 	animation.SetTarget(&sprite);
+	sprite.setScale(0.3f, 0.3f);
 	SetOrigin(Origins::MC);
 }
 

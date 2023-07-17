@@ -8,13 +8,18 @@ class Element;
 class MapStructure;
 class Monster;
 class SpriteGo;
-class Bullet;
+
 
 class SceneDev1 : public Scene
 {
 protected:
 	//ObjectPool<Monster> poolMonsters;
-
+	sf::Vector2f coinDir;
+	sf::Vector2f coinPos;
+	float speed = 300;
+	SpriteGo* tempCoin;
+	std::vector<SpriteGo*> coins;
+	SpriteGo* coin;
 	ObjectPool<Monster> poolMonsters;
 	sf::FloatRect tileSize;
 	TileMap* tileMap = nullptr;
@@ -26,7 +31,7 @@ protected:
 	sf::FloatRect wallBounds;
 	SpriteGo* nextdoor;
 	int monsterCount = 0;
-
+	std::list<Monster*> monsters;
 public:
 	SceneDev1();
 	virtual ~SceneDev1() override;
@@ -50,6 +55,7 @@ public:
 	void ClearObjectPool(ObjectPool<T>& pool);
 	//void CreateMonster(int count);
 	void OnDieMonster(Monster* monster);
+	void GetCoin(std::vector<SpriteGo*> coin);
 };
 
 template<typename T>
