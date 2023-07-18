@@ -8,7 +8,7 @@ protected:
 public:
 	sf::Sprite sprite;
 	std::string textureId;
-
+	sf::RectangleShape rect;
 	SpriteGo(const std::string& textureId, const std::string& n);
 	virtual ~SpriteGo() override;
 

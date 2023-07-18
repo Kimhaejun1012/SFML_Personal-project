@@ -2,7 +2,8 @@
 #include "SceneMgr.h"
 #include "SceneDev1.h"
 #include "SceneDev2.h"
-
+#include "SceneTitle.h"
+#include "SceneBoss.h"
 void SceneMgr::Init()
 {
 	if (!scenes.empty())
@@ -10,9 +11,10 @@ void SceneMgr::Init()
 		Release();
 	}
 
+	scenes.push_back(new SceneTitle());
 	scenes.push_back(new SceneDev1());
 	scenes.push_back(new SceneDev2());
-
+	scenes.push_back(new SceneBoss());
 	for (auto scene : scenes)
 	{
 		scene->Init();

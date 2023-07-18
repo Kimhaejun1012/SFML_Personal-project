@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "UIButton.h"
 #include "Player.h"
+#include "Bullet.h"
 
 UIButton::UIButton(const std::string& textureId, const std::string& n)
 	: SpriteGo(textureId, n)
@@ -79,5 +80,5 @@ void UIButton::IncreaseSpeed()
 
 void UIButton::SetPlayer(Player* player)
 {
-	this->player = player
+	this->player = player;
 }

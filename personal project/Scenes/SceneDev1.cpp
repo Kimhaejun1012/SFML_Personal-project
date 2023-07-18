@@ -10,6 +10,7 @@
 #include "DataTableMgr.h"
 #include "Monster.h"
 #include "Bullet.h"
+#include "UIButton.h"
 
 SceneDev1::SceneDev1() : Scene(SceneId::Dev1)
 {
@@ -51,10 +52,6 @@ void SceneDev1::Init()
 	//장애물 충돌이 되는 혹은 데미지를 입는
 
 
-	for (auto go : gameObjects)
-	{
-		go->Init();
-	}
 
 	tileMap->Load("map/map1.csv");
 	tileMap->SetOrigin(Origins::MC);
@@ -85,7 +82,53 @@ void SceneDev1::Init()
 	//	AddGo(coin);
 	//}
 	//tempCoin = ((SpriteGo*)AddGo(new SpriteGo("graphics/coin.png", "coin")));
-	SpawnMonsters(5, sf::Vector2f(0, 0));
+	
+		testbutton1 = (UIButton*)AddGo(new UIButton("upgrade/doubleArrow.png", "mouse"));
+		testbutton2 = (UIButton*)AddGo(new UIButton("upgrade/doubleAttack.png", ""));
+		testbutton3 = (UIButton*)AddGo(new UIButton("upgrade/doubleSpeed.png", ""));
+		testbutton1->SetOrigin(Origins::MC);
+		testbutton1->SetPosition(size.x * 0.5, size.y * 0.5);
+		testbutton1->sortLayer = 100;
+		testbutton1->SetActive(false);
+		testbutton2->SetOrigin(Origins::MC);
+		testbutton2->SetPosition(testbutton1->GetPosition().x - 300, testbutton1->GetPosition().y);
+		testbutton2->sortLayer = 100;
+		testbutton2->SetActive(false);
+		testbutton3->SetOrigin(Origins::MC);
+		testbutton3->SetPosition(testbutton1->GetPosition().x + 300, testbutton1->GetPosition().y);
+		testbutton3->sortLayer = 100;
+		testbutton3->SetActive(false);
+		testbutton1->OnClick = [this]() {
+			//testbutton1->SetPlayer(this);
+			//testbutton1->IncreaseBullet();
+			std::cout << "1클릭" << std::endl;
+			testbutton1->SetActive(false);
+			testbutton2->SetActive(false);
+			testbutton3->SetActive(false);
+		};
+		testbutton2->OnClick = [this]() {
+			//testbutton2->SetPlayer(this);
+			//testbutton2->IncreaseAttact();
+			std::cout << "2클릭" << std::endl;
+			testbutton1->SetActive(false);
+			testbutton2->SetActive(false);
+			testbutton3->SetActive(false);
+		};
+
+		testbutton3->OnClick = [this]() {
+			//testbutton3->SetPlayer(this);
+			//testbutton3->IncreaseSpeed();
+			std::cout << "3클릭" << std::endl;
+			testbutton1->SetActive(false);
+			testbutton2->SetActive(false);
+			testbutton3->SetActive(false);
+		};
+
+	tempCoin = ((SpriteGo*)AddGo(new SpriteGo("graphics/coin.png", "coin")));
+	for (auto go : gameObjects)
+	{
+		go->Init();
+	}
 }
 
 void SceneDev1::Release()
@@ -101,7 +144,7 @@ void SceneDev1::Release()
 void SceneDev1::Enter()
 {
 	Scene::Enter();
-
+	SpawnMonsters(15, sf::Vector2f(0, 0));
 
 	
 	//poolMonsters.Clear();
@@ -125,6 +168,7 @@ void SceneDev1::Exit()
 
 void SceneDev1::Update(float dt)
 {
+	//std::cout << "씬데브1"<<std::endl;
 	Scene::Update(dt);
 	worldView.setCenter(player->GetPosition());
 	NextScene();
@@ -134,6 +178,14 @@ void SceneDev1::Update(float dt)
 		SCENE_MGR.ChangeScene(SceneId::Dev2);
 	}
 
+	if (player->ReturnExp() >= player->ReturnMaxExp())
+	{
+		std::cout << "나 혼자만 레벨업" << std::endl;
+		testbutton1->SetActive(true);
+		testbutton2->SetActive(true);
+		testbutton3->SetActive(true);
+		player->GetMaxExp(1.3);
+	}
 
 	for (int i = 0; i < coins.size(); ++i)
 	{
@@ -145,23 +197,20 @@ void SceneDev1::Update(float dt)
 			coinPos = coins[i]->sprite.getPosition() + coinDir * speed * dt;
 			coins[i]->sprite.setPosition(coinPos);
 		}
-
 		if (coins[i]->GetActive()) {
 
 			if (coins[i]->sprite.getGlobalBounds().intersects(player->sprite.getGlobalBounds()))
 			{
-				std::cout << "경험치 올랐어요" << std::endl;
+				//std::cout << "경험치 올랐어요" << std::endl;
 				int a = 30;
 				player->GetExp(a);
 				coins[i]->SetActive(false);
 			}
 		}
 	}
-	std::cout << player->ExpExp() << std::endl;
+	//std::cout << player->ExpExp() << std::endl;
 }
-	
-//coin 오브젝트 풀로 만들기
-//경험치 쌓이면 레벨업
+
 
 void SceneDev1::Draw(sf::RenderWindow& window)
 {
@@ -185,7 +234,7 @@ void SceneDev1::SpawnMonsters(int count, sf::Vector2f center)
 {
 	for (int i = 0; i < count; i++)
 	{
-		tempCoin = ((SpriteGo*)AddGo(new SpriteGo("graphics/coin.png", "coin")));
+
 		tempCoin->SetActive(false);
 		coins.push_back(tempCoin);
 
@@ -202,7 +251,7 @@ void SceneDev1::SpawnMonsters(int count, sf::Vector2f center)
 		monsters = poolMonsters.GetUseList();
 
 		//zombie->SetActive(true);
-
+		//이미지 2개를 두고 위에서 아래로 보낸다 일정 시간동안 보내다가 일정 시간이 지나면 사진 고정되게
 		sf::Vector2f pos;
 		do
 		{

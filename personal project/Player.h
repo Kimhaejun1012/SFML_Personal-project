@@ -6,16 +6,23 @@
 class Bullet;
 class Monster;
 class UIButton;
+class SpriteGo;
+
 class Player : public SpriteGo
 {
 protected:
+	sf::Vector2f windowsize;
 	AnimationController animation;
 	sf::Vector2f velocity;
 	sf::Vector2f direction;
 	std::list<Monster*> monsters;
+	//UIButton* testbutton1;
+	//UIButton* testbutton2;
+	//UIButton* testbutton3;
 	sf::Vector2f monsterlook = { 0,0 };
 	Monster* monster;
 	sf::FloatRect playerwall;
+	Player* player;
 	int maxexp = 100;
 	int exp = 0;
 	UIButton* uibutton;
@@ -34,6 +41,10 @@ protected:
 
 	int MaxHp = 100;
 	int Hp = 0;
+	SpriteGo* playerHp;
+	SpriteGo* playerMaxHp;
+	SpriteGo* expbar;
+	SpriteGo* maxexpbar;
 
 public:
 	Player(const std::string& textureId = "", const std::string& n = "")
@@ -61,14 +72,16 @@ public:
 	void RemoveMonster(Monster* monster);
 	void OnHitted(int damage);
 	int GetHp() const;
-	int ExpExp();
+	int ReturnExp();
 	void GetExp(int exp);
-	int GetMaxExp();
+	int ReturnMaxExp();
 	void LevelUp();
+	void GetMaxExp(float exp);
 	bool isplaying = true;
 	bool isAlive = true;
 	void IncreaseBullet();
 	void IncreaseAttack();
 	void IncreaseSpeed();
+	void PlayerUI();
 };
 

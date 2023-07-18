@@ -8,7 +8,7 @@ class Element;
 class MapStructure;
 class Monster;
 class SpriteGo;
-
+class UIButton;
 
 class SceneDev1 : public Scene
 {
@@ -16,8 +16,11 @@ protected:
 	//ObjectPool<Monster> poolMonsters;
 	sf::Vector2f coinDir;
 	sf::Vector2f coinPos;
-	float speed = 300;
+	float speed = 80;
 	SpriteGo* tempCoin;
+	UIButton* testbutton1;
+	UIButton* testbutton2;
+	UIButton* testbutton3;
 	std::vector<SpriteGo*> coins;
 	SpriteGo* coin;
 	ObjectPool<Monster> poolMonsters;

@@ -5,14 +5,16 @@
 #include "Monster.h"
 #include "Scene.h"
 #include "UIButton.h"
-
+#include "SpriteGo.h"
 //몬스터 안죽음, 몬스터한테 안나감, 몬스터 닿아도 안사라짐
+
+
 
 void Player::Init()
 {
 	SpriteGo::Init();
 	increaseDamage = false;
-
+	windowsize = FRAMEWORK.GetWindowSize();
 	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("tables/Idle.csv"));
 	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("tables/Move.csv"));
 	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("tables/Up.csv"));
@@ -28,6 +30,9 @@ void Player::Init()
 	animation.SetTarget(&sprite);
 	SetOrigin(Origins::BC);
 	bulletCount = 1;
+
+
+
 }
 
 void Player::Release()
@@ -49,14 +54,15 @@ void Player::Reset()
 	{
 		SCENE_MGR.GetCurrScene()->RemoveGo(bullet);
 	}
-
+	PlayerUI();
 	poolBullets.Clear();
 }
 
 void Player::Update(float dt)
 {
 	SpriteGo::Update(dt);
-
+	Scene* scene = SCENE_MGR.GetCurrScene();
+	
 	tick -= dt;
 	animation.Update(dt);
 	direction.x = INPUT_MGR.GetAxis(Axis::Horizontal);
@@ -65,6 +71,11 @@ void Player::Update(float dt)
 	PlayerMove(dt);
 	LookMonster();
 	Shoot();
+	
+	playerHp->rect.setPosition(GetPosition().x - 30, sprite.getGlobalBounds().top - 10.f);
+	playerMaxHp->rect.setPosition(GetPosition().x - 30,sprite.getGlobalBounds().top - 10.f);
+	playerHp->rect.setSize({ (static_cast<float>(Hp) / static_cast<float>(MaxHp)) * 50.f, 7.f });
+	expbar->sprite.setScale({ (static_cast<float>(exp) / static_cast<float>(maxexp)), 1.f});
 }
 
 bool Player::GetFlipX() const
@@ -121,7 +132,7 @@ void Player::Shoot()
 
 			float modifiedAngle = Utils::Angle(monsterlook);  // 기존 각도 계산
 			//float additionalAngle = (count % 2 == 1) ? 15.f * count : -15.f * count;  // 추가 각도 계산
-			float additionalAngle = -15 + (30 / bulletCount * count); //(count == 0) ? 0.f : ((count % 2 == 1) ? 15.f * count : -15.f * count);
+			float additionalAngle = -5 + (30 / bulletCount * count); //(count == 0) ? 0.f : ((count % 2 == 1) ? 15.f * count : -15.f * count);
 			//float additionalAngle =  (360 / bulletCount * count);
 			float finalAngle = modifiedAngle + additionalAngle;  // 기존 각도와 추가 각도 합산
 			sf::Vector2f fireDirection = Utils::DirectionFromAngle(finalAngle);  // 총알 발사 각도 계산
@@ -277,7 +288,7 @@ int Player::GetHp() const
 	return Hp;
 }
 
-int Player::ExpExp()
+int Player::ReturnExp()
 {
 	return exp;
 }
@@ -290,47 +301,20 @@ void Player::GetExp(int exp)
 	isexp = false;
 }
 
-int Player::GetMaxExp()
+int Player::ReturnMaxExp()
 {
 	return maxexp;
 }
 
 void Player::LevelUp()
 {
-	if (exp > maxexp)
-	{
-		isplaying = false;
-	}
+	isplaying = false;
+}
 
-	if (!isplaying)
-	{
-		Scene* scene = SCENE_MGR.GetCurrScene();
-		UIButton* testbutton1 = (UIButton*)scene->AddGo(new UIButton("upgrade/doubleArrow.png",""));
-		UIButton* testbutton2 = (UIButton*)scene->AddGo(new UIButton("upgrade/doubleAttack.png",""));
-		UIButton* testbutton3 = (UIButton*)scene->AddGo(new UIButton("upgrade/doubleSpeed.png",""));
-		testbutton1->SetOrigin(Origins::MC);
-		testbutton1->sortLayer = 100;
-		testbutton1->SetPosition(-200, 0.f);
-		testbutton2->SetOrigin(Origins::MC);
-		testbutton2->sortLayer = 100;
-		testbutton2->SetPosition(0, 0.f);
-		testbutton3->SetOrigin(Origins::MC);
-		testbutton3->sortLayer = 100;
-		testbutton3->SetPosition(200, 0.f);
-		testbutton1->OnClick = [testbutton1]() {
-			testbutton1->IncreaseBullet();
-			std::cout << "1클릭" << std::endl;
-
-		};
-		testbutton2->OnClick = [testbutton2]() {
-			testbutton2->IncreaseAttact();
-			std::cout << "2클릭" << std::endl;
-		};
-		testbutton3->OnClick = [testbutton3]() {
-			testbutton3->IncreaseSpeed();
-			std::cout << "3클릭" << std::endl;
-		};
-	}
+void Player::GetMaxExp(float exp)
+{
+	this->exp -= maxexp;
+	maxexp *= exp;
 }
 
 void Player::IncreaseBullet()
@@ -346,4 +330,41 @@ void Player::IncreaseAttack()
 void Player::IncreaseSpeed()
 {
 	speed += 300;
+}
+
+void Player::PlayerUI()
+{
+	Scene* scene = SCENE_MGR.GetCurrScene();
+	playerMaxHp = ((SpriteGo*)scene->AddGo(new SpriteGo("", "")));
+	playerHp = ((SpriteGo*)scene->AddGo(new SpriteGo("", "")));
+
+	playerHp->rect.setSize(sf::Vector2f(50.f, 7.f));
+	playerHp->rect.setFillColor(sf::Color::Green);
+
+	maxexpbar = ((SpriteGo*)scene->AddGo(new SpriteGo("graphics/ExpBarmax.png", "maxexpbar")));
+	expbar = ((SpriteGo*)scene->AddGo(new SpriteGo("graphics/ExpBar.png", "expbar")));
+
+
+	expbar->SetOrigin(Origins::BL);
+	expbar->sortLayer = 101;
+	//expbar->sprite.setScale(0, 0);
+	maxexpbar->sprite.setPosition(windowsize.x * 0.27, 50);
+	expbar->sprite.setPosition(windowsize.x * 0.27, 50);
+	maxexpbar->SetOrigin(Origins::BL);
+	maxexpbar->sortLayer = 101;
+	sf::Color expbar = maxexpbar->sprite.getColor();
+	maxexpbar->sprite.setColor({0,0,0,150});
+	playerMaxHp->rect.setSize(sf::Vector2f(50.f, 7.f));
+	playerMaxHp->rect.setFillColor(sf::Color::Black);
+	sf::Color aaa = playerMaxHp->sprite.getColor();
+	aaa.a = 125;
+	playerMaxHp->rect.setFillColor(aaa);
+	
+	std::cout << maxexpbar->sprite.getScale().x << maxexpbar->sprite.getScale().y << std::endl;
+
+	//playerMaxHp->SetOrigin(Origins::BL);
+	//playerMaxHp->sortLayer = 102;
+	//playerMaxHp->sortOrder = 0;
+	//playerHp->SetPosition(player->GetPosition());
+	//playerMaxHp->SetPosition(player->GetPosition());
 }
