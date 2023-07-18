@@ -16,9 +16,9 @@ protected:
 	sf::Vector2f velocity;
 	sf::Vector2f direction;
 	std::list<Monster*> monsters;
-	//UIButton* testbutton1;
-	//UIButton* testbutton2;
-	//UIButton* testbutton3;
+	UIButton* testbutton1;
+	UIButton* testbutton2;
+	UIButton* testbutton3;
 	sf::Vector2f monsterlook = { 0,0 };
 	Monster* monster;
 	sf::FloatRect playerwall;

@@ -6,6 +6,7 @@
 #include "Scene.h"
 #include "UIButton.h"
 #include "SpriteGo.h"
+
 //몬스터 안죽음, 몬스터한테 안나감, 몬스터 닿아도 안사라짐
 
 
@@ -13,6 +14,7 @@
 void Player::Init()
 {
 	SpriteGo::Init();
+
 	increaseDamage = false;
 	windowsize = FRAMEWORK.GetWindowSize();
 	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("tables/Idle.csv"));
@@ -32,6 +34,7 @@ void Player::Init()
 	bulletCount = 1;
 
 
+	
 
 }
 
@@ -39,6 +42,8 @@ void Player::Release()
 {
 	SpriteGo::Release();
 	poolBullets.Release();
+
+
 }
 void Player::Reset()
 {
@@ -56,6 +61,49 @@ void Player::Reset()
 	}
 	PlayerUI();
 	poolBullets.Clear();
+
+	Scene* scene = SCENE_MGR.GetCurrScene();
+	testbutton1 = (UIButton*)scene->AddGo(new UIButton("upgrade/doubleArrow.png", "mouse"));
+	testbutton2 = (UIButton*)scene->AddGo(new UIButton("upgrade/doubleAttack.png", ""));
+	testbutton3 = (UIButton*)scene->AddGo(new UIButton("upgrade/doubleSpeed.png", ""));
+	testbutton1->SetOrigin(Origins::MC);
+	testbutton1->SetPosition(windowsize.x * 0.5, windowsize.y * 0.5);
+	testbutton1->sortLayer = 100;
+	testbutton1->SetActive(false);
+	testbutton2->SetOrigin(Origins::MC);
+	testbutton2->SetPosition(testbutton1->GetPosition().x - 300, testbutton1->GetPosition().y);
+	testbutton2->sortLayer = 100;
+	testbutton2->SetActive(false);
+	testbutton3->SetOrigin(Origins::MC);
+	testbutton3->SetPosition(testbutton1->GetPosition().x + 300, testbutton1->GetPosition().y);
+	testbutton3->sortLayer = 100;
+	testbutton3->SetActive(false);
+	testbutton1->OnClick = [this]() {
+		//testbutton1->SetPlayer(this);
+		//testbutton1->IncreaseBullet();
+		std::cout << "1클릭" << std::endl;
+		testbutton1->SetActive(false);
+		testbutton2->SetActive(false);
+		testbutton3->SetActive(false);
+	};
+	testbutton2->OnClick = [this]() {
+		//testbutton2->SetPlayer(this);
+		//testbutton2->IncreaseAttact();
+		std::cout << "2클릭" << std::endl;
+		testbutton1->SetActive(false);
+		testbutton2->SetActive(false);
+		testbutton3->SetActive(false);
+	};
+
+	testbutton3->OnClick = [this]() {
+		//testbutton3->SetPlayer(this);
+		//testbutton3->IncreaseSpeed();
+		std::cout << "3클릭" << std::endl;
+		testbutton1->SetActive(false);
+		testbutton2->SetActive(false);
+		testbutton3->SetActive(false);
+	};
+
 }
 
 void Player::Update(float dt)
@@ -76,6 +124,16 @@ void Player::Update(float dt)
 	playerMaxHp->rect.setPosition(GetPosition().x - 30,sprite.getGlobalBounds().top - 10.f);
 	playerHp->rect.setSize({ (static_cast<float>(Hp) / static_cast<float>(MaxHp)) * 50.f, 7.f });
 	expbar->sprite.setScale({ (static_cast<float>(exp) / static_cast<float>(maxexp)), 1.f});
+
+	if (exp >= maxexp)
+	{
+		std::cout << "나 혼자만 레벨업" << std::endl;
+		testbutton1->SetActive(true);
+		testbutton2->SetActive(true);
+		testbutton3->SetActive(true);
+		exp -= maxexp;
+		maxexp *= 1.3;
+	}
 }
 
 bool Player::GetFlipX() const
@@ -118,7 +176,6 @@ void Player::Shoot()
 	//SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
 	if (direction == sf::Vector2f(0.f, 0.f) && tick < 0.1f && !monsters.empty())
 	{
-
 		tick = 0.5f;
 		int count = 0;
 		while (count != bulletCount)

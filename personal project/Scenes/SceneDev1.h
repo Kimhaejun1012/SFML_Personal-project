@@ -18,9 +18,11 @@ protected:
 	sf::Vector2f coinPos;
 	float speed = 80;
 	SpriteGo* tempCoin;
+
 	UIButton* testbutton1;
 	UIButton* testbutton2;
 	UIButton* testbutton3;
+
 	std::vector<SpriteGo*> coins;
 	SpriteGo* coin;
 	ObjectPool<Monster> poolMonsters;
@@ -59,6 +61,8 @@ public:
 	//void CreateMonster(int count);
 	void OnDieMonster(Monster* monster);
 	void GetCoin(std::vector<SpriteGo*> coin);
+
+
 };
 
 template<typename T>

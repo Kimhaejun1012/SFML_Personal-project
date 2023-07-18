@@ -11,7 +11,7 @@
 #include "Monster.h"
 #include "Bullet.h"
 #include "UIButton.h"
-
+#include "SceneDev2.h"
 SceneDev1::SceneDev1() : Scene(SceneId::Dev1)
 {
 	resourceListPath = "scripts/DefaultResourceList.csv";
@@ -83,48 +83,49 @@ void SceneDev1::Init()
 	//}
 	//tempCoin = ((SpriteGo*)AddGo(new SpriteGo("graphics/coin.png", "coin")));
 	
-		testbutton1 = (UIButton*)AddGo(new UIButton("upgrade/doubleArrow.png", "mouse"));
-		testbutton2 = (UIButton*)AddGo(new UIButton("upgrade/doubleAttack.png", ""));
-		testbutton3 = (UIButton*)AddGo(new UIButton("upgrade/doubleSpeed.png", ""));
-		testbutton1->SetOrigin(Origins::MC);
-		testbutton1->SetPosition(size.x * 0.5, size.y * 0.5);
-		testbutton1->sortLayer = 100;
-		testbutton1->SetActive(false);
-		testbutton2->SetOrigin(Origins::MC);
-		testbutton2->SetPosition(testbutton1->GetPosition().x - 300, testbutton1->GetPosition().y);
-		testbutton2->sortLayer = 100;
-		testbutton2->SetActive(false);
-		testbutton3->SetOrigin(Origins::MC);
-		testbutton3->SetPosition(testbutton1->GetPosition().x + 300, testbutton1->GetPosition().y);
-		testbutton3->sortLayer = 100;
-		testbutton3->SetActive(false);
-		testbutton1->OnClick = [this]() {
-			//testbutton1->SetPlayer(this);
-			//testbutton1->IncreaseBullet();
-			std::cout << "1클릭" << std::endl;
-			testbutton1->SetActive(false);
-			testbutton2->SetActive(false);
-			testbutton3->SetActive(false);
-		};
-		testbutton2->OnClick = [this]() {
-			//testbutton2->SetPlayer(this);
-			//testbutton2->IncreaseAttact();
-			std::cout << "2클릭" << std::endl;
-			testbutton1->SetActive(false);
-			testbutton2->SetActive(false);
-			testbutton3->SetActive(false);
-		};
+		//testbutton1 = (UIButton*)AddGo(new UIButton("upgrade/doubleArrow.png", "mouse"));
+		//testbutton2 = (UIButton*)AddGo(new UIButton("upgrade/doubleAttack.png", ""));
+		//testbutton3 = (UIButton*)AddGo(new UIButton("upgrade/doubleSpeed.png", ""));
+		//testbutton1->SetOrigin(Origins::MC);
+		//testbutton1->SetPosition(size.x * 0.5, size.y * 0.5);
+		//testbutton1->sortLayer = 100;
+		//testbutton1->SetActive(false);
+		//testbutton2->SetOrigin(Origins::MC);
+		//testbutton2->SetPosition(testbutton1->GetPosition().x - 300, testbutton1->GetPosition().y);
+		//testbutton2->sortLayer = 100;
+		//testbutton2->SetActive(false);
+		//testbutton3->SetOrigin(Origins::MC);
+		//testbutton3->SetPosition(testbutton1->GetPosition().x + 300, testbutton1->GetPosition().y);
+		//testbutton3->sortLayer = 100;
+		//testbutton3->SetActive(false);
+		//testbutton1->OnClick = [this]() {
+		//	//testbutton1->SetPlayer(this);
+		//	//testbutton1->IncreaseBullet();
+		//	std::cout << "1클릭" << std::endl;
+		//	testbutton1->SetActive(false);
+		//	testbutton2->SetActive(false);
+		//	testbutton3->SetActive(false);
+		//};
+		//testbutton2->OnClick = [this]() {
+		//	//testbutton2->SetPlayer(this);
+		//	//testbutton2->IncreaseAttact();
+		//	std::cout << "2클릭" << std::endl;
+		//	testbutton1->SetActive(false);
+		//	testbutton2->SetActive(false);
+		//	testbutton3->SetActive(false);
+		//};
 
-		testbutton3->OnClick = [this]() {
-			//testbutton3->SetPlayer(this);
-			//testbutton3->IncreaseSpeed();
-			std::cout << "3클릭" << std::endl;
-			testbutton1->SetActive(false);
-			testbutton2->SetActive(false);
-			testbutton3->SetActive(false);
-		};
+		//testbutton3->OnClick = [this]() {
+		//	//testbutton3->SetPlayer(this);
+		//	//testbutton3->IncreaseSpeed();
+		//	std::cout << "3클릭" << std::endl;
+		//	testbutton1->SetActive(false);
+		//	testbutton2->SetActive(false);
+		//	testbutton3->SetActive(false);
+		//};
 
 	tempCoin = ((SpriteGo*)AddGo(new SpriteGo("graphics/coin.png", "coin")));
+
 	for (auto go : gameObjects)
 	{
 		go->Init();
@@ -176,16 +177,19 @@ void SceneDev1::Update(float dt)
 	if (nextScene && player->sprite.getGlobalBounds().intersects(nextdoor->sprite.getGlobalBounds()))
 	{
 		SCENE_MGR.ChangeScene(SceneId::Dev2);
+		Scene* scene = SCENE_MGR.GetCurrScene();
+		SceneDev2* sceneGame = dynamic_cast<SceneDev2*>(scene);
+		sceneGame->SetUibutton(testbutton1, testbutton2, testbutton3);
 	}
 
-	if (player->ReturnExp() >= player->ReturnMaxExp())
-	{
-		std::cout << "나 혼자만 레벨업" << std::endl;
-		testbutton1->SetActive(true);
-		testbutton2->SetActive(true);
-		testbutton3->SetActive(true);
-		player->GetMaxExp(1.3);
-	}
+	//if (player->ReturnExp() >= player->ReturnMaxExp())
+	//{
+	//	std::cout << "나 혼자만 레벨업" << std::endl;
+	//	testbutton1->SetActive(true);
+	//	testbutton2->SetActive(true);
+	//	testbutton3->SetActive(true);
+	//	player->GetMaxExp(1.3);
+	//}
 
 	for (int i = 0; i < coins.size(); ++i)
 	{
