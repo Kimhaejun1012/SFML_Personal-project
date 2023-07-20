@@ -70,7 +70,7 @@ void SceneTitle::Update(float dt)
 
 	title->sprite.setColor(getColor);
 
-	if (getColor.a >= 100 && INPUT_MGR.GetKeyDown(sf::Keyboard::Enter))
+	if (getColor.a >= 250)
 	{
 		SCENE_MGR.ChangeScene(SceneId::Dev1);
 	}

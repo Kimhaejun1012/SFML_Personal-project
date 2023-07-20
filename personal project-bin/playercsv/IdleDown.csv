@@ -1,0 +1,8 @@
+ID,FPS,LOOPTYPE,,
+IdleDown,10,1,,
+,,,,
+TEXTURE ID,LEFT,TOP,WIDTH,HEIGHT
+graphics/Naruto.png,6,266,25,51
+graphics/Naruto.png,40,267,25,50
+graphics/Naruto.png,74,268,25,49
+graphics/Naruto.png,108,267,25,50

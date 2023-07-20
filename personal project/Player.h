@@ -2,53 +2,78 @@
 #include "SpriteGo.h"
 #include "AnimationController.h"
 #include "ObjectPool.h"
+#include "Bullet.h"
 
-class Bullet;
 class Monster;
 class UIButton;
 class SpriteGo;
 
 class Player : public SpriteGo
 {
+
+public:
+
+	struct ClipInfo
+	{
+		std::string idle;
+		std::string move;
+		std::string attack;
+		bool flipX = false;
+		sf::Vector2f point;
+	};
+
 protected:
-	sf::Vector2f windowsize;
 	AnimationController animation;
+
+	sf::Vector2f windowsize;
 	sf::Vector2f velocity;
 	sf::Vector2f direction;
+
 	std::list<Monster*> monsters;
+	Monster* monster;
+	sf::Vector2f closestMonster;
+
+	UIButton* uibutton;
 	UIButton* testbutton1;
 	UIButton* testbutton2;
 	UIButton* testbutton3;
+	
+	Bullet* bullet;
+	ObjectPool<Bullet> poolBullets;
+	int bulletCount;
+	int bulletDamage = 100;
+	bool attack;
+
 	sf::Vector2f monsterlook = { 0,0 };
-	Monster* monster;
 	sf::FloatRect playerwall;
 	Player* player;
 	int maxexp = 100;
 	int exp = 0;
-	UIButton* uibutton;
-	int bulletCount;
+
+
 	float accel = 500.f;
-	float speed = 500.f;
+	float speed = 3000.f;
 	float tick = 0.5f;
 	bool filpX = false;
 	bool increaseDamage;
-	int bulletDamage = 100;
-	ObjectPool<Bullet> poolBullets;
-	Bullet* bullet;
+
 	sf::FloatRect wallBounds;
 	sf::Vector2f wallBoundsLT;
 	sf::Vector2f wallBoundsRB;
 
+	std::vector<ClipInfo> clipInfos;
+	ClipInfo currentClipInfo;
+
 	int MaxHp = 100;
 	int Hp = 0;
+
 	SpriteGo* playerHp;
 	SpriteGo* playerMaxHp;
 	SpriteGo* expbar;
 	SpriteGo* maxexpbar;
 
 public:
-	Player(const std::string& textureId = "", const std::string& n = "")
-		: SpriteGo(textureId, n) {}
+	Player(const std::string& textureId = "", const std::string& n = "");
 	virtual ~Player() override { Release(); }
 
 	virtual void Init() override;
@@ -64,6 +89,7 @@ public:
 	sf::Vector2f GetDirection();
 	void Shoot();
 	void LookMonster();
+	void ShootAndLook();
 	void PlayerMove(float dt);
 	void ClearBullet();
 	//void GetMonsterList(Monster* monster);

@@ -8,7 +8,7 @@ const MonsterInfo* MonsterTable::Get(Monster::Types id)
 	auto find = table.find(id);
 	if (find == table.end())
 	{
-		std::cout << "좀비 못찾았음" << std::endl;
+		std::cout << "몬스터 못찾았음" << std::endl;
 		return nullptr;
 	}
 

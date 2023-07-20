@@ -12,16 +12,32 @@ public:
 	enum class Types
 	{
 		Monster1,
-		Monster2,
+		Boss,
 		Monster3,
+	};
+
+	enum class MonsterAni
+	{
+		mob,
+		boss,
+
 	};
 	static const int TotalTypes = 3;
 
 protected:
-	AnimationController animation;
+	MonsterAni Mob;
+	AnimationController monster;
+
+	AnimationController Boss;
+	float bossMoveDuration;
+	float bossMoveTimer;
+	sf::Vector2f bossMoveDir;
+
+
 	Types monsterType;
 	sf::Vector2f look;
 	sf::Vector2f direction;
+	sf::Vector2f direction2;
 	float plusespeed = 0;
 	float speed = 0.f;
 	int maxHp = 0;
@@ -34,6 +50,10 @@ protected:
 	bool isHit = false;
 	Scene* scene;
 	Player* player = nullptr;
+	sf::FloatRect mapsize;
+	sf::Vector2f randPos;
+
+	float tick = 0.f;
 
 public:
 	ObjectPool<Monster>* pool;
@@ -57,8 +77,7 @@ public:
 	void LookAtPlayer();
 	void FollowPlayer(float dt);
 	void HitPlayer(float dt);
-	void GetMonsterPos();
 	const std::list<Monster*> GetMonsterList() const;
-	void AddMonster(Monster& monster);
+	void GetMap2(const sf::FloatRect& mapsize);
 };
 

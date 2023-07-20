@@ -1,0 +1,10 @@
+ID,FPS,LOOPTYPE,,
+boss_Bullet,10,1,,
+,,,,
+TEXTURE ID,LEFT,TOP,WIDTH,HEIGHT
+graphics/boss_Bullet.png,0,2,15,15
+graphics/boss_Bullet.png,17,2,15,16
+graphics/boss_Bullet.png,34,2,15,15
+graphics/boss_Bullet.png,51,2,16,16
+graphics/boss_Bullet.png,68,1,15,16
+graphics/boss_Bullet.png,85,2,15,15

@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "SceneMgr.h"
 #include "SceneDev1.h"
-#include "SceneDev2.h"
 #include "SceneTitle.h"
 #include "SceneBoss.h"
 void SceneMgr::Init()
@@ -13,13 +12,10 @@ void SceneMgr::Init()
 
 	scenes.push_back(new SceneTitle());
 	scenes.push_back(new SceneDev1());
-	scenes.push_back(new SceneDev2());
-	scenes.push_back(new SceneBoss());
 	for (auto scene : scenes)
 	{
 		scene->Init();
 	}
-
 	currentSceneId = startSceneId;
 	currentScene = scenes[(int)currentSceneId];
 	currentScene->Enter();

@@ -155,13 +155,13 @@
   <ItemGroup>
     <ClCompile Include="Animation\AnimationClip.cpp" />
     <ClCompile Include="Animation\AnimationController.cpp" />
+    <ClCompile Include="MonsterBullet.cpp" />
     <ClCompile Include="Bullet.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="DataTables\DataTable.cpp" />
     <ClCompile Include="DataTables\StringTable.cpp" />
     <ClCompile Include="Element.cpp" />
-    <ClCompile Include="ElementTable.cpp" />
     <ClCompile Include="Framework\DataTableMgr.cpp" />
     <ClCompile Include="Framework\Framework.cpp" />
     <ClCompile Include="Framework\InputMgr.cpp" />
@@ -180,6 +180,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Framework\ResourceMgr.cpp" />
+    <ClCompile Include="Map.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="MapStructure.cpp" />
     <ClCompile Include="Monster.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
@@ -190,26 +193,30 @@
     <ClCompile Include="Player.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Scenes\SceneBoss.cpp" />
+    <ClCompile Include="Scenes\SceneBoss.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Scenes\SceneDev1.cpp" />
     <ClCompile Include="Scenes\Scene.cpp" />
     <ClCompile Include="Framework\SceneMgr.cpp" />
     <ClCompile Include="GameObjects\SpriteGo.cpp" />
     <ClCompile Include="Global\Variables.cpp" />
-    <ClCompile Include="Scenes\SceneDev2.cpp" />
+    <ClCompile Include="Scenes\SceneDev2.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Scenes\SceneTitle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rd\rapidcsv.h" />
     <ClInclude Include="Animation\AnimationController.h" />
     <ClInclude Include="Animation\AnimationClip.h" />
+    <ClInclude Include="MonsterBullet.h" />
     <ClInclude Include="Bullet.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="DataTables\DataTable.h" />
     <ClInclude Include="DataTables\StringTable.h" />
     <ClInclude Include="Element.h" />
-    <ClInclude Include="ElementTable.h" />
     <ClInclude Include="Framework\DataTableMgr.h" />
     <ClInclude Include="Framework\ObjectPool.h" />
     <ClInclude Include="GameObjects\GameObject.h" />
@@ -223,6 +230,9 @@
     <ClInclude Include="Framework\InputMgr.h" />
     <ClInclude Include="Framework\ResourceMgr.h" />
     <ClInclude Include="Global\Utils.h" />
+    <ClInclude Include="Map.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="MapStructure.h" />
     <ClInclude Include="Monster.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
@@ -233,13 +243,17 @@
     <ClInclude Include="Player.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="Scenes\SceneBoss.h" />
+    <ClInclude Include="Scenes\SceneBoss.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Scenes\SceneDev1.h" />
     <ClInclude Include="Scenes\Scene.h" />
     <ClInclude Include="Framework\SceneMgr.h" />
     <ClInclude Include="Global\Singleton.h" />
     <ClInclude Include="GameObjects\SpriteGo.h" />
-    <ClInclude Include="Scenes\SceneDev2.h" />
+    <ClInclude Include="Scenes\SceneDev2.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Scenes\SceneTitle.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Global\Variables.h" />

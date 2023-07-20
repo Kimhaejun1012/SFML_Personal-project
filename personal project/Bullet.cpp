@@ -19,8 +19,9 @@ void Bullet::Init()
 {
 	SpriteGo::Init();
 	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("tables/Bullet.csv"));
+	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("tables/bossBullet.csv"));
 	animation.SetTarget(&sprite);
-	sprite.setScale(0.3f, 0.3f);
+	sprite.setScale(0.5f, 0.5f);
 	SetOrigin(Origins::MC);
 }
 
@@ -31,7 +32,7 @@ void Bullet::Release()
 
 void Bullet::Reset()
 {
-	SpriteGo::Reset();
+	//SpriteGo::Reset();
 	damage = 100;
 	animation.Play("Bullet");
 	sprite.setRotation(0.f);
@@ -43,10 +44,15 @@ void Bullet::Reset()
 
 void Bullet::Update(float dt)
 {
+	sprite.setOrigin(sprite.getGlobalBounds().width * 0.5f, sprite.getGlobalBounds().height * 0.5f);
+
 	SpriteGo::Update(dt);
 	animation.Update(dt);
-	Move(dt);
-	HitMonster();
+	if()
+	{
+		Move(dt);
+		HitMonster();
+	}
 }
 
 void Bullet::Draw(sf::RenderWindow& window)

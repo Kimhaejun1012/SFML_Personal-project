@@ -5,8 +5,8 @@
 struct MonsterInfo
 {
 	Monster::Types monsterType;
-
 	//std::string textureId;
+	//AnimationController monsterAni;
 	float speed;
 	int maxHP;
 	int damage;

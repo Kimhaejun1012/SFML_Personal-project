@@ -1,7 +1,6 @@
 #pragma once
 
 class GameObject;
-
 class Scene
 {
 protected:
@@ -9,7 +8,6 @@ protected:
 	Scene& operator=(const Scene&) = delete;
 
 	SceneId sceneId;
-
 	std::string resourceListPath;
 
 	std::list<GameObject*> gameObjects; 

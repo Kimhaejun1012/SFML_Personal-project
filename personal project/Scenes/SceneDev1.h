@@ -1,6 +1,7 @@
 #pragma once
 #include "Scene.h"
 #include "ObjectPool.h"
+#include "Monster.h"
 
 class TileMap;
 class Player;
@@ -12,6 +13,10 @@ class UIButton;
 
 class SceneDev1 : public Scene
 {
+public:
+
+
+
 protected:
 	//ObjectPool<Monster> poolMonsters;
 	sf::Vector2f coinDir;
@@ -23,16 +28,28 @@ protected:
 	UIButton* testbutton2;
 	UIButton* testbutton3;
 
+
 	std::vector<SpriteGo*> coins;
 	SpriteGo* coin;
 	ObjectPool<Monster> poolMonsters;
 	sf::FloatRect tileSize;
+
+
 	TileMap* tileMap = nullptr;
+	TileMap* tileMap2 = nullptr;
+	SpriteGo* mapmap;
+	SpriteGo* mapmap2;
+
+
 	Player* player;
 	Element* element;
 	bool nextScene;
-	SpriteGo* mapmap;
+	Monster::Types monsterType;
+	Monster::Types monsterType0 = (Monster::Types)0;
+	Monster::Types monsterType1 = (Monster::Types)1;
+
 	Monster* monster;
+
 	sf::FloatRect wallBounds;
 	SpriteGo* nextdoor;
 	int monsterCount = 0;
@@ -51,8 +68,8 @@ public:
 	virtual void Draw(sf::RenderWindow& window) override;
 
 	//void Scene1MonsterSetting(int count);
-	void SpawnMonsters(int count, sf::Vector2f center);
-
+	void SpawnMonsters(int count, sf::Vector2f center, Monster::Types a);
+	void SpawnMonsters2(int count, sf::Vector2f center);
 	const std::list<Monster*>* GetMonsterList() const;
 
 	void NextScene();
@@ -61,7 +78,6 @@ public:
 	//void CreateMonster(int count);
 	void OnDieMonster(Monster* monster);
 	void GetCoin(std::vector<SpriteGo*> coin);
-
 
 };
 

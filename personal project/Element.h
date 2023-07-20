@@ -7,16 +7,10 @@ class Element : public SpriteGo
 {
 
 public:
-	enum class Types
-	{
-		Element1,
-		Element2,
-		Element3,
-	};
 
 
 protected:
-	Types elementType;
+
 
 
 public:

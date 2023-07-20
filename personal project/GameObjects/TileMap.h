@@ -1,6 +1,9 @@
 #pragma once
 #include "VertexArrayGo.h"
 
+class SpriteGo;
+class Player;
+
 struct Tile
 {
 	int x = 0;
@@ -11,6 +14,11 @@ struct Tile
 class TileMap : public VertexArrayGo
 {
 protected:
+
+	Player* player;
+	SpriteGo* mapmap;
+	sf::FloatRect wallBounds;
+	sf::FloatRect tileSize;
 
 public:
 	TileMap(const std::string& textureId = "", const std::string& n = "");

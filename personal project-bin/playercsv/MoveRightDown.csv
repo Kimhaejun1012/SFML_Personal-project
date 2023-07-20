@@ -1,0 +1,12 @@
+ID,FPS,LOOPTYPE,,
+MoveRightDown,10,1,,
+,,,,
+TEXTURE ID,LEFT,TOP,WIDTH,HEIGHT
+graphics/Naruto.png,2,855,30,45
+graphics/Naruto.png,35,852,31,50
+graphics/Naruto.png,69,852,32,46
+graphics/Naruto.png,103,853,32,39
+graphics/Naruto.png,143,855,33,42
+graphics/Naruto.png,185,852,33,45
+graphics/Naruto.png,221,852,32,40
+graphics/Naruto.png,255,853,32,38

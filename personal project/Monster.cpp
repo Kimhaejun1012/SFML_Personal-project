@@ -19,13 +19,21 @@ Monster::~Monster()
 void Monster::Init()
 {
 	SpriteGo::Init();
-	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/monster-1_Idle.csv"));
-	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/monster-1_Move.csv"));
-	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/monster-1_Attack.csv"));
-	animation.SetTarget(&sprite);
-	SetOrigin(Origins::BC);
+	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/monster-1_Idle.csv"));
+	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/monster-1_Move.csv"));
+	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/monster-1_Attack.csv"));
+	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/boss.csv"));
+	//hp = maxHp;
+	monster.SetTarget(&sprite);
+
+	bossMoveDuration = 2.0f;
+	bossMoveTimer = bossMoveDuration;
+	bossMoveDir = {0.f,0.f};
+	//Types::Boss
+	//sprite.setScale(2.f, 2.f);
+	//SetOrigin(Origins::BC);
 	//SetPosition(0, 0);
-	
+	//sprite.getTexture() = "boss";
 }
 
 void Monster::Release()
@@ -35,46 +43,69 @@ void Monster::Release()
 
 void Monster::Reset()
 {
-	SpriteGo::Reset();
-	animation.Play("monster1Idle");
+	//SpriteGo::Reset();
+	monster.Play("monster1Idle");
 	SetOrigin(origin);
 	//SetPosition({ 0, 0 });
-	hp = maxHp;
+
 	attackTimer = attackRate;
 }
 
 void Monster::Update(float dt)
 {
-	animation.Update(dt);
 	SpriteGo::Update(dt);
+	monster.Update(dt);
+
 
 	if (player == nullptr)
 		return;
 
-	look = direction = Utils::Normalize(player->GetPosition() - position);
+	direction = Utils::Normalize(player->GetPosition() - position);
 	float distance = Utils::Distance(player->GetPosition(), position);
-	if (distance > 150.f)
+
+	tick -= dt;
+	if (monsterType == Types::Boss)
 	{
-		position += direction * (speed+ plusespeed) * dt;
-		sprite.setPosition(position);
-		if (animation.GetCurrentClipId() != "monster1Move")
-		animation.Play("monster1Move");
+		sprite.setScale(3.f, 3.f);
+		bossMoveTimer -= dt;
+		SetOrigin(Origins::MC);
+		if (bossMoveTimer <= 10.f)
+		{
+			bossMoveDir = { Utils::RandomRange(-1.f, 1.f) ,Utils::RandomRange(-1.f, 1.f)};
+			sprite.move(bossMoveDir.x, bossMoveDir.y);
+			bossMoveTimer = bossMoveDuration;
+		}
+
+		if (tick <= 0.f)
+		{
+			monster.Play("Boss");
+	
+			tick = 1.25f;
+		}
 	}
-	else
+
+	if (monsterType == Types::Monster1)
 	{
-		if (animation.GetCurrentClipId() != "monster1Attack")
-		animation.Play("monster1Attack");
-		HitPlayer(dt);
-		//std::cout << player->GetHp() << std::endl;
+			if (distance > 150.f)
+			{
+				position += direction * (speed + plusespeed) * dt;
+				sprite.setPosition(position);
+				if (monster.GetCurrentClipId() != "monster1Move")
+					monster.Play("monster1Move");
+			}
+			else
+			{
+				if (monster.GetCurrentClipId() != "monster1Attack")
+					monster.Play("monster1Attack");
+				HitPlayer(dt);
+			}
+
+
+		if (distance < 300.f)
+		{
+			plusespeed = 200;
+		}
 	}
-	if (distance < 300.f)
-	{
-		plusespeed = 200;
-	}
-	//if (distance < 300.f)
-	//{
-	//	speed = 300;
-	//}
 }
 
 void Monster::Draw(sf::RenderWindow& window)
@@ -89,11 +120,16 @@ void Monster::SetType(Types t)
 	//int index = (int)zombieType;
 	//textureId = info.textureId;
 	//monsterType = info.monsterType;
-	int index = (int)monsterType;
+	//int index = (int)monsterType;
+	//monsterType = (Monster::Types)info->monsterType;
+	monsterType = (Monster::Types)info->monsterType;
 	speed = info->speed;
 	maxHp = info->maxHP;
+	hp = maxHp;
 	damage = info->damage;
 	attackRate = info->attackRate;
+
+	std::cout << (int)t << std::endl;
 }
 
 Monster::Types Monster::GetType() const
@@ -143,6 +179,11 @@ void Monster::HitPlayer(float dt)
 		player->OnHitted(damage);
 
 	}
+}
+
+void Monster::GetMap2(const sf::FloatRect& mapsize)
+{
+	this->mapsize = mapsize;
 }
 
 //const std::list<Monster*>* Monster::GetMonsterList() const

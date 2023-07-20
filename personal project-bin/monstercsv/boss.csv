@@ -1,0 +1,8 @@
+ID,FPS,LOOPTYPE,,
+Boss,4,1,,
+,,,,
+TEXTURE ID,LEFT,TOP,WIDTH,HEIGHT
+graphics/Boss.png,18,25,92,61
+graphics/Boss.png,131,40,119,41
+graphics/Boss.png,14,168,97,54
+graphics/Boss.png,164,168,53,68

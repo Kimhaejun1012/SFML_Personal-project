@@ -9,7 +9,6 @@ protected:
 	std::list<T*> useList;
 
 	void CreateObjs(int count = 100);
-
 public:
 	ObjectPool() = default;
 	~ObjectPool();
@@ -17,6 +16,7 @@ public:
 	void Init(int cacheSize = 100);
 	void Release(); 
 	void Clear();	// pool로 전부 회수
+	void CreateObjs2(int a);
 
 	T* Get();
 	void Return(T* obj);
@@ -37,6 +37,21 @@ template<typename T>
 inline void ObjectPool<T>::CreateObjs(int count)
 {
 	for (int i = 0; i < count; ++i)
+	{
+		T* obj = new T();
+		if (OnCreate != nullptr)
+		{
+			OnCreate(obj);
+		}
+		obj->Init();
+		pool.push_back(obj);
+	}
+}
+
+template<typename T>
+inline void ObjectPool<T>::CreateObjs2(int a)
+{
+	for (int i = 0; i < a; ++i)
 	{
 		T* obj = new T();
 		if (OnCreate != nullptr)

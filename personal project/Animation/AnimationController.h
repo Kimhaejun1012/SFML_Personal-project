@@ -5,7 +5,7 @@ class AnimationController
 protected:
 	std::unordered_map<std::string, AnimationClip> clips;
 	std::queue<std::string> queue;
-
+	sf::Sprite* sprite = nullptr;
 	float speed = 1.f;
 	bool isPlaying = false;
 

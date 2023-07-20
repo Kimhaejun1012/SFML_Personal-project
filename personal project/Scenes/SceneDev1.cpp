@@ -4,14 +4,12 @@
 #include "TileMap.h"
 #include "Player.h"
 #include "Element.h"
-#include "MapStructure.h"
-#include "Monster.h"
 #include "DataTable.h"
 #include "DataTableMgr.h"
 #include "Monster.h"
 #include "Bullet.h"
 #include "UIButton.h"
-#include "SceneDev2.h"
+
 SceneDev1::SceneDev1() : Scene(SceneId::Dev1)
 {
 	resourceListPath = "scripts/DefaultResourceList.csv";
@@ -25,8 +23,6 @@ SceneDev1::~SceneDev1()
 void SceneDev1::Init()
 {
 	Release();
-	
-
 	sf::Vector2f size = FRAMEWORK.GetWindowSize();
 	worldView.setSize(size);
 	worldView.setCenter({ 0, 0 });
@@ -41,88 +37,42 @@ void SceneDev1::Init()
 	sceneName->text.setString(L"데브 1");
 
 	tileMap = (TileMap*)AddGo(new TileMap("mapsprite/tile.png", "Tile Map"));
+	tileMap2 = (TileMap*)AddGo(new TileMap("mapsprite/tile.png", "Tile Map"));
 	mapmap = (SpriteGo*)AddGo(new SpriteGo("mapstructure/mapmap.png", "mapmap"));
+	mapmap2 = (SpriteGo*)AddGo(new SpriteGo("mapstructure/mapmap.png", "mapmap"));
 	element = (Element*)AddGo(new Element("mapsprite/element1.png", "element1"));
 	nextdoor = (SpriteGo*)AddGo(new SpriteGo("mapstructure/LayerDoor_1.png", "door"));
 	player = (Player*)AddGo(new Player());
-	//coin = (SpriteGo*)AddGo(new SpriteGo("graphics/coin.png", "asdf"));
-	//monster = (Monster*)AddGo(new Monster());
-	//애초에 그림 어떻게 띄우더라 csv로
-	//지형지물을 1,2,3,4,5 다 쓸건데
-	//장애물 충돌이 되는 혹은 데미지를 입는
+
 
 
 
 	tileMap->Load("map/map1.csv");
 	tileMap->SetOrigin(Origins::MC);
-	//->SetPosition(player->GetPosition());
+	tileMap2->Load("map/map1.csv");
+	tileMap2->SetOrigin(Origins::MC);
+	tileMap2->SetPosition(tileMap->GetPosition().x, tileMap->GetPosition().y - 3000);
+	mapmap2->SetPosition(tileMap2->GetPosition());
+	mapmap2->SetOrigin(Origins::MC);
+
+
 	element->SetOrigin(Origins::MC);
-	element->SetPosition(sf::Vector2f{ tileMap->GetPosition()});
-	//structure->SetPosition(sf::Vector2f{ 400,400 });
+	element->SetPosition(sf::Vector2f{ tileMap->GetPosition() });
+
 	tileSize = tileMap->vertexArray.getBounds();
-	//element->sortLayer = 101;
 	mapmap->SetPosition(0, 0);
 	mapmap->SetOrigin(Origins::MC);
-	nextdoor->SetPosition(-19.f, tileSize.top-37);
+	nextdoor->SetPosition(-19.f, tileSize.top - 37);
 	nextdoor->SetOrigin(Origins::MC);
 	nextdoor->SetActive(false);
 	//CreateMonster(2);
 	poolMonsters.OnCreate = [this](Monster* monster) {
 
-		Monster::Types monsterType = (Monster::Types)0;
-		monster->SetType(monsterType);
 		monster->SetPlayer(player);
 	};
 	poolMonsters.Init();
-	//for (int i = 0; i < 5; ++i)
-	//{
-	//	auto coin = new SpriteGo("graphics/coin.png", "coin");
-	//	coin->SetActive(false);
-	//	coins.push_back(coin);
-	//	AddGo(coin);
-	//}
-	//tempCoin = ((SpriteGo*)AddGo(new SpriteGo("graphics/coin.png", "coin")));
-	
-		//testbutton1 = (UIButton*)AddGo(new UIButton("upgrade/doubleArrow.png", "mouse"));
-		//testbutton2 = (UIButton*)AddGo(new UIButton("upgrade/doubleAttack.png", ""));
-		//testbutton3 = (UIButton*)AddGo(new UIButton("upgrade/doubleSpeed.png", ""));
-		//testbutton1->SetOrigin(Origins::MC);
-		//testbutton1->SetPosition(size.x * 0.5, size.y * 0.5);
-		//testbutton1->sortLayer = 100;
-		//testbutton1->SetActive(false);
-		//testbutton2->SetOrigin(Origins::MC);
-		//testbutton2->SetPosition(testbutton1->GetPosition().x - 300, testbutton1->GetPosition().y);
-		//testbutton2->sortLayer = 100;
-		//testbutton2->SetActive(false);
-		//testbutton3->SetOrigin(Origins::MC);
-		//testbutton3->SetPosition(testbutton1->GetPosition().x + 300, testbutton1->GetPosition().y);
-		//testbutton3->sortLayer = 100;
-		//testbutton3->SetActive(false);
-		//testbutton1->OnClick = [this]() {
-		//	//testbutton1->SetPlayer(this);
-		//	//testbutton1->IncreaseBullet();
-		//	std::cout << "1클릭" << std::endl;
-		//	testbutton1->SetActive(false);
-		//	testbutton2->SetActive(false);
-		//	testbutton3->SetActive(false);
-		//};
-		//testbutton2->OnClick = [this]() {
-		//	//testbutton2->SetPlayer(this);
-		//	//testbutton2->IncreaseAttact();
-		//	std::cout << "2클릭" << std::endl;
-		//	testbutton1->SetActive(false);
-		//	testbutton2->SetActive(false);
-		//	testbutton3->SetActive(false);
-		//};
 
-		//testbutton3->OnClick = [this]() {
-		//	//testbutton3->SetPlayer(this);
-		//	//testbutton3->IncreaseSpeed();
-		//	std::cout << "3클릭" << std::endl;
-		//	testbutton1->SetActive(false);
-		//	testbutton2->SetActive(false);
-		//	testbutton3->SetActive(false);
-		//};
+	
 
 	tempCoin = ((SpriteGo*)AddGo(new SpriteGo("graphics/coin.png", "coin")));
 
@@ -134,27 +84,24 @@ void SceneDev1::Init()
 
 void SceneDev1::Release()
 {
-	poolMonsters.Release();
+	//poolMonsters.Release();
 	for (auto go : gameObjects)
 	{
 		//go->Release();
-		delete go;
+		delete go; // <- 요기
 	}
 }
 
 void SceneDev1::Enter()
 {
 	Scene::Enter();
-	SpawnMonsters(15, sf::Vector2f(0, 0));
+	SpawnMonsters(2, sf::Vector2f(0, 0), monsterType0);
+	//SpawnMonsters(2, tileMap2->GetPosition());
 
-	
-	//poolMonsters.Clear();
-	//uiView.setSize(size);
-	//uiView.setCenter(player->GetPosition());
-	//SpawnMonsters(5, player->GetPosition());
 
 	wallBounds = mapmap->sprite.getGlobalBounds();
-	player->SetWallBounds(wallBounds);	
+
+	player->SetWallBounds(wallBounds);
 
 	//coin->SetPosition(player->GetPosition());
 	//coin->SetOrigin(Origins::MC);
@@ -164,6 +111,7 @@ void SceneDev1::Exit()
 {
 	ClearObjectPool(poolMonsters);
 	player->Reset();
+	poolMonsters.Clear();
 	Scene::Exit();
 }
 
@@ -171,17 +119,24 @@ void SceneDev1::Update(float dt)
 {
 	//std::cout << "씬데브1"<<std::endl;
 	Scene::Update(dt);
-	worldView.setCenter(player->GetPosition());
+	worldView.setCenter(player->GetPosition().x, player->GetPosition().y);
 	NextScene();
-	player->SetMonsterList(monsters);
+	
+
 	if (nextScene && player->sprite.getGlobalBounds().intersects(nextdoor->sprite.getGlobalBounds()))
 	{
-		SCENE_MGR.ChangeScene(SceneId::Dev2);
-		Scene* scene = SCENE_MGR.GetCurrScene();
-		SceneDev2* sceneGame = dynamic_cast<SceneDev2*>(scene);
-		sceneGame->SetUibutton(testbutton1, testbutton2, testbutton3);
-	}
 
+		monster->GetMap2(mapmap2->sprite.getGlobalBounds());
+		SpawnMonsters(1, tileMap2->GetPosition(), (Monster::Types)1);
+		player->SetWallBounds(mapmap2->sprite.getGlobalBounds());
+		player->SetPosition(tileMap2->GetPosition().x, tileMap2->GetPosition().y + 700);
+		nextdoor->SetPosition(-19.f, tileMap2->vertexArray.getBounds().top - 37);
+		nextdoor->SetActive(false);
+		//Scene* scene = SCENE_MGR.GetCurrScene();
+		//SceneBoss* sceneGame = dynamic_cast<SceneBoss*>(scene);
+		//sceneGame->SetPlayer(player);
+	}
+	player->SetMonsterList(monsters);
 	//if (player->ReturnExp() >= player->ReturnMaxExp())
 	//{
 	//	std::cout << "나 혼자만 레벨업" << std::endl;
@@ -196,7 +151,7 @@ void SceneDev1::Update(float dt)
 		coinDir = Utils::Normalize(player->GetPosition() - coins[i]->sprite.getPosition());
 		float distance = Utils::Distance(player->GetPosition(), coins[i]->sprite.getPosition());
 
-		if (distance > 25.f) 
+		if (distance > 25.f)
 		{
 			coinPos = coins[i]->sprite.getPosition() + coinDir * speed * dt;
 			coins[i]->sprite.setPosition(coinPos);
@@ -234,7 +189,7 @@ void SceneDev1::Draw(sf::RenderWindow& window)
 //	}
 //}
 
-void SceneDev1::SpawnMonsters(int count, sf::Vector2f center)
+void SceneDev1::SpawnMonsters(int count, sf::Vector2f center, Monster::Types a)
 {
 	for (int i = 0; i < count; i++)
 	{
@@ -251,8 +206,9 @@ void SceneDev1::SpawnMonsters(int count, sf::Vector2f center)
 
 		//Zombie* zombie = zombiePool.front();
 		//zombiePool.pop_front();
-		Monster* monster = poolMonsters.Get();
+		monster = poolMonsters.Get();
 		monsters = poolMonsters.GetUseList();
+		monster->SetType(a);
 
 		//zombie->SetActive(true);
 		//이미지 2개를 두고 위에서 아래로 보낸다 일정 시간동안 보내다가 일정 시간이 지나면 사진 고정되게
@@ -273,6 +229,44 @@ void SceneDev1::SpawnMonsters(int count, sf::Vector2f center)
 	}
 }
 
+void SceneDev1::SpawnMonsters2(int count, sf::Vector2f center)
+{
+	for (int i = 0; i < count; i++)
+	{
+
+		tempCoin->SetActive(false);
+		coins.push_back(tempCoin);
+
+
+		//if (zombiePool.empty())
+		//if (poolMonsters.GetPool().empty())
+		//{
+		//	CreateMonster(2);
+		//}
+
+		//Zombie* zombie = zombiePool.front();
+		//zombiePool.pop_front();
+		monster = poolMonsters.Get();
+		monsters = poolMonsters.GetUseList();
+
+		//zombie->SetActive(true);
+		//이미지 2개를 두고 위에서 아래로 보낸다 일정 시간동안 보내다가 일정 시간이 지나면 사진 고정되게
+		sf::Vector2f pos;
+		do
+		{
+			pos = center + Utils::RandomInCircle(400);
+		} while (Utils::Distance(center, pos) < 200.f && 3 > 200.f);
+
+		monster->SetPosition(pos);
+
+		//zombies.push_back(zombie);
+		//zombie->Reset();
+		AddGo(monster);
+		monsterCount++;
+		std::cout << "몬스터 생성" << std::endl;
+
+	}
+}
 //void SceneDev1::CreateMonster(int count)
 //{
 //	for (auto zombie : poolMonsters.GetUseList())
@@ -292,7 +286,7 @@ void SceneDev1::OnDieMonster(Monster* monster)
 	RemoveGo(monster);
 	poolMonsters.Return(monster);
 	monsters.remove(monster);
-	
+
 	for (int i = 0; i < coins.size(); ++i)
 	{
 		if (coins[i]->GetActive())
@@ -301,7 +295,7 @@ void SceneDev1::OnDieMonster(Monster* monster)
 		}
 		else
 		{
-			std::cout << "코인 테스트"  << std::endl;
+			std::cout << "코인 테스트" << std::endl;
 			coins[i]->SetActive(true);
 			coins[i]->SetPosition(monster->GetPosition());
 			coins[i]->SetOrigin(Origins::MC);
@@ -340,5 +334,7 @@ void SceneDev1::NextScene()
 		nextScene = true;
 		nextdoor->SetActive(true);
 	}
+	else
+		nextScene = false;
 }
 

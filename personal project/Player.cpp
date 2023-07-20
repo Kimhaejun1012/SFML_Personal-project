@@ -7,20 +7,28 @@
 #include "UIButton.h"
 #include "SpriteGo.h"
 
-//몬스터 안죽음, 몬스터한테 안나감, 몬스터 닿아도 안사라짐
 
-
+Player::Player(const std::string& textureId, const std::string& n) : SpriteGo(textureId, n), attack(false)
+{
+	Hp = MaxHp;
+}
 
 void Player::Init()
 {
-	SpriteGo::Init();
-
+	//Player::Init();
 	increaseDamage = false;
 	windowsize = FRAMEWORK.GetWindowSize();
-	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("tables/Idle.csv"));
-	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("tables/Move.csv"));
-	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("tables/Up.csv"));
-	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("tables/Down.csv"));
+	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("playercsv/IdleUp.csv"));
+	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("playercsv/IdleDown.csv"));
+	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("playercsv/IdleRight.csv"));
+	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("playercsv/MoveUp.csv"));
+	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("playercsv/MoveRightUp.csv"));
+	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("playercsv/MoveRightDown.csv"));
+	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("playercsv/MoveDown.csv"));
+	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("playercsv/MoveRight.csv"));
+	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("playercsv/AttackUp.csv"));
+	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("playercsv/AttackDown.csv"));
+	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("playercsv/AttackRight.csv"));
 
 	ObjectPool<Bullet>* ptr = &poolBullets;
 	poolBullets.OnCreate = [ptr](Bullet* bullet) {
@@ -34,33 +42,43 @@ void Player::Init()
 	bulletCount = 1;
 
 
-	
+	clipInfos.push_back({ "IdleRight", "MoveRightUp","AttackDown" ,true, Utils::Normalize({-1.f, -1.f})});
+	clipInfos.push_back({ "IdleUp", "MoveUp","AttackUp" ,true, {0.f, -1.f} });
+	clipInfos.push_back({ "IdleRight", "MoveRightUp", "AttackUp",false, Utils::Normalize({1.f, -1.f})});
+
+	clipInfos.push_back({ "IdleRight", "MoveRight","AttackUp" ,true, {-1.f, 0.f}});
+	clipInfos.push_back({ "IdleRight", "MoveRight","AttackUp" ,false, {1.f, 0.f}});
+
+	clipInfos.push_back({ "IdleRight", "MoveRightDown","AttackUp" ,true, Utils::Normalize({-1.f, 1.f})});
+	clipInfos.push_back({ "IdleDown", "MoveDown","AttackUp",true,{0.f, 1.f}});
+	clipInfos.push_back({ "IdleRight", "MoveRightDown","AttackDown",false, Utils::Normalize({1.f, 1.f})});
+
 
 }
 
 void Player::Release()
 {
-	SpriteGo::Release();
 	poolBullets.Release();
-
-
 }
 void Player::Reset()
 {
-	SpriteGo::Reset();
-
-	animation.Play("Idle");
+	PlayerUI();
+	animation.Play("IdleUp");
 	SetOrigin(origin);
 	SetPosition({ 0, 500 });
 	SetFlipX(false);
-	sprite.setScale(0.5f, 0.5f);
-	Hp = MaxHp;
+	sprite.setScale(2.f, 2.f);
+	
 	for (auto bullet : poolBullets.GetUseList())
 	{
 		SCENE_MGR.GetCurrScene()->RemoveGo(bullet);
 	}
-	PlayerUI();
+	
+
 	poolBullets.Clear();
+
+	currentClipInfo = clipInfos[6];
+
 
 	Scene* scene = SCENE_MGR.GetCurrScene();
 	testbutton1 = (UIButton*)scene->AddGo(new UIButton("upgrade/doubleArrow.png", "mouse"));
@@ -108,18 +126,23 @@ void Player::Reset()
 
 void Player::Update(float dt)
 {
-	SpriteGo::Update(dt);
+	//SpriteGo::Update(dt);
 	Scene* scene = SCENE_MGR.GetCurrScene();
-	
+
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num1))
+	attack = true;
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num2))
+	attack = false;
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num3))
+		Hp += MaxHp;
 	tick -= dt;
 	animation.Update(dt);
-	direction.x = INPUT_MGR.GetAxis(Axis::Horizontal);
-	direction.y= INPUT_MGR.GetAxis(Axis::Vertical);
-
+	SetOrigin(origin);
 	PlayerMove(dt);
-	LookMonster();
-	Shoot();
-	
+	ShootAndLook();
+	//LookMonster();
+	//Shoot();
+	//std::cout << attack << std::endl;
 	playerHp->rect.setPosition(GetPosition().x - 30, sprite.getGlobalBounds().top - 10.f);
 	playerMaxHp->rect.setPosition(GetPosition().x - 30,sprite.getGlobalBounds().top - 10.f);
 	playerHp->rect.setSize({ (static_cast<float>(Hp) / static_cast<float>(MaxHp)) * 50.f, 7.f });
@@ -189,9 +212,9 @@ void Player::Shoot()
 
 			float modifiedAngle = Utils::Angle(monsterlook);  // 기존 각도 계산
 			//float additionalAngle = (count % 2 == 1) ? 15.f * count : -15.f * count;  // 추가 각도 계산
-			float additionalAngle = -5 + (30 / bulletCount * count); //(count == 0) ? 0.f : ((count % 2 == 1) ? 15.f * count : -15.f * count);
+			//float additionalAngle = -5 + (30 / bulletCount * count); //(count == 0) ? 0.f : ((count % 2 == 1) ? 15.f * count : -15.f * count);
 			//float additionalAngle =  (360 / bulletCount * count);
-			float finalAngle = modifiedAngle + additionalAngle;  // 기존 각도와 추가 각도 합산
+			float finalAngle = modifiedAngle; // + additionalAngle;  // 기존 각도와 추가 각도 합산
 			sf::Vector2f fireDirection = Utils::DirectionFromAngle(finalAngle);  // 총알 발사 각도 계산
 
 			bullet->Fire(GetPosition(), fireDirection, 800.f);
@@ -216,7 +239,7 @@ void Player::LookMonster()
 	{
 		//float minValue = *std::min_element(monsters.begin(), monsters.end());
 		float closestDistance = std::numeric_limits<float>::max();
-		sf::Vector2f closestMonster = { 0.f, 0.f };
+		closestMonster = { 0.f, 0.f };
 		for (const auto& monster : monsters) {
 			float distance = Utils::Distance(monster->GetPosition(), GetPosition());
 			if (distance < closestDistance) {
@@ -226,81 +249,113 @@ void Player::LookMonster()
 			}
 		}
 		monsterlook = Utils::Normalize(closestMonster - GetPosition());
-		//sprite.setRotation(Utils::Angle(monsterlook));
+		//sprite.setRotation(Utils::Angle(closestMonster));
 	}
-	else
+	//else
+	//{
+	//	sprite.setRotation(0.f);
+	//}
+}
+
+void Player::ShootAndLook()
+{
+	Scene* scene = SCENE_MGR.GetCurrScene();
+	SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
+
+	// 플레이어 주변에 있는 몬스터를 찾기 위한 로직
+	float closestDistance = std::numeric_limits<float>::max();
+	closestMonster = { 0.f, 0.f };
+	for (const auto& monster : monsters) {
+		float distance = Utils::Distance(monster->GetPosition(), GetPosition());
+		if (distance < closestDistance) {
+			closestMonster = monster->GetPosition();
+			closestDistance = distance;
+		}
+	}
+	monsterlook = Utils::Normalize(closestMonster - GetPosition());
+	
+
+	//if (direction == sf::Vector2f(0.f, 0.f) && tick < 0.1f && !monsters.empty())
+	if (direction == sf::Vector2f(0.f, 0.f) && tick < 0.1f && attack)
 	{
-		sprite.setRotation(0.f);
+		tick = 0.5f;
+		int count = 0;
+		while (count != bulletCount)
+		{
+			Bullet* bullet = poolBullets.Get();
+			if (increaseDamage)
+			{
+				increaseDamage = false;
+			}
+			bullet->SetDamage(bulletDamage);
+
+			//float modifiedAngle = Utils::Angle(monsterlook);  // 기존 각도 계산
+			//float additionalAngle = (count % 2 == 1) ? 15.f * count : -15.f * count;  // 추가 각도 계산
+			//float additionalAngle = -5 + (30 / bulletCount * count); //(count == 0) ? 0.f : ((count % 2 == 1) ? 15.f * count : -15.f * count);
+			//float additionalAngle =  (360 / bulletCount * count);
+			//float finalAngle = modifiedAngle; // + additionalAngle;  // 기존 각도와 추가 각도 합산
+			//sf::Vector2f fireDirection = Utils::DirectionFromAngle(finalAngle);  // 총알 발사 각도 계산
+
+			bullet->Fire(GetPosition(), monsterlook, 800.f);
+
+			if (scene != nullptr)
+			{
+				bullet->SetMonsterList(sceneDev1->GetMonsterList());
+				scene->AddGo(bullet);
+			}
+			count++;
+		}
 	}
 }
 
+
 void Player::PlayerMove(float dt)
 {
-	velocity.x = direction.x * speed;
-	velocity.y = direction.y * speed;
-	position += velocity * dt;
-
-	if (direction.x != 0.f)
+	direction.x = INPUT_MGR.GetAxis(Axis::Horizontal);
+	direction.y = INPUT_MGR.GetAxis(Axis::Vertical);
+	float magnitude = Utils::Magnitude(direction);
+	if (magnitude > 1.f)
 	{
-		bool flip = direction.x > 0.f;
-		if (GetFlipX() != flip)
-		{
-			SetFlipX(flip);
-		}
+		direction /= magnitude;
 	}
 
+	position += direction * speed * dt;
 	SetPosition(position);
-	if (sprite.getGlobalBounds().intersects(wallBounds))
+
+
+	if (direction.x != 0.f || direction.y != 0.f)
 	{
-		//std::cout << "충돌함" << std::endl;
-		position = Utils::Clamp(position, wallBoundsLT, wallBoundsRB);
+		auto min = std::min_element(clipInfos.begin(), clipInfos.end(),
+			[this](const ClipInfo& lhs, const ClipInfo& rhs) {
+				return Utils::Distance(lhs.point, direction) < Utils::Distance(rhs.point, direction);
+			});
+		currentClipInfo = *min;
+	}
+	else
+	{
+
 	}
 
-	// 에니메이션
-	if (animation.GetCurrentClipId() == "Idle" || animation.GetCurrentClipId() == "Up" || animation.GetCurrentClipId() == "Down")
-	{
-		if (direction.x != 0.f)
-		{
-			animation.Play("Move");
-		}
-	}
-	else if (animation.GetCurrentClipId() == "Move")
-	{
-		if (direction.x == 0.f)
-		{
-			animation.Play("Idle");
-		}
-	}
+		std::string clipId = magnitude == 0.f ?
+		(monsters.empty() ? currentClipInfo.idle : closestMonster.y < GetPosition().y ? "AttackUp" : "AttackDown") : currentClipInfo.move;
 
-	if ((animation.GetCurrentClipId() == "Idle" || animation.GetCurrentClipId() == "Down" || animation.GetCurrentClipId() == "Move") && direction.x == 0)
-	{
-		//animation.GetCurrentClipId() = "Up";
-		if (direction.y < 0.f)
+		if (GetFlipX() != currentClipInfo.flipX)
 		{
-			animation.Play("Up");
+			SetFlipX(currentClipInfo.flipX);
 		}
-	}
-	else if (animation.GetCurrentClipId() == "Up")
-	{
-		if (direction.y == 0.f)
+
+		if (animation.GetCurrentClipId() != clipId)
 		{
-			animation.Play("Idle");
+			animation.Play(clipId);
 		}
-	}
-	if ((animation.GetCurrentClipId() == "Idle" || animation.GetCurrentClipId() == "Up" || animation.GetCurrentClipId() == "Move") && direction.x == 0)
-	{
-		if (direction.y > 0.f)
-		{
-			animation.Play("Down");
-		}
-	}
-	else if (animation.GetCurrentClipId() == "Down")
-	{
-		if (direction.y == 0.f)
-		{
-			animation.Play("Idle");
-		}
-	}
+		
+
+	//if (sprite.getGlobalBounds().intersects(wallBounds))
+	//{
+	//	//std::cout << "충돌함" << std::endl;
+	//	position = Utils::Clamp(position, wallBoundsLT, wallBoundsRB);
+	//}
+
 }
 
 void Player::ClearBullet()

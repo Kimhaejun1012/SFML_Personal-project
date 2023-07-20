@@ -6,31 +6,33 @@
 class Monster;
 class Player;
 
-class Bullet : public SpriteGo
+class MonsterBullet : public SpriteGo
 {
+public:
+
+	enum class Types
+	{
+		Boss,
+		Monster,
+	};
 
 
 protected:
 
+	AnimationController monsterbul;
 	sf::Vector2f direction;
 	sf::Vector2f attack = { 0.f,0.f };
 	float speed = 0.f;
 	float range = 2000.f;
-	int damage = 100;
-	//Player* player;
-	Monster* monster;
-	const std::list<Monster*>* monsters;
-	AnimationController animation;
+	int damage = 10;
+	Player* player;
 
-	int rotateAngle = 0;
 
 public:
-	ObjectPool<Bullet>* pool;
+	ObjectPool<MonsterBullet>* pool;
 
-	Bullet(const std::string textureId = "", const std::string n = "");
-	virtual ~Bullet() override;
-
-	void SetMonsterList(const std::list<Monster*>* list);
+	MonsterBullet(const std::string textureId = "", const std::string n = "");
+	virtual ~MonsterBullet() override;
 
 	void Fire(const sf::Vector2f& pos, const sf::Vector2f& dir, float speed);
 
@@ -42,7 +44,6 @@ public:
 	virtual void Draw(sf::RenderWindow& window) override;
 
 	void Move(float dt);
-	void HitMonster();
 
 	void SetDamage(int number);
 	int GetDamage()

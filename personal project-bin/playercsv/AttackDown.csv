@@ -1,0 +1,10 @@
+ID,FPS,LOOPTYPE,,
+AttackDown,10,1,,
+,,,,
+TEXTURE ID,LEFT,TOP,WIDTH,HEIGHT
+graphics/Naruto.png,3,1044,40,62
+graphics/Naruto.png,45,1054,27,54
+graphics/Naruto.png,95,1069,36,39
+graphics/Naruto.png,227,1069,36,39
+graphics/Naruto.png,359,1069,36,39
+graphics/Naruto.png,425,1069,36,39

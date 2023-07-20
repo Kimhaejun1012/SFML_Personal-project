@@ -7,23 +7,10 @@ class MapStructure : public SpriteGo
 
 public:
 
-	enum class Types
-	{
-		Grass_down,
-		Grass_up,
-		Left,
-		Left_down,
-		Left_up,
-		Maze_dege,
-		Right,
-		Right_down,
-		right_up
-	};
 	static const int TotalTypes = 9;
 
 
 protected:
-	Types structureTyes;
 
 
 
