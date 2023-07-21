@@ -56,7 +56,7 @@ void Monster::Reset()
 	monster.Play("monster1Idle");
 	SetOrigin(origin);
 	//SetPosition({ 0, 0 });
-	attackTimer = attackRate;
+
 
 	for (auto bullet : poolBullets.GetUseList())
 	{
@@ -83,10 +83,13 @@ void Monster::Update(float dt)
 
 	if (monsterType == Types::Boss)
 	{
-
-		SpawnBullet((MonsterBullet::Types)0);
-		Shoot();
-
+		attackTimer += dt;
+		if (attackTimer > attackRate)
+		{
+			SpawnBullet((MonsterBullet::Types)0);
+			Shoot();
+			attackTimer = 0;
+		}
 		sprite.setScale(3.f, 3.f);
 		bossMoveTimer -= dt;
 		if (bossMoveTimer <= 10.f)

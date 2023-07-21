@@ -26,7 +26,7 @@ void MonsterBullet::Init()
 	monsterbullet.SetTarget(&sprite);
 	//monster = new Monster("");
 	SetOrigin(Origins::MC);
-
+	attackTimer = attackRate;
 }
 
 void MonsterBullet::Release()
@@ -45,7 +45,7 @@ void MonsterBullet::Reset()
 	attackRate = 0.f;
 	direction = { 0.f , 0.f };
 	tick = 3.f;
-	attackTimer = attackRate;
+
 }
 
 void MonsterBullet::Update(float dt)
@@ -55,14 +55,17 @@ void MonsterBullet::Update(float dt)
 	SpriteGo::Update(dt);
 	monsterbullet.Update(dt);
 	//SetPlayer(player->GetPlayer());
-	tick -= dt;
-		//std::cout << tick << std::endl;
-
+		tick -= dt;
 		if (bullettype == Types::Bossbullet)
 		{
 			SetType(Types::Bossbullet);
 			Move(dt);
-			HitPlayer(dt);
+			attackTimer += dt;
+			if (attackTimer > attackRate)
+			{
+				HitPlayer(dt);
+				attackTimer = 0.f;
+			}
 			//std::cout << "스피드" << speed << std::endl;
 			//std::cout << "공격력" << damage << std::endl;
 			//std::cout << "포지션" << GetPosition().x << GetPosition().y << std::endl;
@@ -117,19 +120,12 @@ void MonsterBullet::HitPlayer(float dt)
 	//몬스터 리스트를 안가져오니 셋플레이어를 해야되나
 	if (player != nullptr)
 	{
-
-			if (sprite.getGlobalBounds().intersects(player->sprite.getGlobalBounds()))
-			{
-
-				std::cout << "MonsterBullet::HitPlayer" << std::endl;
-				//std::cout << damage << std::endl;
-				SCENE_MGR.GetCurrScene()->RemoveGo(this);
-				pool->Return(this);
-				player->OnHitted(damage);
-
-				attackTimer = 0.f;
-			}
-		
+		if (sprite.getGlobalBounds().intersects(player->sprite.getGlobalBounds()))
+		{
+			SCENE_MGR.GetCurrScene()->RemoveGo(this);
+			pool->Return(this);
+			player->OnHitted(damage);
+		}
 	}
 }
 
