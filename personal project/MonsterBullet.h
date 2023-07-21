@@ -12,20 +12,27 @@ public:
 
 	enum class Types
 	{
-		Boss,
-		Monster,
+		Bossbullet,
+		Redbullet,
 	};
 
 
 protected:
+	AnimationController monsterbullet;
 
-	AnimationController monsterbul;
+	Types bullettype;
+	int damage = 0;
+	float speed = 0.f;
+	float attackRate = 0.f;
+	float attackTimer = 0.f;
+	int bulletCount = 0;
+	float tick;
+	float range = 0.f;
 	sf::Vector2f direction;
 	sf::Vector2f attack = { 0.f,0.f };
-	float speed = 0.f;
-	float range = 2000.f;
-	int damage = 10;
-	Player* player;
+
+	Player* player = nullptr;
+	Monster* monster;
 
 
 public:
@@ -34,7 +41,15 @@ public:
 	MonsterBullet(const std::string textureId = "", const std::string n = "");
 	virtual ~MonsterBullet() override;
 
-	void Fire(const sf::Vector2f& pos, const sf::Vector2f& dir, float speed);
+	void Fire(const sf::Vector2f& pos, const sf::Vector2f& dir);
+
+	void HitPlayer(float dt);
+
+	void SetPlayer(Player* player);
+
+	float GetAttacktimer();
+	float GetattackRate() const;
+	int GetBulletCount();
 
 	virtual void Init() override;
 	virtual void Release() override;
@@ -44,11 +59,11 @@ public:
 	virtual void Draw(sf::RenderWindow& window) override;
 
 	void Move(float dt);
-
 	void SetDamage(int number);
 	int GetDamage()
 	{
 		return damage;
 	}
+	void SetType(Types t);
 };
 

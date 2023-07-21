@@ -10,7 +10,7 @@
 
 Player::Player(const std::string& textureId, const std::string& n) : SpriteGo(textureId, n), attack(false)
 {
-	Hp = MaxHp;
+
 }
 
 void Player::Init()
@@ -58,7 +58,7 @@ void Player::Init()
 
 void Player::Release()
 {
-	poolBullets.Release();
+	//poolBullets.Release();
 }
 void Player::Reset()
 {
@@ -68,7 +68,7 @@ void Player::Reset()
 	SetPosition({ 0, 500 });
 	SetFlipX(false);
 	sprite.setScale(2.f, 2.f);
-	
+	Hp = MaxHp;
 	for (auto bullet : poolBullets.GetUseList())
 	{
 		SCENE_MGR.GetCurrScene()->RemoveGo(bullet);
@@ -135,6 +135,9 @@ void Player::Update(float dt)
 	attack = false;
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num3))
 		Hp += MaxHp;
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num4))
+		std::cout << "플레이어 HP : " << Hp << std::endl;
+
 	tick -= dt;
 	animation.Update(dt);
 	SetOrigin(origin);
@@ -388,10 +391,11 @@ void Player::OnHitted(int damage)
 	if (!isAlive)
 		return;
 	Hp = std::max(Hp - damage, 0);
+	std::cout << Hp << std::endl;
 	if (Hp == 0)
 	{
 		isAlive = false;
-		std::cout << "플레이어 죽음" << std::endl;
+		std::cout << "플레이어 죽음!!!" << std::endl;
 	}
 }
 
@@ -472,11 +476,36 @@ void Player::PlayerUI()
 	aaa.a = 125;
 	playerMaxHp->rect.setFillColor(aaa);
 	
-	std::cout << maxexpbar->sprite.getScale().x << maxexpbar->sprite.getScale().y << std::endl;
+	//std::cout << maxexpbar->sprite.getScale().x << maxexpbar->sprite.getScale().y << std::endl;
 
 	//playerMaxHp->SetOrigin(Origins::BL);
 	//playerMaxHp->sortLayer = 102;
 	//playerMaxHp->sortOrder = 0;
 	//playerHp->SetPosition(player->GetPosition());
 	//playerMaxHp->SetPosition(player->GetPosition());
+}
+
+void Player::OnHitBullet(int damage)
+{
+	Hp -= damage;
+	if (Hp <= 0)
+	{
+		Scene* scene = SCENE_MGR.GetCurrScene();
+		SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
+
+		if (scene != nullptr)
+		{
+			OnDiePlayer();
+		}
+	}
+}
+
+void Player::OnDiePlayer()
+{
+	std::cout << "플레이어 죽음" << Hp << std::endl;
+}
+
+Player* Player::GetPlayer()
+{
+	return player;
 }

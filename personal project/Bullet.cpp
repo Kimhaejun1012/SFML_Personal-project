@@ -19,7 +19,6 @@ void Bullet::Init()
 {
 	SpriteGo::Init();
 	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("tables/Bullet.csv"));
-	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("tables/bossBullet.csv"));
 	animation.SetTarget(&sprite);
 	sprite.setScale(0.5f, 0.5f);
 	SetOrigin(Origins::MC);
@@ -48,11 +47,10 @@ void Bullet::Update(float dt)
 
 	SpriteGo::Update(dt);
 	animation.Update(dt);
-	if()
-	{
-		Move(dt);
-		HitMonster();
-	}
+
+	Move(dt);
+	HitMonster();
+
 }
 
 void Bullet::Draw(sf::RenderWindow& window)
@@ -104,7 +102,6 @@ void Bullet::HitMonster()
 			}
 		}
 	}
-	//std::cout << "몬스터 충돌 안됨" << std::endl;
 }
 
 void Bullet::SetDamage(int number)

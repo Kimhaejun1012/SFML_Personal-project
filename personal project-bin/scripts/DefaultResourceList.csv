@@ -42,3 +42,5 @@
 0,graphics/Boss.png
 3,tables/bossBullet.csv
 0,graphics/bossBullet.png
+3,tables/redBullet.csv
+0,graphics/redBullet.png

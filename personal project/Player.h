@@ -64,7 +64,7 @@ protected:
 	std::vector<ClipInfo> clipInfos;
 	ClipInfo currentClipInfo;
 
-	int MaxHp = 100;
+	int MaxHp = 1000;
 	int Hp = 0;
 
 	SpriteGo* playerHp;
@@ -109,5 +109,8 @@ public:
 	void IncreaseAttack();
 	void IncreaseSpeed();
 	void PlayerUI();
+	void OnHitBullet(int damage);
+	void OnDiePlayer();
+	Player* GetPlayer();
 };
 

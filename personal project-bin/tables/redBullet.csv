@@ -1,0 +1,10 @@
+ID,FPS,LOOPTYPE,,
+redBullet,15,1,,
+,,,,
+TEXTURE ID,LEFT,TOP,WIDTH,HEIGHT
+graphics/redBullet.png,0,4,22,22
+graphics/redBullet.png,24,3,23,24
+graphics/redBullet.png,48,4,23,22
+graphics/redBullet.png,73,3,23,24
+graphics/redBullet.png,98,4,23,23
+graphics/redBullet.png,122,4,24,23

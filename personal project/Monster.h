@@ -2,6 +2,7 @@
 #include "SpriteGo.h"
 #include "AnimationController.h"
 #include "ObjectPool.h"
+#include "MonsterBullet.h"
 
 class Player;
 class Scene;
@@ -16,43 +17,50 @@ public:
 		Monster3,
 	};
 
-	enum class MonsterAni
-	{
-		mob,
-		boss,
-
-	};
 	static const int TotalTypes = 3;
 
 protected:
-	MonsterAni Mob;
-	AnimationController monster;
 
-	AnimationController Boss;
+	AnimationController monster;
+	ObjectPool<MonsterBullet> poolBullets;
+
+	// 보스 정보
 	float bossMoveDuration;
 	float bossMoveTimer;
 	sf::Vector2f bossMoveDir;
+	float bossbulletRate;
 
 
 	Types monsterType;
+	sf::Vector2f playerlook;
+
+	// 위치 정보
 	sf::Vector2f look;
 	sf::Vector2f direction;
 	sf::Vector2f direction2;
+
+	// 스탯
 	float plusespeed = 0;
 	float speed = 0.f;
 	int maxHp = 0;
 	int damage = 0;
 	int hp = 0;
+
 	float attackRate = 0.f;
 	float attackTimer = 0.f;
 	int monsterCount = 0;
 	float damageTick = 0.f;
+
+	// 상태변수
 	bool isHit = false;
+
 	Scene* scene;
 	Player* player = nullptr;
 	sf::FloatRect mapsize;
 	sf::Vector2f randPos;
 
+	MonsterBullet* monsterbullet = nullptr;
+	std::list<MonsterBullet*> monsterbullets;
 	float tick = 0.f;
 
 public:
@@ -72,12 +80,15 @@ public:
 
 	void SetPlayer(Player* player);
 
+	void HitMonsterBullet(int damage);
 	void OnHitBullet(int damage);
-
 	void LookAtPlayer();
 	void FollowPlayer(float dt);
 	void HitPlayer(float dt);
 	const std::list<Monster*> GetMonsterList() const;
 	void GetMap2(const sf::FloatRect& mapsize);
+	void Shoot();
+	void SpawnBullet(MonsterBullet::Types t);
+
 };
 

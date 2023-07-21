@@ -9,6 +9,7 @@
 #include "Monster.h"
 #include "Bullet.h"
 #include "UIButton.h"
+#include "MonsterBullet.h"
 
 SceneDev1::SceneDev1() : Scene(SceneId::Dev1)
 {
@@ -17,7 +18,7 @@ SceneDev1::SceneDev1() : Scene(SceneId::Dev1)
 
 SceneDev1::~SceneDev1()
 {
-	Release();
+	//Release();
 }
 
 void SceneDev1::Init()
@@ -65,10 +66,11 @@ void SceneDev1::Init()
 	nextdoor->SetPosition(-19.f, tileSize.top - 37);
 	nextdoor->SetOrigin(Origins::MC);
 	nextdoor->SetActive(false);
-	//CreateMonster(2);
+
 	poolMonsters.OnCreate = [this](Monster* monster) {
 
 		monster->SetPlayer(player);
+
 	};
 	poolMonsters.Init();
 
@@ -112,6 +114,8 @@ void SceneDev1::Exit()
 	ClearObjectPool(poolMonsters);
 	player->Reset();
 	poolMonsters.Clear();
+	poolMonsters.Release();
+	//monster->Release();
 	Scene::Exit();
 }
 
@@ -196,7 +200,6 @@ void SceneDev1::SpawnMonsters(int count, sf::Vector2f center, Monster::Types a)
 
 		tempCoin->SetActive(false);
 		coins.push_back(tempCoin);
-
 
 		//if (zombiePool.empty())
 		//if (poolMonsters.GetPool().empty())
