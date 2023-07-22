@@ -34,12 +34,13 @@ void Monster::Init()
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/GoombaRunRight.csv"));
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/GoombaRunUp.csv"));
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/GoombaRunUpRight.csv"));
+	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/GoombaDie.csv"));
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/BossMoveDown.csv"));
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/BossMoveDownRight.csv"));
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/BossMoveRight.csv"));
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/BossMoveUp.csv"));
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/BossMoveUpRight.csv"));
-
+	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/BossPattern1.csv"));
 	monster.SetTarget(&sprite);
 
 	bossMoveDuration = 2.0f;
@@ -58,16 +59,16 @@ void Monster::Init()
 
 	bosscount = 1;
 	//±À¹Ù
-	clipInfos.push_back({ "GoombaMoveUpRight", "GoombaMoveUpRight" ,true, Utils::Normalize({-1.f, -1.f}) });
-	clipInfos.push_back({ "GoombaMoveUp", "GoombaMoveUp" ,true, {0.f, -1.f} });
-	clipInfos.push_back({ "GoombaMoveUpRight", "GoombaMoveUpRight",false, Utils::Normalize({1.f, -1.f}) });
+	clipInfos.push_back({ "GoombaMoveUpRight", "GoombaRunUpRight" ,true, Utils::Normalize({-1.f, -1.f}) });
+	clipInfos.push_back({ "GoombaMoveUp", "GoombaRunUp" ,true, {0.f, -1.f} });
+	clipInfos.push_back({ "GoombaMoveUpRight", "GoombaRunUpRight",false, Utils::Normalize({1.f, -1.f}) });
 
-	clipInfos.push_back({ "GoombaMoveRight", "GoombaMoveRight" ,true, {-1.f, 0.f} });
-	clipInfos.push_back({ "GoombaMoveRight", "GoombaMoveRight" ,false, {1.f, 0.f} });
+	clipInfos.push_back({ "GoombaMoveRight", "GoombaRunRight" ,true, {-1.f, 0.f} });
+	clipInfos.push_back({ "GoombaMoveRight", "GoombaRunRight" ,false, {1.f, 0.f} });
 
-	clipInfos.push_back({ "GoombaMoveDownRight", "GoombaMoveDownRight" ,true, Utils::Normalize({-1.f, 1.f}) });
-	clipInfos.push_back({ "GoombaMoveDown", "GoombaMoveDown",true,{0.f, 1.f} });
-	clipInfos.push_back({ "GoombaMoveDownRight", "GoombaMoveDownRight",false, Utils::Normalize({1.f, 1.f}) });
+	clipInfos.push_back({ "GoombaMoveDownRight", "GoombaRunDownRight" ,true, Utils::Normalize({-1.f, 1.f}) });
+	clipInfos.push_back({ "GoombaMoveDown", "GoombaRunDown",true,{0.f, 1.f} });
+	clipInfos.push_back({ "GoombaMoveDownRight", "GoombaRunDownRight",false, Utils::Normalize({1.f, 1.f}) });
 
 	//º¸½º
 	clipInfosboss.push_back({ "BossMoveUpRight", "BossMoveUpRight" ,true, Utils::Normalize({-1.f, -1.f}) });
@@ -93,7 +94,7 @@ void Monster::Release()
 void Monster::Reset()
 {
 	SpriteGo::Reset();
-	monster.Play("GoombaMoveDown");
+	monster.Play("BossMoveDown");
 	SetOrigin(origin);
 
 	for (auto bullet : poolBullets.GetUseList())
@@ -112,6 +113,7 @@ void Monster::Update(float dt)
 	monster.Update(dt);
 	SetOrigin(Origins::MC);
 
+	tick -= dt;
 	if (player == nullptr)
 		return;
 
@@ -126,6 +128,7 @@ void Monster::Update(float dt)
 	if (monsterType == Types::Boss)
 	{
 		attackTimer += dt;
+		if(bossMoving)
 		BossMove(dt);
 		if (attackTimer > attackRate)
 		{
@@ -133,12 +136,11 @@ void Monster::Update(float dt)
 			Shoot();
 			attackTimer = 0;
 		}
-
 	}
 
 	if (monsterType == Types::Monster1)
 	{
-		if(monsterscale)
+		if (monsterscale)
 		{
 			sprite.setScale(2.5f, 2.5f);
 			monsterscale = false;
@@ -152,6 +154,7 @@ void Monster::Update(float dt)
 		});
 		currentClipInfo = *min;
 		std::string clipId = distance >= 300.f ? currentClipInfo.move : currentClipInfo.run;
+
 		if (GetFlipX() != currentClipInfo.flipX)
 		{
 			SetFlipX(currentClipInfo.flipX);
@@ -173,7 +176,7 @@ void Monster::Update(float dt)
 	}
 
 }
-	
+
 
 
 
@@ -215,7 +218,7 @@ void Monster::OnHitBullet(int damage)
 {
 	hp -= damage;
 
-	if (hp <= 0  && monsterType == Types::Boss)
+	if (hp <= 0 && monsterType == Types::Boss)
 	{
 
 		Scene* scene = SCENE_MGR.GetCurrScene();
@@ -227,7 +230,7 @@ void Monster::OnHitBullet(int damage)
 			sceneDev1->bossdie = true;
 		}
 	}
-	else if (hp <= 0)
+	else if (hp <= 0 && monsterType == Types::Monster1 /*&& monster.GetCurrentClipId() != "GoombaDie"*/)
 	{
 		Scene* scene = SCENE_MGR.GetCurrScene();
 		SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
@@ -236,7 +239,7 @@ void Monster::OnHitBullet(int damage)
 		{
 			sceneDev1->OnDieMonster(this);
 		}
-		std::cout << "Àâ¸÷ÀÌ Á×À½" << std::endl;
+
 	}
 }
 
@@ -294,7 +297,7 @@ void Monster::Shoot()
 		//monsterbullet->SetPlayer(player->GetPlayer());
 		sceneDev1->AddGo(monsterbullet);
 	}
-	
+
 }
 
 void Monster::SpawnBullet(MonsterBullet::Types t)
@@ -315,7 +318,7 @@ void Monster::BossMove(float dt)
 	SetPosition(position);
 	float distance = Utils::Distance(player->GetPosition(), position);
 	auto min = std::min_element(clipInfosboss.begin(), clipInfosboss.end(),
-		[this](const ClipInfo& lhs, const ClipInfo& rhs) {
+		[this](const ClipInfoBoss& lhs, const ClipInfoBoss& rhs) {
 		return Utils::Distance(lhs.point, direction) < Utils::Distance(rhs.point, direction);
 	});
 	currentClipInfoboss = *min;
@@ -338,4 +341,3 @@ void Monster::SetFlipX(bool flip)
 	scale.x = !flipX ? abs(scale.x) : -abs(scale.x);
 	sprite.setScale(scale);
 }
-	

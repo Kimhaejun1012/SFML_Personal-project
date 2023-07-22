@@ -58,3 +58,5 @@
 3,monstercsv/BossMoveRight.csv
 3,monstercsv/BossMoveUp.csv
 3,monstercsv/BossMoveUpRight.csv
+0,graphics/BossPattern.png
+3,monstercsv/BossPattern1.csv

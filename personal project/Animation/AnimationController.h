@@ -8,7 +8,7 @@ protected:
 	sf::Sprite* sprite = nullptr;
 	float speed = 1.f;
 	bool isPlaying = false;
-
+	bool monsterdie = false;
 	AnimationClip* currentClip = nullptr;
 	int currentFrame = -1;
 	int totalFrame = 0;
@@ -39,5 +39,6 @@ public:
 	void Stop();
 
 	void SetFrame(const AnimationFrame& frame);
+	int GetFrame();
 };
 

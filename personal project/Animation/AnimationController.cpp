@@ -98,3 +98,8 @@ void AnimationController::SetFrame(const AnimationFrame& frame)
 	target->setTexture(*tex);
 	target->setTextureRect(frame.texCoord);
 }
+
+int AnimationController::GetFrame()
+{
+	return currentFrame;
+}

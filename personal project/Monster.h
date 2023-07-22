@@ -26,7 +26,14 @@ public:
 		bool flipX = false;
 		sf::Vector2f point;
 	};
-
+	struct ClipInfoBoss
+	{
+		std::string move;
+		std::string run;
+		//std::string attack;
+		bool flipX = false;
+		sf::Vector2f point;
+	};
 	static const int TotalTypes = 3;
 
 protected:
@@ -42,7 +49,7 @@ protected:
 
 	bool bossAlive = true;
 	int bosscount;
-
+	bool bossMoving = true;
 	bool monsterscale = true;
 	sf::Vector2f windowsize;
 	Types monsterType;
@@ -57,8 +64,8 @@ protected:
 	std::vector<ClipInfo> clipInfos;
 	ClipInfo currentClipInfo;
 
-	std::vector<ClipInfo> clipInfosboss;
-	ClipInfo currentClipInfoboss;
+	std::vector<ClipInfoBoss> clipInfosboss;
+	ClipInfoBoss currentClipInfoboss;
 	bool flipX = false;
 	// 스탯
 	//float plusespeed = 0;
@@ -71,7 +78,7 @@ protected:
 	float attackTimer = 0.f;
 	int monsterCount = 0;
 	float damageTick = 0.f;
-
+	float bosspattern = 10.f;
 	// 상태변수
 	bool isHit = false;
 
@@ -80,15 +87,15 @@ protected:
 	sf::FloatRect mapsize;
 	sf::Vector2f randPos;
 
+	bool monsterdie = false;
 	MonsterBullet* monsterbullet = nullptr;
 	std::list<MonsterBullet*> monsterbullets;
-	float tick = 0.f;
+	float tick = 5.f;
 
 public:
 	ObjectPool<Monster>* pool;
 	Monster(const std::string n = "");
 	virtual ~Monster() override;
-
 	virtual void Init() override;
 	virtual void Release() override;
 	virtual void Reset() override;
@@ -113,5 +120,6 @@ public:
 	void SetFlipX(bool filp);
 	bool GetFlipX() const;
 	void BossMove(float dt);
+	void MonsterDie(bool monsterdie);
 };
 
