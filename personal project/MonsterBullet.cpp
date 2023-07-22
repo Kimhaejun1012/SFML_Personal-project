@@ -17,7 +17,6 @@ MonsterBullet::~MonsterBullet()
 
 
 
-
 void MonsterBullet::Init()
 {
 	SpriteGo::Init();
@@ -58,6 +57,7 @@ void MonsterBullet::Update(float dt)
 		tick -= dt;
 		if (bullettype == Types::Bossbullet)
 		{
+			sprite.setScale(2.0, 2.0);
 			SetType(Types::Bossbullet);
 			Move(dt);
 			attackTimer += dt;
@@ -71,8 +71,6 @@ void MonsterBullet::Update(float dt)
 			//std::cout << "포지션" << GetPosition().x << GetPosition().y << std::endl;
 			tick = 2.f;
 		}
-
-
 }
 
 void MonsterBullet::Draw(sf::RenderWindow& window)
@@ -107,10 +105,15 @@ void MonsterBullet::Fire(const sf::Vector2f& pos, const sf::Vector2f& dir)
 
 void MonsterBullet::Move(float dt)
 {
-	//벽에 닿으면 사라지게
+
 
 	position += direction * speed * dt;
 	SetPosition(position);
+	if (!mapsize.contains(GetPosition()))
+	{
+		SCENE_MGR.GetCurrScene()->RemoveGo(this);
+		pool->Return(this);
+	}
 }
 
 
@@ -127,6 +130,10 @@ void MonsterBullet::HitPlayer(float dt)
 			player->OnHitted(damage);
 		}
 	}
+	/*else if (!sprite.getGlobalBounds().contains())
+		{
+
+		}*/
 }
 
 void MonsterBullet::SetPlayer(Player* player)
@@ -139,8 +146,7 @@ float MonsterBullet::GetAttacktimer()
 	return attackTimer;
 }
 
-//float MonsterBullet::GetattackRate() const
-//{
-//	return attackRate;
-//}
-
+void MonsterBullet::SetMapSize(sf::FloatRect& mapsize)
+{
+	this->mapsize = mapsize;
+}

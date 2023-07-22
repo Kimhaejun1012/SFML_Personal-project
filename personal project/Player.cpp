@@ -160,6 +160,7 @@ void Player::Update(float dt)
 		exp -= maxexp;
 		maxexp *= 1.3;
 	}
+	//std::cout << wallBounds.top << std::endl;
 }
 
 bool Player::GetFlipX() const

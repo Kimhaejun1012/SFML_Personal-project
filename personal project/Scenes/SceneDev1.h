@@ -7,9 +7,9 @@ class TileMap;
 class Player;
 class Element;
 class MapStructure;
-class Monster;
 class SpriteGo;
 class UIButton;
+class MonsterBullet;
 
 class SceneDev1 : public Scene
 {
@@ -49,8 +49,9 @@ protected:
 	Monster::Types monsterType1 = (Monster::Types)1;
 
 	Monster* monster;
+	MonsterBullet* monsterbullet;
 
-	sf::FloatRect wallBounds;
+
 	SpriteGo* nextdoor;
 	int monsterCount = 0;
 	std::list<Monster*> monsters;
@@ -78,7 +79,7 @@ public:
 	//void CreateMonster(int count);
 	void OnDieMonster(Monster* monster);
 	void GetCoin(std::vector<SpriteGo*> coin);
-
+	sf::FloatRect wallBounds;
 };
 
 template<typename T>

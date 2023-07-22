@@ -70,7 +70,6 @@ void SceneDev1::Init()
 	poolMonsters.OnCreate = [this](Monster* monster) {
 
 		monster->SetPlayer(player);
-
 	};
 	poolMonsters.Init();
 
@@ -97,14 +96,13 @@ void SceneDev1::Release()
 void SceneDev1::Enter()
 {
 	Scene::Enter();
-	SpawnMonsters(2, sf::Vector2f(0, 0), monsterType0);
 	//SpawnMonsters(2, tileMap2->GetPosition());
 
-
 	wallBounds = mapmap->sprite.getGlobalBounds();
-
+	std::cout << "엔터" << std::endl;
 	player->SetWallBounds(wallBounds);
 
+	SpawnMonsters(2, sf::Vector2f(0, 0), monsterType0);
 	//coin->SetPosition(player->GetPosition());
 	//coin->SetOrigin(Origins::MC);
 }
@@ -125,31 +123,23 @@ void SceneDev1::Update(float dt)
 	Scene::Update(dt);
 	worldView.setCenter(player->GetPosition().x, player->GetPosition().y);
 	NextScene();
+	player->SetMonsterList(monsters);
 	
 
 	if (nextScene && player->sprite.getGlobalBounds().intersects(nextdoor->sprite.getGlobalBounds()))
 	{
-
-		monster->GetMap2(mapmap2->sprite.getGlobalBounds());
+		wallBounds = mapmap2->sprite.getGlobalBounds();
+		//monsterbullet->SetMapSize(mapmap2->sprite.getGlobalBounds());
+		monster->GetMap2(wallBounds);
 		SpawnMonsters(1, tileMap2->GetPosition(), (Monster::Types)1);
 		player->SetWallBounds(mapmap2->sprite.getGlobalBounds());
 		player->SetPosition(tileMap2->GetPosition().x, tileMap2->GetPosition().y + 700);
 		nextdoor->SetPosition(-19.f, tileMap2->vertexArray.getBounds().top - 37);
 		nextdoor->SetActive(false);
-		//Scene* scene = SCENE_MGR.GetCurrScene();
-		//SceneBoss* sceneGame = dynamic_cast<SceneBoss*>(scene);
-		//sceneGame->SetPlayer(player);
-	}
-	player->SetMonsterList(monsters);
-	//if (player->ReturnExp() >= player->ReturnMaxExp())
-	//{
-	//	std::cout << "나 혼자만 레벨업" << std::endl;
-	//	testbutton1->SetActive(true);
-	//	testbutton2->SetActive(true);
-	//	testbutton3->SetActive(true);
-	//	player->GetMaxExp(1.3);
-	//}
 
+	}
+
+	
 	for (int i = 0; i < coins.size(); ++i)
 	{
 		coinDir = Utils::Normalize(player->GetPosition() - coins[i]->sprite.getPosition());
@@ -171,7 +161,7 @@ void SceneDev1::Update(float dt)
 			}
 		}
 	}
-	//std::cout << player->ExpExp() << std::endl;
+
 }
 
 
@@ -200,7 +190,6 @@ void SceneDev1::SpawnMonsters(int count, sf::Vector2f center, Monster::Types a)
 
 		tempCoin->SetActive(false);
 		coins.push_back(tempCoin);
-
 		//if (zombiePool.empty())
 		//if (poolMonsters.GetPool().empty())
 		//{
@@ -212,7 +201,7 @@ void SceneDev1::SpawnMonsters(int count, sf::Vector2f center, Monster::Types a)
 		monster = poolMonsters.Get();
 		monsters = poolMonsters.GetUseList();
 		monster->SetType(a);
-
+		monster->GetMap2(wallBounds);
 		//zombie->SetActive(true);
 		//이미지 2개를 두고 위에서 아래로 보낸다 일정 시간동안 보내다가 일정 시간이 지나면 사진 고정되게
 		sf::Vector2f pos;

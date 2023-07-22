@@ -5,6 +5,7 @@
 
 class Monster;
 class Player;
+class SceneDev1;
 
 class MonsterBullet : public SpriteGo
 {
@@ -20,6 +21,7 @@ public:
 protected:
 	AnimationController monsterbullet;
 
+	SceneDev1* scenedev1;
 	Types bullettype;
 	int damage = 0;
 	float speed = 0.f;
@@ -34,6 +36,7 @@ protected:
 	Player* player = nullptr;
 	Monster* monster;
 
+	sf::FloatRect mapsize;
 
 public:
 	ObjectPool<MonsterBullet>* pool;
@@ -50,7 +53,7 @@ public:
 	float GetAttacktimer();
 	float GetattackRate() const;
 	int GetBulletCount();
-
+	void SetMapSize(sf::FloatRect& mapsize);
 	virtual void Init() override;
 	virtual void Release() override;
 	virtual void Reset() override;

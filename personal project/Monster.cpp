@@ -37,7 +37,9 @@ void Monster::Init()
 	poolBullets.OnCreate = [ptr, this](MonsterBullet* monsterbullet) {
 
 		monsterbullet->SetPlayer(player);
+		monsterbullet->SetMapSize(mapsize);
 		monsterbullet->pool = ptr;
+
 	};
 	poolBullets.Init();
 	//bossbulletRate = monsterbullet->GetattackRate();
@@ -131,6 +133,8 @@ void Monster::Update(float dt)
 			plusespeed = 200;
 		}
 	}
+	
+
 }
 
 void Monster::Draw(sf::RenderWindow& window)
@@ -204,18 +208,7 @@ void Monster::HitPlayer(float dt)
 	}
 
 }
-//void Monster::HitMonsterBullet(int damage)
-//{
-//
-//	// 플레이어 피격
-//	
-//
-//	//Scene* scene = SCENE_MGR.GetCurrScene();
-//	//SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
-//	//sceneDev1->RemoveGo(monsterbullet);
-//	//poolBullets.Return(monsterbullet);
-//	//monsterbullets.remove(monsterbullet);
-//}
+
 
 
 void Monster::GetMap2(const sf::FloatRect& mapsize)
@@ -232,7 +225,7 @@ void Monster::Shoot()
 	playerlook = Utils::Normalize(player->GetPosition() - GetPosition());
 	//std::cout << playerlook.x << playerlook.y << std::endl;
 	MonsterBullet* monsterbullet = poolBullets.Get();
-
+	monsterbullet->SetMapSize(mapsize);
 
 	//float modifiedAngle = Utils::Angle(monsterlook);  // 기존 각도 계산
 	//float additionalAngle = (count % 2 == 1) ? 15.f * count : -15.f * count;  // 추가 각도 계산
@@ -242,12 +235,12 @@ void Monster::Shoot()
 	//sf::Vector2f fireDirection = Utils::DirectionFromAngle(finalAngle);  // 총알 발사 각도 계산
 
 	monsterbullet->Fire(GetPosition(), playerlook);
-
 	if (scene != nullptr)
 	{
 		//monsterbullet->SetPlayer(player->GetPlayer());
 		scene->AddGo(monsterbullet);
 	}
+	
 }
 
 void Monster::SpawnBullet(MonsterBullet::Types t)
