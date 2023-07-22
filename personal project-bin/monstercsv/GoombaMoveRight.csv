@@ -1,0 +1,12 @@
+ID,FPS,LOOPTYPE,,
+GoombaMoveRight,10,1,,
+,,,,
+TEXTURE ID,LEFT,TOP,WIDTH,HEIGHT
+graphics/Goomba.png,6,96,24,29
+graphics/Goomba.png,40,95,24,30
+graphics/Goomba.png,74,96,24,29
+graphics/Goomba.png,108,97,24,28
+graphics/Goomba.png,142,96,24,29
+graphics/Goomba.png,176,95,24,30
+graphics/Goomba.png,210,96,24,29
+graphics/Goomba.png,244,97,24,28

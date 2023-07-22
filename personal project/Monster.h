@@ -18,6 +18,15 @@ public:
 		Monster3,
 	};
 
+	struct ClipInfo
+	{
+		std::string move;
+		std::string run;
+		//std::string attack;
+		bool flipX = false;
+		sf::Vector2f point;
+	};
+
 	static const int TotalTypes = 3;
 
 protected:
@@ -34,6 +43,7 @@ protected:
 	bool bossAlive = true;
 	int bosscount;
 
+	bool monsterscale = true;
 	sf::Vector2f windowsize;
 	Types monsterType;
 	sf::Vector2f playerlook;
@@ -43,8 +53,12 @@ protected:
 	sf::Vector2f direction;
 	sf::Vector2f direction2;
 
+	//몬스터 움직임
+	std::vector<ClipInfo> clipInfos;
+	ClipInfo currentClipInfo;
+	bool flipX = false;
 	// 스탯
-	float plusespeed = 0;
+	//float plusespeed = 0;
 	float speed = 0.f;
 	int maxHp = 0;
 	int damage = 0;
@@ -93,6 +107,7 @@ public:
 	void GetMap2(const sf::FloatRect& mapsize);
 	void Shoot();
 	void SpawnBullet(MonsterBullet::Types t);
-
+	void SetFlipX(bool filp);
+	bool GetFlipX() const;
 };
 

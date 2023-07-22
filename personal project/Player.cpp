@@ -338,10 +338,6 @@ void Player::PlayerMove(float dt)
 			});
 		currentClipInfo = *min;
 	}
-	else
-	{
-
-	}
 
 		std::string clipId = magnitude == 0.f ?
 		(monsters.empty() ? currentClipInfo.idle : closestMonster.y < GetPosition().y ? "AttackUp" : "AttackDown") : currentClipInfo.move;

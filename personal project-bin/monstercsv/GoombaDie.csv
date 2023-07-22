@@ -1,0 +1,8 @@
+ID,FPS,LOOPTYPE,,
+GoombaDie,10,1,,
+,,,,
+TEXTURE ID,LEFT,TOP,WIDTH,HEIGHT
+graphics/Goomba.png,13,473,24,25
+graphics/Goomba.png,47,473,24,23
+graphics/Goomba.png,81,474,24,21
+graphics/Goomba.png,115,473,24,23
