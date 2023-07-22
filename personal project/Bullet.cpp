@@ -31,7 +31,7 @@ void Bullet::Release()
 
 void Bullet::Reset()
 {
-	//SpriteGo::Reset();
+	SpriteGo::Reset();
 	damage = 100;
 	animation.Play("Bullet");
 	SetPosition(0.f, 0.f);
@@ -90,10 +90,7 @@ void Bullet::HitMonster()
 		{
 			if (sprite.getGlobalBounds().intersects(monster->sprite.getGlobalBounds()))
 			{
-				std::cout << "몬스터 맞음" << std::endl;
-				//std::cout << damage << std::endl;
 				monster->OnHitBullet(damage);
-
 				SCENE_MGR.GetCurrScene()->RemoveGo(this);
 				pool->Return(this);		// 풀로 회수
 				//SetActive(false);

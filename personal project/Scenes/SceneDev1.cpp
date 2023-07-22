@@ -24,7 +24,7 @@ SceneDev1::~SceneDev1()
 void SceneDev1::Init()
 {
 	Release();
-	sf::Vector2f size = FRAMEWORK.GetWindowSize();
+	size = FRAMEWORK.GetWindowSize();
 	worldView.setSize(size);
 	worldView.setCenter({ 0, 0 });
 
@@ -44,9 +44,18 @@ void SceneDev1::Init()
 	element = (Element*)AddGo(new Element("mapsprite/element1.png", "element1"));
 	nextdoor = (SpriteGo*)AddGo(new SpriteGo("mapstructure/LayerDoor_1.png", "door"));
 	player = (Player*)AddGo(new Player());
+	clear = (SpriteGo*)AddGo(new SpriteGo("graphics/win.png", "win"));
+	clearbutton = (UIButton*)AddGo(new UIButton("graphics/home.png", "home"));
 
+	clear->SetOrigin(Origins::MC);
+	clear->SetPosition(size.x * 0.5, size.y * 0.5);
+	clear->sortLayer = 102;
+	clear->SetActive(false);
 
-
+	clearbutton->SetOrigin(Origins::MC);
+	clearbutton->SetPosition(size.x * 0.5, size.y * 0.8);
+	clearbutton->sortLayer = 103;
+	clearbutton->SetActive(false);
 
 	tileMap->Load("map/map1.csv");
 	tileMap->SetOrigin(Origins::MC);
@@ -73,10 +82,17 @@ void SceneDev1::Init()
 	};
 	poolMonsters.Init();
 
-	
 
 	tempCoin = ((SpriteGo*)AddGo(new SpriteGo("graphics/coin.png", "coin")));
 
+	clearbutton->OnClick = [this]() {
+
+		std::cout << "클리어 버튼 클릭" << std::endl;
+		SCENE_MGR.ChangeScene(SceneId::Title);
+		clear->SetActive(false);
+		clearbutton->SetActive(false);
+		//Release();
+	};
 	for (auto go : gameObjects)
 	{
 		go->Init();
@@ -99,7 +115,6 @@ void SceneDev1::Enter()
 	//SpawnMonsters(2, tileMap2->GetPosition());
 
 	wallBounds = mapmap->sprite.getGlobalBounds();
-	std::cout << "엔터" << std::endl;
 	player->SetWallBounds(wallBounds);
 
 	SpawnMonsters(2, sf::Vector2f(0, 0), monsterType0);
@@ -109,11 +124,12 @@ void SceneDev1::Enter()
 
 void SceneDev1::Exit()
 {
+	//player->Release();
 	ClearObjectPool(poolMonsters);
 	player->Reset();
-	poolMonsters.Clear();
-	poolMonsters.Release();
-	//monster->Release();
+	monster->Reset();
+	//poolMonsters.Clear();
+	//poolMonsters.Release();
 	Scene::Exit();
 }
 
@@ -138,8 +154,8 @@ void SceneDev1::Update(float dt)
 		nextdoor->SetActive(false);
 
 	}
-
-	
+	if(INPUT_MGR.GetKeyDown(sf::Keyboard::Num4))
+	SCENE_MGR.ChangeScene(SceneId::Title);
 	for (int i = 0; i < coins.size(); ++i)
 	{
 		coinDir = Utils::Normalize(player->GetPosition() - coins[i]->sprite.getPosition());
@@ -161,7 +177,23 @@ void SceneDev1::Update(float dt)
 			}
 		}
 	}
+	if (bossdie)
+	{
+		clear->SetActive(true);
+		clearbutton->SetActive(true);
+		std::cout << "보스 죽음 클리어 메뉴 띄워라" << std::endl;
+		bossdie = false;
+	}
 
+	//if (exp >= maxexp)
+	//{
+	//	std::cout << "나 혼자만 레벨업" << std::endl;
+	//	testbutton1->SetActive(true);
+	//	testbutton2->SetActive(true);
+	//	testbutton3->SetActive(true);
+	//	exp -= maxexp;
+	//	maxexp *= 1.3;
+	//}
 }
 
 
@@ -255,7 +287,6 @@ void SceneDev1::SpawnMonsters2(int count, sf::Vector2f center)
 		//zombie->Reset();
 		AddGo(monster);
 		monsterCount++;
-		std::cout << "몬스터 생성" << std::endl;
 
 	}
 }
@@ -287,7 +318,7 @@ void SceneDev1::OnDieMonster(Monster* monster)
 		}
 		else
 		{
-			std::cout << "코인 테스트" << std::endl;
+			//std::cout << "코인 테스트" << std::endl;
 			coins[i]->SetActive(true);
 			coins[i]->SetPosition(monster->GetPosition());
 			coins[i]->SetOrigin(Origins::MC);
@@ -306,7 +337,6 @@ void SceneDev1::OnDieMonster(Monster* monster)
 	//player->RemoveMonster(monster);
 	monsterCount--;
 
-	std::cout << "몬스터 죽음" << monsterCount << std::endl;
 }
 
 void SceneDev1::GetCoin(std::vector<SpriteGo*> coin)
@@ -318,6 +348,75 @@ const std::list<Monster*>* SceneDev1::GetMonsterList() const
 {
 	return &poolMonsters.GetUseList();
 }
+
+//void SceneDev1::PlayerUI()
+//{
+//	playerMaxHp = ((SpriteGo*)AddGo(new SpriteGo("", "")));
+//	playerHp = ((SpriteGo*)AddGo(new SpriteGo("", "")));
+//	maxexpbar = ((SpriteGo*)AddGo(new SpriteGo("graphics/ExpBarmax.png", "maxexpbar")));
+//	expbar = ((SpriteGo*)AddGo(new SpriteGo("graphics/ExpBar.png", "expbar")));
+//	playerHp->rect.setSize(sf::Vector2f(50.f, 7.f));
+//	playerHp->rect.setFillColor(sf::Color::Green);
+//
+//
+//
+//
+//	expbar->SetOrigin(Origins::BL);
+//	expbar->sortLayer = 101;
+//	//expbar->sprite.setScale(0, 0);
+//	maxexpbar->sprite.setPosition(size.x * 0.27, 50);
+//	expbar->sprite.setPosition(size.x * 0.27, 50);
+//	maxexpbar->SetOrigin(Origins::BL);
+//	maxexpbar->sortLayer = 101;
+//	sf::Color expbar = maxexpbar->sprite.getColor();
+//	maxexpbar->sprite.setColor({ 0,0,0,150 });
+//	playerMaxHp->rect.setSize(sf::Vector2f(50.f, 7.f));
+//	playerMaxHp->rect.setFillColor(sf::Color::Black);
+//	sf::Color aaa = playerMaxHp->sprite.getColor();
+//	aaa.a = 125;
+//	playerMaxHp->rect.setFillColor(aaa);
+//
+//	testbutton1 = (UIButton*)AddGo(new UIButton("upgrade/doubleArrow.png", "mouse"));
+//	testbutton2 = (UIButton*)AddGo(new UIButton("upgrade/doubleAttack.png", ""));
+//	testbutton3 = (UIButton*)AddGo(new UIButton("upgrade/doubleSpeed.png", ""));
+//	testbutton1->SetOrigin(Origins::MC);
+//	testbutton1->SetPosition(size.x * 0.5, size.y * 0.5);
+//	testbutton1->sortLayer = 100;
+//	testbutton1->SetActive(false);
+//	testbutton2->SetOrigin(Origins::MC);
+//	testbutton2->SetPosition(testbutton1->GetPosition().x - 300, testbutton1->GetPosition().y);
+//	testbutton2->sortLayer = 100;
+//	testbutton2->SetActive(false);
+//	testbutton3->SetOrigin(Origins::MC);
+//	testbutton3->SetPosition(testbutton1->GetPosition().x + 300, testbutton1->GetPosition().y);
+//	testbutton3->sortLayer = 100;
+//	testbutton3->SetActive(false);
+//	testbutton1->OnClick = [this]() {
+//		//testbutton1->SetPlayer(this);
+//		//testbutton1->IncreaseBullet();
+//		std::cout << "1클릭" << std::endl;
+//		testbutton1->SetActive(false);
+//		testbutton2->SetActive(false);
+//		testbutton3->SetActive(false);
+//	};
+//	testbutton2->OnClick = [this]() {
+//		//testbutton2->SetPlayer(this);
+//		//testbutton2->IncreaseAttact();
+//		std::cout << "2클릭" << std::endl;
+//		testbutton1->SetActive(false);
+//		testbutton2->SetActive(false);
+//		testbutton3->SetActive(false);
+//	};
+//
+//	testbutton3->OnClick = [this]() {
+//		//testbutton3->SetPlayer(this);
+//		//testbutton3->IncreaseSpeed();
+//		std::cout << "3클릭" << std::endl;
+//		testbutton1->SetActive(false);
+//		testbutton2->SetActive(false);
+//		testbutton3->SetActive(false);
+//	};
+//}
 
 void SceneDev1::NextScene()
 {

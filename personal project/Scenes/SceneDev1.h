@@ -24,10 +24,6 @@ protected:
 	float speed = 80;
 	SpriteGo* tempCoin;
 
-	UIButton* testbutton1;
-	UIButton* testbutton2;
-	UIButton* testbutton3;
-
 
 	std::vector<SpriteGo*> coins;
 	SpriteGo* coin;
@@ -39,7 +35,7 @@ protected:
 	TileMap* tileMap2 = nullptr;
 	SpriteGo* mapmap;
 	SpriteGo* mapmap2;
-
+	sf::Vector2f size;
 
 	Player* player;
 	Element* element;
@@ -51,14 +47,26 @@ protected:
 	Monster* monster;
 	MonsterBullet* monsterbullet;
 
+	SpriteGo* clear;
+	UIButton* clearbutton;
 
 	SpriteGo* nextdoor;
 	int monsterCount = 0;
 	std::list<Monster*> monsters;
+
+	//플레이어 UI
+	UIButton* testbutton1;
+	UIButton* testbutton2;
+	UIButton* testbutton3;
+	SpriteGo* playerHp;
+	SpriteGo* playerMaxHp;
+	SpriteGo* expbar;
+	SpriteGo* maxexpbar;
+
 public:
 	SceneDev1();
 	virtual ~SceneDev1() override;
-
+	bool bossdie = false;
 	virtual void Init() override;
 	virtual void Release() override;
 
@@ -72,6 +80,8 @@ public:
 	void SpawnMonsters(int count, sf::Vector2f center, Monster::Types a);
 	void SpawnMonsters2(int count, sf::Vector2f center);
 	const std::list<Monster*>* GetMonsterList() const;
+
+	void PlayerUI();
 
 	void NextScene();
 	template<typename T>

@@ -4,6 +4,7 @@
 #include "ObjectPool.h"
 #include "MonsterBullet.h"
 
+class UIButton;
 class Player;
 class Scene;
 
@@ -30,7 +31,10 @@ protected:
 	sf::Vector2f bossMoveDir;
 	float bossbulletRate;
 
+	bool bossAlive = true;
+	int bosscount;
 
+	sf::Vector2f windowsize;
 	Types monsterType;
 	sf::Vector2f playerlook;
 

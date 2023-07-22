@@ -41,7 +41,7 @@ protected:
 	Bullet* bullet;
 	ObjectPool<Bullet> poolBullets;
 	int bulletCount;
-	int bulletDamage = 100;
+	int bulletDamage = 1000;
 	bool attack;
 
 	sf::Vector2f monsterlook = { 0,0 };
@@ -112,5 +112,6 @@ public:
 	void OnHitBullet(int damage);
 	void OnDiePlayer();
 	Player* GetPlayer();
+	void PlayerReset();
 };
 

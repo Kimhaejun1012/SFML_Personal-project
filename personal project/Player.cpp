@@ -15,7 +15,6 @@ Player::Player(const std::string& textureId, const std::string& n) : SpriteGo(te
 
 void Player::Init()
 {
-	//Player::Init();
 	increaseDamage = false;
 	windowsize = FRAMEWORK.GetWindowSize();
 	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("playercsv/IdleUp.csv"));
@@ -62,6 +61,12 @@ void Player::Release()
 }
 void Player::Reset()
 {
+	Scene* scene = SCENE_MGR.GetCurrScene();
+	SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
+	PlayerReset();
+
+
+	SpriteGo::Reset();
 	PlayerUI();
 	animation.Play("IdleUp");
 	SetOrigin(origin);
@@ -69,6 +74,8 @@ void Player::Reset()
 	SetFlipX(false);
 	sprite.setScale(2.f, 2.f);
 	Hp = MaxHp;
+	exp = 0;
+
 	for (auto bullet : poolBullets.GetUseList())
 	{
 		SCENE_MGR.GetCurrScene()->RemoveGo(bullet);
@@ -80,10 +87,10 @@ void Player::Reset()
 	currentClipInfo = clipInfos[6];
 
 
-	Scene* scene = SCENE_MGR.GetCurrScene();
-	testbutton1 = (UIButton*)scene->AddGo(new UIButton("upgrade/doubleArrow.png", "mouse"));
-	testbutton2 = (UIButton*)scene->AddGo(new UIButton("upgrade/doubleAttack.png", ""));
-	testbutton3 = (UIButton*)scene->AddGo(new UIButton("upgrade/doubleSpeed.png", ""));
+
+	testbutton1 = (UIButton*)sceneDev1->AddGo(new UIButton("upgrade/doubleArrow.png", "mouse"));
+	testbutton2 = (UIButton*)sceneDev1->AddGo(new UIButton("upgrade/doubleAttack.png", ""));
+	testbutton3 = (UIButton*)sceneDev1->AddGo(new UIButton("upgrade/doubleSpeed.png", ""));
 	testbutton1->SetOrigin(Origins::MC);
 	testbutton1->SetPosition(windowsize.x * 0.5, windowsize.y * 0.5);
 	testbutton1->sortLayer = 100;
@@ -197,7 +204,6 @@ void Player::Shoot()
 {
 	Scene* scene = SCENE_MGR.GetCurrScene();
 	SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
-	//SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
 	if (direction == sf::Vector2f(0.f, 0.f) && tick < 0.1f && !monsters.empty())
 	{
 		tick = 0.5f;
@@ -223,7 +229,7 @@ void Player::Shoot()
 			if (scene != nullptr)
 			{
 				bullet->SetMonsterList(sceneDev1->GetMonsterList());
-				scene->AddGo(bullet);
+				sceneDev1->AddGo(bullet);
 			}
 			count++;
 		}
@@ -302,7 +308,7 @@ void Player::ShootAndLook()
 			if (scene != nullptr)
 			{
 				bullet->SetMonsterList(sceneDev1->GetMonsterList());
-				scene->AddGo(bullet);
+				sceneDev1->AddGo(bullet);
 			}
 			count++;
 		}
@@ -362,9 +368,10 @@ void Player::PlayerMove(float dt)
 void Player::ClearBullet()
 {
 	Scene* scene = SCENE_MGR.GetCurrScene();
+	SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
 	for (auto bullet : poolBullets.GetUseList())
 	{
-		scene->RemoveGo(bullet);
+		sceneDev1->RemoveGo(bullet);
 	}
 	poolBullets.Clear();
 }
@@ -449,14 +456,15 @@ void Player::IncreaseSpeed()
 void Player::PlayerUI()
 {
 	Scene* scene = SCENE_MGR.GetCurrScene();
-	playerMaxHp = ((SpriteGo*)scene->AddGo(new SpriteGo("", "")));
-	playerHp = ((SpriteGo*)scene->AddGo(new SpriteGo("", "")));
-
+	SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
+	playerMaxHp = ((SpriteGo*)sceneDev1->AddGo(new SpriteGo("", "")));
+	playerHp = ((SpriteGo*)sceneDev1->AddGo(new SpriteGo("", "")));
+	maxexpbar = ((SpriteGo*)sceneDev1->AddGo(new SpriteGo("graphics/ExpBarmax.png", "maxexpbar")));
+	expbar = ((SpriteGo*)sceneDev1->AddGo(new SpriteGo("graphics/ExpBar.png", "expbar")));
 	playerHp->rect.setSize(sf::Vector2f(50.f, 7.f));
 	playerHp->rect.setFillColor(sf::Color::Green);
 
-	maxexpbar = ((SpriteGo*)scene->AddGo(new SpriteGo("graphics/ExpBarmax.png", "maxexpbar")));
-	expbar = ((SpriteGo*)scene->AddGo(new SpriteGo("graphics/ExpBar.png", "expbar")));
+
 
 
 	expbar->SetOrigin(Origins::BL);
@@ -473,14 +481,7 @@ void Player::PlayerUI()
 	sf::Color aaa = playerMaxHp->sprite.getColor();
 	aaa.a = 125;
 	playerMaxHp->rect.setFillColor(aaa);
-	
-	//std::cout << maxexpbar->sprite.getScale().x << maxexpbar->sprite.getScale().y << std::endl;
 
-	//playerMaxHp->SetOrigin(Origins::BL);
-	//playerMaxHp->sortLayer = 102;
-	//playerMaxHp->sortOrder = 0;
-	//playerHp->SetPosition(player->GetPosition());
-	//playerMaxHp->SetPosition(player->GetPosition());
 }
 
 void Player::OnHitBullet(int damage)
@@ -506,4 +507,17 @@ void Player::OnDiePlayer()
 Player* Player::GetPlayer()
 {
 	return player;
+}
+
+void Player::PlayerReset()
+{
+	Scene* scene = SCENE_MGR.GetCurrScene();
+	SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
+	sceneDev1->RemoveGo(playerHp);
+	sceneDev1->RemoveGo(playerMaxHp);
+	sceneDev1->RemoveGo(expbar);
+	sceneDev1->RemoveGo(maxexpbar);
+	sceneDev1->RemoveGo(testbutton1);
+	sceneDev1->RemoveGo(testbutton2);
+	sceneDev1->RemoveGo(testbutton3);
 }

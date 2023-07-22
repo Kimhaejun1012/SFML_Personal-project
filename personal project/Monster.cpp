@@ -7,7 +7,9 @@
 #include "MonsterTable.h"
 #include "Bullet.h"
 #include "MonsterBullet.h"
+#include "UIButton.h"
 
+//std::cout << "µé¾î¿È" << std::endl;
 Monster::Monster(const std::string n)
 	: SpriteGo("", n)
 {
@@ -20,10 +22,13 @@ Monster::~Monster()
 void Monster::Init()
 {
 	SpriteGo::Init();
+
+	windowsize = FRAMEWORK.GetWindowSize();
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/monster-1_Idle.csv"));
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/monster-1_Move.csv"));
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/monster-1_Attack.csv"));
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/boss.csv"));
+
 	//monsterbullet = new MonsterBullet("","");
 	//player = new Player("");
 	//hp = maxHp;
@@ -42,7 +47,9 @@ void Monster::Init()
 
 	};
 	poolBullets.Init();
-	//bossbulletRate = monsterbullet->GetattackRate();
+
+	bosscount = 1;
+
 }
 
 void Monster::Release()
@@ -54,11 +61,9 @@ void Monster::Release()
 
 void Monster::Reset()
 {
-	//SpriteGo::Reset();
+	SpriteGo::Reset();
 	monster.Play("monster1Idle");
 	SetOrigin(origin);
-	//SetPosition({ 0, 0 });
-
 
 	for (auto bullet : poolBullets.GetUseList())
 	{
@@ -83,6 +88,8 @@ void Monster::Update(float dt)
 
 	tick -= dt;
 
+
+
 	if (monsterType == Types::Boss)
 	{
 		attackTimer += dt;
@@ -99,6 +106,7 @@ void Monster::Update(float dt)
 			bossMoveDir = { Utils::RandomRange(-1.f, 1.f) ,Utils::RandomRange(-1.f, 1.f) };
 			sprite.move(bossMoveDir.x, bossMoveDir.y);
 			bossMoveTimer = bossMoveDuration;
+
 		}
 
 		if (tick <= 0.f)
@@ -107,6 +115,7 @@ void Monster::Update(float dt)
 
 			tick = 1.25f;
 		}
+
 	}
 
 
@@ -174,7 +183,20 @@ void Monster::SetPlayer(Player* player)
 void Monster::OnHitBullet(int damage)
 {
 	hp -= damage;
-	if (hp <= 0)
+
+	if (hp <= 0  && monsterType == Types::Boss)
+	{
+
+		Scene* scene = SCENE_MGR.GetCurrScene();
+		SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
+
+		if (scene != nullptr)
+		{
+			sceneDev1->OnDieMonster(this);
+			sceneDev1->bossdie = true;
+		}
+	}
+	else if (hp <= 0)
 	{
 		Scene* scene = SCENE_MGR.GetCurrScene();
 		SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
@@ -183,6 +205,7 @@ void Monster::OnHitBullet(int damage)
 		{
 			sceneDev1->OnDieMonster(this);
 		}
+		std::cout << "Àâ¸÷ÀÌ Á×À½" << std::endl;
 	}
 }
 
@@ -238,7 +261,7 @@ void Monster::Shoot()
 	if (scene != nullptr)
 	{
 		//monsterbullet->SetPlayer(player->GetPlayer());
-		scene->AddGo(monsterbullet);
+		sceneDev1->AddGo(monsterbullet);
 	}
 	
 }

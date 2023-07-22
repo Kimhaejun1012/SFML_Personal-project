@@ -14,6 +14,7 @@ void AnimationController::Update(float dt)
 	if (!isPlaying)
 		return;
 
+
 	accumTime += dt * speed;
 	if (accumTime < clipDuration)
 		return;
