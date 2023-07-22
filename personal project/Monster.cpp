@@ -34,7 +34,11 @@ void Monster::Init()
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/GoombaRunRight.csv"));
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/GoombaRunUp.csv"));
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/GoombaRunUpRight.csv"));
-	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/boss.csv"));
+	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/BossMoveDown.csv"));
+	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/BossMoveDownRight.csv"));
+	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/BossMoveRight.csv"));
+	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/BossMoveUp.csv"));
+	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/BossMoveUpRight.csv"));
 
 	monster.SetTarget(&sprite);
 
@@ -53,17 +57,29 @@ void Monster::Init()
 	poolBullets.Init();
 
 	bosscount = 1;
+	//±À¹Ù
+	clipInfos.push_back({ "GoombaMoveUpRight", "GoombaMoveUpRight" ,true, Utils::Normalize({-1.f, -1.f}) });
+	clipInfos.push_back({ "GoombaMoveUp", "GoombaMoveUp" ,true, {0.f, -1.f} });
+	clipInfos.push_back({ "GoombaMoveUpRight", "GoombaMoveUpRight",false, Utils::Normalize({1.f, -1.f}) });
 
-	clipInfos.push_back({ "GoombaMoveUpRight", "GoombaRunUpRight" ,true, Utils::Normalize({-1.f, -1.f}) });
-	clipInfos.push_back({ "GoombaMoveUp", "GoombaRunUp" ,true, {0.f, -1.f} });
-	clipInfos.push_back({ "GoombaMoveUpRight", "GoombaRunUpRight",false, Utils::Normalize({1.f, -1.f}) });
+	clipInfos.push_back({ "GoombaMoveRight", "GoombaMoveRight" ,true, {-1.f, 0.f} });
+	clipInfos.push_back({ "GoombaMoveRight", "GoombaMoveRight" ,false, {1.f, 0.f} });
 
-	clipInfos.push_back({ "GoombaMoveRight", "GoombaRunRight" ,true, {-1.f, 0.f} });
-	clipInfos.push_back({ "GoombaMoveRight", "GoombaRunRight" ,false, {1.f, 0.f} });
+	clipInfos.push_back({ "GoombaMoveDownRight", "GoombaMoveDownRight" ,true, Utils::Normalize({-1.f, 1.f}) });
+	clipInfos.push_back({ "GoombaMoveDown", "GoombaMoveDown",true,{0.f, 1.f} });
+	clipInfos.push_back({ "GoombaMoveDownRight", "GoombaMoveDownRight",false, Utils::Normalize({1.f, 1.f}) });
 
-	clipInfos.push_back({ "GoombaMoveDownRight", "GoombaRunDownRight" ,true, Utils::Normalize({-1.f, 1.f}) });
-	clipInfos.push_back({ "GoombaMoveDown", "GoombaRunDown",true,{0.f, 1.f} });
-	clipInfos.push_back({ "GoombaMoveDownRight", "GoombaRunDownRight",false, Utils::Normalize({1.f, 1.f}) });
+	//º¸½º
+	clipInfosboss.push_back({ "BossMoveUpRight", "BossMoveUpRight" ,true, Utils::Normalize({-1.f, -1.f}) });
+	clipInfosboss.push_back({ "BossMoveUp", "BossMoveUp" ,true, {0.f, -1.f} });
+	clipInfosboss.push_back({ "BossMoveUpRight", "BossMoveUpRight",false, Utils::Normalize({1.f, -1.f}) });
+
+	clipInfosboss.push_back({ "BossMoveRight", "BossMoveRight" ,true, {-1.f, 0.f} });
+	clipInfosboss.push_back({ "BossMoveRight", "BossMoveRight" ,false, {1.f, 0.f} });
+
+	clipInfosboss.push_back({ "BossMoveDownRight", "BossMoveDownRight" ,true, Utils::Normalize({-1.f, 1.f}) });
+	clipInfosboss.push_back({ "BossMoveDown", "BossMoveDown",true,{0.f, 1.f} });
+	clipInfosboss.push_back({ "BossMoveDownRight", "BossMoveDownRight",false, Utils::Normalize({1.f, 1.f}) });
 
 
 }
@@ -87,6 +103,7 @@ void Monster::Reset()
 
 	poolBullets.Clear();
 	currentClipInfo = clipInfos[6];
+	currentClipInfoboss = clipInfosboss[6];
 }
 
 void Monster::Update(float dt)
@@ -105,33 +122,18 @@ void Monster::Update(float dt)
 		direction /= magnitude;
 	}
 
-	tick -= dt;
-
 
 	if (monsterType == Types::Boss)
 	{
 		attackTimer += dt;
+		BossMove(dt);
 		if (attackTimer > attackRate)
 		{
 			SpawnBullet((MonsterBullet::Types)0);
 			Shoot();
 			attackTimer = 0;
 		}
-		sprite.setScale(3.f, 3.f);
-		bossMoveTimer -= dt;
-		if (bossMoveTimer <= 10.f)
-		{
-			bossMoveDir = { Utils::RandomRange(-1.f, 1.f) ,Utils::RandomRange(-1.f, 1.f) };
-			sprite.move(bossMoveDir.x, bossMoveDir.y);
-			bossMoveTimer = bossMoveDuration;
 
-		}
-		if (tick <= 0.f)
-		{
-			monster.Play("Boss");
-
-			tick = 1.25f;
-		}
 	}
 
 	if (monsterType == Types::Monster1)
@@ -149,7 +151,7 @@ void Monster::Update(float dt)
 			return Utils::Distance(lhs.point, direction) < Utils::Distance(rhs.point, direction);
 		});
 		currentClipInfo = *min;
-		std::string clipId = distance >= 200.f ? currentClipInfo.move : currentClipInfo.run;
+		std::string clipId = distance >= 300.f ? currentClipInfo.move : currentClipInfo.run;
 		if (GetFlipX() != currentClipInfo.flipX)
 		{
 			SetFlipX(currentClipInfo.flipX);
@@ -169,22 +171,7 @@ void Monster::Update(float dt)
 			}
 		}
 	}
-	//if (monsterType == Types::Monster1)
-	//{
-	//	float distance = Utils::Distance(player->GetPosition(), position);
-	//	if (distance > 150.f)
-	//	{
-	//		position += direction * (speed + plusespeed) * dt;
-	//		sprite.setPosition(position);
-	//		if (monster.GetCurrentClipId() != "monster1Move")
-	//			monster.Play("monster1Move");
-	//	}
-	//	else if(distance < 150.f)
-	//	{
-	//		if (monster.GetCurrentClipId() != "monster1Attack")
-	//			monster.Play("monster1Attack");
-	//		HitPlayer(dt);
-	//	}
+
 }
 	
 
@@ -320,6 +307,27 @@ void Monster::SpawnBullet(MonsterBullet::Types t)
 bool Monster::GetFlipX() const
 {
 	return flipX;
+}
+
+void Monster::BossMove(float dt)
+{
+	position += direction * speed * dt;
+	SetPosition(position);
+	float distance = Utils::Distance(player->GetPosition(), position);
+	auto min = std::min_element(clipInfosboss.begin(), clipInfosboss.end(),
+		[this](const ClipInfo& lhs, const ClipInfo& rhs) {
+		return Utils::Distance(lhs.point, direction) < Utils::Distance(rhs.point, direction);
+	});
+	currentClipInfoboss = *min;
+	std::string clipId = distance >= 300.f ? currentClipInfoboss.move : currentClipInfoboss.run;
+	if (GetFlipX() != currentClipInfoboss.flipX)
+	{
+		SetFlipX(currentClipInfoboss.flipX);
+	}
+	if (monster.GetCurrentClipId() != clipId)
+	{
+		monster.Play(clipId);
+	}
 }
 
 void Monster::SetFlipX(bool flip)

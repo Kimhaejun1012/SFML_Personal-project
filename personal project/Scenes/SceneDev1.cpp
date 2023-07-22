@@ -147,7 +147,7 @@ void SceneDev1::Update(float dt)
 		wallBounds = mapmap2->sprite.getGlobalBounds();
 		//monsterbullet->SetMapSize(mapmap2->sprite.getGlobalBounds());
 		monster->GetMap2(wallBounds);
-		SpawnMonsters(1, tileMap2->GetPosition(), (Monster::Types)1);
+		SpawnMonsters(1, tileMap2->GetPosition(), (Monster::Types)2);
 		player->SetWallBounds(mapmap2->sprite.getGlobalBounds());
 		player->SetPosition(tileMap2->GetPosition().x, tileMap2->GetPosition().y + 700);
 		nextdoor->SetPosition(-19.f, tileMap2->vertexArray.getBounds().top - 37);

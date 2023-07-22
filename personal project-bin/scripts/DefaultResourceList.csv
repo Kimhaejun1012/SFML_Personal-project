@@ -34,7 +34,6 @@
 3,playercsv/AttackDown.csv
 3,playercsv/AttackRight.csv
 0,graphics/Naruto.png
-3,monstercsv/boss.csv
 0,graphics/Boss.png
 3,tables/bossBullet.csv
 0,graphics/bossBullet.png
@@ -54,3 +53,8 @@
 3,monstercsv/GoombaRunUp.csv
 3,monstercsv/GoombaRunUpRight.csv
 0,graphics/Goomba.png
+3,monstercsv/BossMoveDown.csv
+3,monstercsv/BossMoveDownRight.csv
+3,monstercsv/BossMoveRight.csv
+3,monstercsv/BossMoveUp.csv
+3,monstercsv/BossMoveUpRight.csv

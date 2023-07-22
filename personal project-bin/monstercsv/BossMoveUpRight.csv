@@ -1,0 +1,16 @@
+ID,FPS,LOOPTYPE,,
+BossMoveUpRight,10,1,,
+,,,,
+TEXTURE ID,LEFT,TOP,WIDTH,HEIGHT
+graphics/Boss.png,1812,447,165,181
+graphics/Boss.png,1622,447,165,183
+graphics/Boss.png,1432,451,165,181
+graphics/Boss.png,1242,453,163,179
+graphics/Boss.png,1052,451,163,181
+graphics/Boss.png,864,449,163,185
+graphics/Boss.png,674,447,169,187
+graphics/Boss.png,482,447,175,187
+graphics/Boss.png,294,451,177,183
+graphics/Boss.png,102,451,181,181
+graphics/Boss.png,1810,653,179,181
+graphics/Boss.png,1620,651,173,183

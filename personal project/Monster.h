@@ -14,8 +14,8 @@ public:
 	enum class Types
 	{
 		Monster1,
+		Monster2,
 		Boss,
-		Monster3,
 	};
 
 	struct ClipInfo
@@ -56,6 +56,9 @@ protected:
 	//몬스터 움직임
 	std::vector<ClipInfo> clipInfos;
 	ClipInfo currentClipInfo;
+
+	std::vector<ClipInfo> clipInfosboss;
+	ClipInfo currentClipInfoboss;
 	bool flipX = false;
 	// 스탯
 	//float plusespeed = 0;
@@ -109,5 +112,6 @@ public:
 	void SpawnBullet(MonsterBullet::Types t);
 	void SetFlipX(bool filp);
 	bool GetFlipX() const;
+	void BossMove(float dt);
 };
 
