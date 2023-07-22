@@ -2,11 +2,11 @@ ID,FPS,LOOPTYPE,,
 Bullet,30,1,,
 ,,,,
 TEXTURE ID,LEFT,TOP,WIDTH,HEIGHT
-graphics/Bullet.png,62,19,124,120
-graphics/Bullet.png,574,12,131,126
-graphics/Bullet.png,71,171,127,123
-graphics/Bullet.png,614,168,112,134
-graphics/Bullet.png,267,163,123,133
-graphics/Bullet.png,242,24,129,121
-graphics/Bullet.png,416,8,117,135
-graphics/Bullet.png,51,330,124,131
+graphics/mario.png,41,883,28,25
+graphics/mario.png,75,883,29,25
+graphics/mario.png,111,883,27,25
+graphics/mario.png,145,883,26,25
+graphics/mario.png,178,883,27,25
+graphics/mario.png,212,883,29,25
+graphics/mario.png,247,883,28,25
+graphics/mario.png,281,883,26,25

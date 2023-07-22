@@ -2,11 +2,15 @@ ID,FPS,LOOPTYPE,,
 MoveRight,10,1,,
 ,,,,
 TEXTURE ID,LEFT,TOP,WIDTH,HEIGHT
-graphics/Naruto.png,6,393,43,45
-graphics/Naruto.png,53,391,38,49
-graphics/Naruto.png,96,391,37,49
-graphics/Naruto.png,136,392,36,45
-graphics/Naruto.png,183,393,42,41
-graphics/Naruto.png,231,392,36,45
-graphics/Naruto.png,273,392,36,45
-graphics/Naruto.png,314,392,37,42
+graphics/mario.png,27,1064,21,44
+graphics/mario.png,67,1062,30,46
+graphics/mario.png,110,1060,38,43
+graphics/mario.png,156,1059,39,43
+graphics/mario.png,206,1061,33,46
+graphics/mario.png,256,1062,24,46
+graphics/mario.png,304,1064,20,44
+graphics/mario.png,342,1062,33,46
+graphics/mario.png,385,1060,37,43
+graphics/mario.png,431,1059,38,43
+graphics/mario.png,479,1061,37,46
+graphics/mario.png,532,1062,25,46

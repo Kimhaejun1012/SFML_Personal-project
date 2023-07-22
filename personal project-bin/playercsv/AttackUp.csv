@@ -2,9 +2,9 @@ ID,FPS,LOOPTYPE,,
 AttackUp,20,1,,
 ,,,,
 TEXTURE ID,LEFT,TOP,WIDTH,HEIGHT
-graphics/Naruto.png,4,975,42,60
-graphics/Naruto.png,55,980,34,52
-graphics/Naruto.png,98,984,47,48
-graphics/Naruto.png,208,984,47,48
-graphics/Naruto.png,318,984,45,48
-graphics/Naruto.png,366,984,45,48
+graphics/mario.png,34,549,30,47
+graphics/mario.png,70,545,37,51
+graphics/mario.png,113,556,35,38
+graphics/mario.png,158,559,32,35
+graphics/mario.png,197,556,33,38
+graphics/mario.png,238,552,30,44

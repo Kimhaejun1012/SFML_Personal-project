@@ -143,9 +143,6 @@ void Player::Update(float dt)
 	SetOrigin(origin);
 	PlayerMove(dt);
 	ShootAndLook();
-	//LookMonster();
-	//Shoot();
-	//std::cout << attack << std::endl;
 	playerHp->rect.setPosition(GetPosition().x - 30, sprite.getGlobalBounds().top - 10.f);
 	playerMaxHp->rect.setPosition(GetPosition().x - 30,sprite.getGlobalBounds().top - 10.f);
 	playerHp->rect.setSize({ (static_cast<float>(Hp) / static_cast<float>(MaxHp)) * 50.f, 7.f });
