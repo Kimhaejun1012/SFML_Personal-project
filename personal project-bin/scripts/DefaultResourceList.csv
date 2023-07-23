@@ -1,11 +1,6 @@
 "RESOURCE_TYPES (0: 텍스처, 1: 폰트, 2: 사운드 클립, 3. 애니메이션 클립)",RESOURCE_PATH
 1,fonts/Noto_Sans_KR/NotoSansKR-Bold.otf
 0,mapsprite/tile.png
-3,tables/Idle.csv
-3,tables/Move.csv
-3,tables/Up.csv
-3,tables/Down.csv
-0,graphics/RubySheet.png
 0,mapsprite/element1.png
 0,mapstructure/mapmap.png
 3,tables/Bullet.csv
@@ -60,3 +55,6 @@
 3,monstercsv/BossMoveUpRight.csv
 0,graphics/BossPattern.png
 3,monstercsv/BossPattern1.csv
+3,monstercsv/BossPattern2.csv
+3,monstercsv/BossPattern3.csv
+3,monstercsv/BossPattern4.csv
