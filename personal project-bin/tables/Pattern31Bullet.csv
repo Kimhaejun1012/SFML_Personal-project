@@ -1,0 +1,12 @@
+ID,FPS,LOOPTYPE,,
+Pattern31Bullet,10,1,,
+,,,,
+TEXTURE ID,LEFT,TOP,WIDTH,HEIGHT
+graphics/BossBullet.png,25,38,123,123
+graphics/BossBullet.png,191,45,121,126
+graphics/BossBullet.png,343,60,125,123
+graphics/BossBullet.png,571,42,124,124
+graphics/BossBullet.png,19,226,126,123
+graphics/BossBullet.png,205,235,124,123
+graphics/BossBullet.png,355,259,120,122
+graphics/BossBullet.png,538,230,123,127

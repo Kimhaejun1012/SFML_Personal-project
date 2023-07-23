@@ -2,7 +2,6 @@
 #include "SceneMgr.h"
 #include "SceneDev1.h"
 #include "SceneTitle.h"
-#include "SceneBoss.h"
 void SceneMgr::Init()
 {
 	if (!scenes.empty())

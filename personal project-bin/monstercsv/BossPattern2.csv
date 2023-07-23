@@ -1,5 +1,5 @@
 ID,FPS,LOOPTYPE,,
-BossPattern2,20,0,,
+BossPattern2,20,1,,
 ,,,,
 TEXTURE ID,LEFT,TOP,WIDTH,HEIGHT
 graphics/BossPattern.png,51,283,209,185
@@ -7,7 +7,6 @@ graphics/BossPattern.png,375,283,193,187
 graphics/BossPattern.png,671,279,235,191
 graphics/BossPattern.png,341,947,275,187
 graphics/BossPattern.png,687,953,219,181
-graphics/BossPattern.png,1021,955,187,179
 graphics/BossPattern.png,12,5096,197,185
 graphics/BossPattern.png,233,5081,205,185
 graphics/BossPattern.png,451,5079,207,187
@@ -58,7 +57,7 @@ graphics/BossPattern.png,1347,5977,173,175
 graphics/BossPattern.png,1537,5975,173,175
 graphics/BossPattern.png,1727,5973,173,175
 graphics/BossPattern.png,23,6205,173,177
-graphics/BossPattern.png,255,6205,173,177
+graphics/BossPattern.png,225,6205,173,177
 graphics/BossPattern.png,427,6203,175,179
 graphics/BossPattern.png,627,6199,179,183
 graphics/BossPattern.png,827,6199,183,183

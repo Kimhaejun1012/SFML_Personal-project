@@ -1,0 +1,13 @@
+ID,FPS,LOOPTYPE,,
+FireBall,10,1,,
+,,,,
+TEXTURE ID,LEFT,TOP,WIDTH,HEIGHT
+graphics/FireBall.png,129,2,29,29
+graphics/FireBall.png,97,2,29,29
+graphics/FireBall.png,65,2,29,29
+graphics/FireBall.png,97,2,29,29
+graphics/FireBall.png,33,2,29,29
+graphics/FireBall.png,2,2,28,29
+graphics/FireBall.png,33,2,29,29
+graphics/FireBall.png,65,2,29,29
+graphics/FireBall.png,97,2,29,29

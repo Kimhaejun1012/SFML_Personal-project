@@ -30,7 +30,8 @@ public:
 			return "";
 		return currentClip->id;
 	}
-
+	int GetCurFrame() { return currentFrame; }
+	int GetTotalFrame() { return totalFrame; }
 	void Update(float dt);
 
 	void Play(const std::string& clipid, bool clearQueue = true);

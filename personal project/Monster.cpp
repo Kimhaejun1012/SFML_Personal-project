@@ -6,7 +6,6 @@
 #include "DataTable.h"
 #include "MonsterTable.h"
 #include "Bullet.h"
-#include "MonsterBullet.h"
 #include "UIButton.h"
 
 //std::cout << "들어옴" << std::endl;
@@ -24,6 +23,7 @@ void Monster::Init()
 	SpriteGo::Init();
 
 	windowsize = FRAMEWORK.GetWindowSize();
+	//굼바 움직임, 돌진
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/GoombaMoveDown.csv"));
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/GoombaMoveDownRight.csv"));
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/GoombaMoveRight.csv"));
@@ -35,13 +35,16 @@ void Monster::Init()
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/GoombaRunUp.csv"));
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/GoombaRunUpRight.csv"));
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/GoombaDie.csv"));
+
+	//보스 움직임
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/BossMoveDown.csv"));
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/BossMoveDownRight.csv"));
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/BossMoveRight.csv"));
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/BossMoveUp.csv"));
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/BossMoveUpRight.csv"));
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/BossPattern1.csv"));
-	//공격 애니매이션
+
+	//보스 공격 패턴
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/BossPattern1.csv"));
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/BossPattern2.csv"));
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/BossPattern3.csv"));
@@ -126,6 +129,11 @@ void Monster::Update(float dt)
 	if (player == nullptr)
 		return;
 
+	// 몬스터 패턴이 아닐경우 보스몬스터는 평소처럼 움직이면서 총알쏨
+	// 랜덤 숫자로 몬스터 패턴이 걸릴경우 움직임이랑 총알쏘는거 멈추고 패턴만 플레이함
+
+
+
 	direction = Utils::Normalize(player->GetPosition() - position);
 	float magnitude = Utils::Magnitude(direction);
 	if (magnitude > 1.f)
@@ -133,57 +141,269 @@ void Monster::Update(float dt)
 		direction /= magnitude;
 	}
 
-
 	if (monsterType == Types::Boss)
 	{
-		attackTimer += dt;
-		//if(bossMoving)
-		BossMove(dt);
-		if (attackTimer > attackRate)
+		//std::cout << monster.GetTotalFrame() - monster.GetCurFrame() << std::endl;
+		//if(!isPattern)
+		//BossMove(dt);
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num6))
 		{
-			SpawnBullet((MonsterBullet::Types)0);
-			Shoot();
-			attackTimer = 0;
+			bosspattern += 1;
+			std::cout << "bosspattern : " << bosspattern << std::endl;
+			std::cout << "randomPattern : " << randomPattern << std::endl;
 		}
+		if (randomPattern==0)
+		{
+			if (attackTimer > attackRate)
+			{
+				SpawnBullet((MonsterBullet::Types)0);
+				//Shoot();
+				attackTimer = 0;
+			}
+			BossMove(dt);
+			bosspattern += dt;
+			attackTimer += dt;
+		}
+		if (bosspattern > bosscooltime/* && !isPattern*/)
+		{
+			isPattern = true;
+			//randomPattern = Utils::RandomRange(1, 5); // 랜덤 패턴 선택
+			randomPattern = 3; // 랜덤 패턴 선택
+			bosspattern = 0;
+		}
+		if (randomPattern == 1)
+		{
+			BossPattern1(dt);
+
+			if (monster.GetTotalFrame() - monster.GetCurFrame() <= 1)
+			randomPattern = 0;
+				std::cout << "프레임 끝" << std::endl;
+		}
+		if (randomPattern == 2)
+		{
+
+			BossPattern2(dt);
+			if (monster.GetTotalFrame() - monster.GetCurFrame() <= 1)
+			{
+				std::cout << "프레임 끝"<<std::endl;
+				randomPattern = 0;
+				isone = true;
+			}
+		}
+		if (randomPattern == 3)
+		{
+			BossPattern3(dt);
+			if (monster.GetTotalFrame() - monster.GetCurFrame() <= 10)
+			{
+				if (isone)
+				{
+					Pattern3Bullet((MonsterBullet::Types)1);
+					isone = false;
+				}
+			}
+			if (monster.GetTotalFrame() - monster.GetCurFrame() <= 1)
+			{
+				randomPattern = 0;
+				isone = true;
+				std::cout << "프레임 끝" << std::endl;
+			}
+		}
+		if (randomPattern == 4)
+		{
+			std::cout << monster.GetTotalFrame() << std::endl;
+			BossPattern4(dt);
+			if(isone)
+			{
+				SpawnBullet2(10,(MonsterBullet::Types)3);
+				isone = false;
+			}
+			if (monster.GetTotalFrame() - monster.GetCurFrame() <= 70)
+			{
+				isone = true;
+					if(isone)
+					{
+						SpawnBullet2(10, (MonsterBullet::Types)3);
+						isone = false;
+					}
+			}
+			if (isone && monster.GetTotalFrame() - monster.GetCurFrame() <= 60)
+			{
+				isone = true;
+				if (isone)
+				{
+					SpawnBullet2(10, (MonsterBullet::Types)3);
+					isone = false;
+				}
+			}
+			if (isone && monster.GetTotalFrame() - monster.GetCurFrame() <= 50)
+			{
+				isone = true;
+				if (isone)
+				{
+					SpawnBullet2(10, (MonsterBullet::Types)3);
+					isone = false;
+				}
+			}
+			if (isone && monster.GetTotalFrame() - monster.GetCurFrame() <= 40)
+			{
+				isone = true;
+				if (isone)
+				{
+					SpawnBullet2(10, (MonsterBullet::Types)3);
+					isone = false;
+				}
+			}
+			if (isone && monster.GetTotalFrame() - monster.GetCurFrame() <= 30)
+			{
+				isone = true;
+				if (isone)
+				{
+					SpawnBullet2(10, (MonsterBullet::Types)3);
+					isone = false;
+				}
+			}
+			if (isone && monster.GetTotalFrame() - monster.GetCurFrame() <= 20)
+			{
+				isone = true;
+				if (isone)
+				{
+					SpawnBullet2(10, (MonsterBullet::Types)3);
+					isone = false;
+				}
+			}
+			if (monster.GetTotalFrame() - monster.GetCurFrame() <= 1)
+			{
+				isone = true;
+				if(isone)
+				{
+					randomPattern = 0;
+				isone = true;
+				std::cout << "프레임 끝" << std::endl;
+				}
+			}
+		}
+		bosspattern = 0;
+		isPattern = false;
 	}
 
-	if (monsterType == Types::Monster1)
+	if(monsterType == Types::Monster1)
 	{
-		if (monsterscale)
+		GoombaMove(dt);
+	}
+
+}
+
+void Monster::BossPattern1(float dt)
+{
+
+		if (monster.GetCurrentClipId() != "BossPattern1")
 		{
-			sprite.setScale(2.5f, 2.5f);
-			monsterscale = false;
+			monster.Play("BossPattern1");
 		}
-		position += direction * speed * dt;
+		position += direction * (speed+300) * dt;
 		SetPosition(position);
 		float distance = Utils::Distance(player->GetPosition(), position);
-		auto min = std::min_element(clipInfos.begin(), clipInfos.end(),
-			[this](const ClipInfo& lhs, const ClipInfo& rhs) {
+		auto min = std::min_element(clipInfosboss.begin(), clipInfosboss.end(),
+			[this](const ClipInfoBoss& lhs, const ClipInfoBoss& rhs) {
 			return Utils::Distance(lhs.point, direction) < Utils::Distance(rhs.point, direction);
 		});
-		currentClipInfo = *min;
-		std::string clipId = distance >= 300.f ? currentClipInfo.move : currentClipInfo.run;
+		currentClipInfoboss = *min;
+		std::string clipId = distance >= 300.f ? currentClipInfoboss.move : currentClipInfoboss.run;
+		if (GetFlipX() != currentClipInfoboss.flipX)
+		{
+			SetFlipX(currentClipInfoboss.flipX);
+		}
 
-		if (GetFlipX() != currentClipInfo.flipX)
-		{
-			SetFlipX(currentClipInfo.flipX);
-		}
-		if (monster.GetCurrentClipId() != clipId)
-		{
-			if (clipId == currentClipInfo.run)
-			{
-				speed = 150.f;
-			}
-			else
-				speed = 40.f;
-			monster.Play(clipId);
-			if (distance <= 50.f)
-			{
-				HitPlayer(dt);
-			}
-		}
+}
+
+void Monster::BossPattern2(float dt)
+{
+	Scene* scene = SCENE_MGR.GetCurrScene();
+	SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
+
+	if (monster.GetCurrentClipId() != "BossPattern2")
+	{
+		monster.Play("BossPattern2");
 	}
 
+	sf::Vector2f BosPos = GetPosition();
+	if (monster.GetTotalFrame() - monster.GetCurFrame() <= 10)
+	{
+		if (isone)
+			sceneDev1->SpawnMonsters(3, BosPos, (Monster::Types)0);
+		isone = false;
+	}
+	//sceneDev1->SetBossPos(BosPos);
+}
+
+void Monster::BossPattern3(float dt)
+{
+	if (monster.GetCurrentClipId() != "BossPattern3")
+	{
+		monster.Play("BossPattern3");
+	}
+}
+
+void Monster::BossPattern4(float dt)
+{
+	if (monster.GetCurrentClipId() != "BossPattern4")
+	{
+		monster.Play("BossPattern4");
+
+	}
+
+}
+
+void Monster::BossDefault(float dt)
+{
+	BossMove(dt);
+	attackTimer += dt;
+	//if (attackTimer > attackRate)
+	//{
+
+
+		SpawnBullet((MonsterBullet::Types)0);
+		Shoot();
+
+	//	attackTimer = 0;
+	//}
+}
+
+void Monster::GoombaMove(float dt)
+{
+	if (monsterscale)
+	{
+		sprite.setScale(2.5f, 2.5f);
+		monsterscale = false;
+	}
+	position += direction * speed * dt;
+	SetPosition(position);
+	float distance = Utils::Distance(player->GetPosition(), position);
+	auto min = std::min_element(clipInfos.begin(), clipInfos.end(),
+		[this](const ClipInfo& lhs, const ClipInfo& rhs) {
+		return Utils::Distance(lhs.point, direction) < Utils::Distance(rhs.point, direction);
+	});
+	currentClipInfo = *min;
+	std::string clipId = distance >= 300.f ? currentClipInfo.move : currentClipInfo.run;
+
+	if (GetFlipX() != currentClipInfo.flipX)
+	{
+		SetFlipX(currentClipInfo.flipX);
+	}
+	if (monster.GetCurrentClipId() != clipId)
+	{
+		if (clipId == currentClipInfo.run)
+		{
+			speed = 150.f;
+		}
+		else
+			speed = 40.f;
+		monster.Play(clipId);
+		if (distance <= 50.f)
+		{
+			HitPlayer(dt);
+		}
+	}
 }
 
 
@@ -210,7 +430,6 @@ void Monster::SetType(Types t)
 	damage = info->damage;
 	attackRate = info->attackRate;
 
-	//std::cout << (int)t << std::endl;
 }
 
 Monster::Types Monster::GetType() const
@@ -285,27 +504,9 @@ void Monster::GetMap2(const sf::FloatRect& mapsize)
 
 void Monster::Shoot()
 {
-	Scene* scene = SCENE_MGR.GetCurrScene();
-	SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
 
 	playerlook = Utils::Normalize(player->GetPosition() - GetPosition());
-	//std::cout << playerlook.x << playerlook.y << std::endl;
-	MonsterBullet* monsterbullet = poolBullets.Get();
-	monsterbullet->SetMapSize(mapsize);
-
-	//float modifiedAngle = Utils::Angle(monsterlook);  // 기존 각도 계산
-	//float additionalAngle = (count % 2 == 1) ? 15.f * count : -15.f * count;  // 추가 각도 계산
-	//float additionalAngle = -5 + (30 / bulletCount * count); //(count == 0) ? 0.f : ((count % 2 == 1) ? 15.f * count : -15.f * count);
-	//float additionalAngle =  (360 / bulletCount * count);
-	//float finalAngle = modifiedAngle; // + additionalAngle;  // 기존 각도와 추가 각도 합산
-	//sf::Vector2f fireDirection = Utils::DirectionFromAngle(finalAngle);  // 총알 발사 각도 계산
-
 	monsterbullet->Fire(GetPosition(), playerlook);
-	if (scene != nullptr)
-	{
-		//monsterbullet->SetPlayer(player->GetPlayer());
-		sceneDev1->AddGo(monsterbullet);
-	}
 
 }
 
@@ -314,6 +515,62 @@ void Monster::SpawnBullet(MonsterBullet::Types t)
 	monsterbullet = poolBullets.Get();
 	monsterbullets = poolBullets.GetUseList();
 	monsterbullet->SetType(t);
+	monsterbullet->SetMapSize(mapsize);
+	playerlook = Utils::Normalize(player->GetPosition() - GetPosition());
+	monsterbullet->Fire(GetPosition(), playerlook);
+	Scene* scene = SCENE_MGR.GetCurrScene();
+	SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
+	sceneDev1->AddGo(monsterbullet);
+
+	if (t == MonsterBullet::Types::Pattern31)
+	{
+		SpawnBullet2(10, MonsterBullet::Types::Pattern32);
+	}
+}
+
+void Monster::Pattern3Bullet(MonsterBullet::Types t)
+{
+	monsterbullet = poolBullets.Get();
+	monsterbullets = poolBullets.GetUseList();
+	monsterbullet->SetType(t);
+	monsterbullet->SetMapSize(mapsize);
+	playerlook = Utils::Normalize(player->GetPosition() - GetPosition());
+
+	pattern31BulletPos = GetPosition();
+	monsterbullet->Fire(pattern31BulletPos, playerlook);
+	Scene* scene = SCENE_MGR.GetCurrScene();
+	SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
+	sceneDev1->AddGo(monsterbullet);
+
+	if (t == MonsterBullet::Types::Pattern31)
+	{
+		SpawnBullet2(10, MonsterBullet::Types::Pattern32);
+	}
+}
+
+
+void Monster::SpawnBullet2(int count, MonsterBullet::Types t)
+{
+	for (int i = 0; i < count; i++)
+	{
+		sf::Vector2f a;
+		a.x = Utils::RandomRange(-1.f, 1.f);
+		a.y = Utils::RandomRange(-1.f, 1.f);
+		monsterbullet = poolBullets.Get();
+		monsterbullets = poolBullets.GetUseList();
+		monsterbullet->SetType(t);
+		monsterbullet->SetMapSize(mapsize);
+
+		if (t == MonsterBullet::Types::Pattern4)
+		{
+			monsterbullet->Fire(sf::Vector2f(GetPosition().x, sprite.getGlobalBounds().top - 30), a);
+		}
+		monsterbullet->Fire(GetPosition(), a);
+		Scene* scene = SCENE_MGR.GetCurrScene();
+		SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
+		sceneDev1->AddGo(monsterbullet);
+
+	}
 }
 
 bool Monster::GetFlipX() const
@@ -324,8 +581,8 @@ bool Monster::GetFlipX() const
 void Monster::BossMove(float dt)
 {
 
-		position += direction * speed * dt;
-		SetPosition(position);
+	position += direction * speed * dt;
+	SetPosition(position);
 	float distance = Utils::Distance(player->GetPosition(), position);
 	auto min = std::min_element(clipInfosboss.begin(), clipInfosboss.end(),
 		[this](const ClipInfoBoss& lhs, const ClipInfoBoss& rhs) {
@@ -342,6 +599,7 @@ void Monster::BossMove(float dt)
 		monster.Play(clipId);
 	}
 }
+
 
 void Monster::SetFlipX(bool flip)
 {

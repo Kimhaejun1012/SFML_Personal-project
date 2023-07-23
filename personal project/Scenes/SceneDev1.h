@@ -30,6 +30,9 @@ protected:
 	ObjectPool<Monster> poolMonsters;
 	sf::FloatRect tileSize;
 
+	sf::Vector2f bossPos;
+
+	bool bosspattern2 = false;
 
 	TileMap* tileMap = nullptr;
 	TileMap* tileMap2 = nullptr;
@@ -81,7 +84,9 @@ public:
 	void SpawnMonsters2(int count, sf::Vector2f center);
 	const std::list<Monster*>* GetMonsterList() const;
 
-	void PlayerUI();
+	void BossPattern2(bool bosspattern2);
+	
+	void SetBossPos(sf::Vector2f& BossPos);
 
 	void NextScene();
 	template<typename T>

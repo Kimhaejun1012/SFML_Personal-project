@@ -135,12 +135,16 @@ void SceneDev1::Exit()
 
 void SceneDev1::Update(float dt)
 {
-	//std::cout << "씬데브1"<<std::endl;
 	Scene::Update(dt);
 	worldView.setCenter(player->GetPosition().x, player->GetPosition().y);
 	NextScene();
 	player->SetMonsterList(monsters);
 	
+	if (bosspattern2)
+	{
+		SpawnMonsters(3, bossPos, (Monster::Types)0);
+		bosspattern2 = false;
+	}
 
 	if (nextScene && player->sprite.getGlobalBounds().intersects(nextdoor->sprite.getGlobalBounds()))
 	{
@@ -154,7 +158,7 @@ void SceneDev1::Update(float dt)
 		nextdoor->SetActive(false);
 
 	}
-	if(INPUT_MGR.GetKeyDown(sf::Keyboard::Num4))
+	if(INPUT_MGR.GetKeyDown(sf::Keyboard::Num5))
 	SCENE_MGR.ChangeScene(SceneId::Title);
 	for (int i = 0; i < coins.size(); ++i)
 	{
@@ -185,15 +189,7 @@ void SceneDev1::Update(float dt)
 		bossdie = false;
 	}
 
-	//if (exp >= maxexp)
-	//{
-	//	std::cout << "나 혼자만 레벨업" << std::endl;
-	//	testbutton1->SetActive(true);
-	//	testbutton2->SetActive(true);
-	//	testbutton3->SetActive(true);
-	//	exp -= maxexp;
-	//	maxexp *= 1.3;
-	//}
+
 }
 
 
@@ -349,74 +345,16 @@ const std::list<Monster*>* SceneDev1::GetMonsterList() const
 	return &poolMonsters.GetUseList();
 }
 
-//void SceneDev1::PlayerUI()
-//{
-//	playerMaxHp = ((SpriteGo*)AddGo(new SpriteGo("", "")));
-//	playerHp = ((SpriteGo*)AddGo(new SpriteGo("", "")));
-//	maxexpbar = ((SpriteGo*)AddGo(new SpriteGo("graphics/ExpBarmax.png", "maxexpbar")));
-//	expbar = ((SpriteGo*)AddGo(new SpriteGo("graphics/ExpBar.png", "expbar")));
-//	playerHp->rect.setSize(sf::Vector2f(50.f, 7.f));
-//	playerHp->rect.setFillColor(sf::Color::Green);
-//
-//
-//
-//
-//	expbar->SetOrigin(Origins::BL);
-//	expbar->sortLayer = 101;
-//	//expbar->sprite.setScale(0, 0);
-//	maxexpbar->sprite.setPosition(size.x * 0.27, 50);
-//	expbar->sprite.setPosition(size.x * 0.27, 50);
-//	maxexpbar->SetOrigin(Origins::BL);
-//	maxexpbar->sortLayer = 101;
-//	sf::Color expbar = maxexpbar->sprite.getColor();
-//	maxexpbar->sprite.setColor({ 0,0,0,150 });
-//	playerMaxHp->rect.setSize(sf::Vector2f(50.f, 7.f));
-//	playerMaxHp->rect.setFillColor(sf::Color::Black);
-//	sf::Color aaa = playerMaxHp->sprite.getColor();
-//	aaa.a = 125;
-//	playerMaxHp->rect.setFillColor(aaa);
-//
-//	testbutton1 = (UIButton*)AddGo(new UIButton("upgrade/doubleArrow.png", "mouse"));
-//	testbutton2 = (UIButton*)AddGo(new UIButton("upgrade/doubleAttack.png", ""));
-//	testbutton3 = (UIButton*)AddGo(new UIButton("upgrade/doubleSpeed.png", ""));
-//	testbutton1->SetOrigin(Origins::MC);
-//	testbutton1->SetPosition(size.x * 0.5, size.y * 0.5);
-//	testbutton1->sortLayer = 100;
-//	testbutton1->SetActive(false);
-//	testbutton2->SetOrigin(Origins::MC);
-//	testbutton2->SetPosition(testbutton1->GetPosition().x - 300, testbutton1->GetPosition().y);
-//	testbutton2->sortLayer = 100;
-//	testbutton2->SetActive(false);
-//	testbutton3->SetOrigin(Origins::MC);
-//	testbutton3->SetPosition(testbutton1->GetPosition().x + 300, testbutton1->GetPosition().y);
-//	testbutton3->sortLayer = 100;
-//	testbutton3->SetActive(false);
-//	testbutton1->OnClick = [this]() {
-//		//testbutton1->SetPlayer(this);
-//		//testbutton1->IncreaseBullet();
-//		std::cout << "1클릭" << std::endl;
-//		testbutton1->SetActive(false);
-//		testbutton2->SetActive(false);
-//		testbutton3->SetActive(false);
-//	};
-//	testbutton2->OnClick = [this]() {
-//		//testbutton2->SetPlayer(this);
-//		//testbutton2->IncreaseAttact();
-//		std::cout << "2클릭" << std::endl;
-//		testbutton1->SetActive(false);
-//		testbutton2->SetActive(false);
-//		testbutton3->SetActive(false);
-//	};
-//
-//	testbutton3->OnClick = [this]() {
-//		//testbutton3->SetPlayer(this);
-//		//testbutton3->IncreaseSpeed();
-//		std::cout << "3클릭" << std::endl;
-//		testbutton1->SetActive(false);
-//		testbutton2->SetActive(false);
-//		testbutton3->SetActive(false);
-//	};
-//}
+void SceneDev1::BossPattern2(bool bosspattern2)
+{
+	this ->bosspattern2 = bosspattern2;
+}
+
+
+void SceneDev1::SetBossPos(sf::Vector2f& BossPos)
+{
+	bossPos = BossPos;
+}
 
 void SceneDev1::NextScene()
 {

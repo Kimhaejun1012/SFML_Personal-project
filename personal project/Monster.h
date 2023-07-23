@@ -35,7 +35,7 @@ public:
 		sf::Vector2f point;
 	};
 
-	enum class BossAttackPattern
+	enum class BossPattern
 	{
 		Move,      
 		Pattern1,  
@@ -51,13 +51,21 @@ protected:
 	ObjectPool<MonsterBullet> poolBullets;
 
 	// 보스 정보
-	float bossMoveDuration;
-	float bossMoveTimer;
 	sf::Vector2f bossMoveDir;
 	float bossbulletRate;
+	
+	//보스패턴보스패턴보스패턴보스패턴보스패턴
+	BossPattern currentBossPattern;
+	bool bossMoving = true;
+	bool isPattern = false;
+	bool isone = true;
+	float bosscooltime = 1.f;
+	float bosspattern = 0.f;
+	float bossMoveTimer = bossMoveDuration;
+	float bossMoveDuration = 5.0f;
+	int randomPattern = 0;
 
-	BossAttackPattern currentAttackPattern;
-	bool bossMoving;
+
 
 	bool bossAlive = true;
 	int bosscount;
@@ -66,11 +74,11 @@ protected:
 	Types monsterType;
 	sf::Vector2f playerlook;
 
+	sf::Vector2f pattern31BulletPos;
 	// 위치 정보
 	sf::Vector2f look;
 	sf::Vector2f direction;
 	sf::Vector2f direction2;
-
 	//몬스터 움직임
 	std::vector<ClipInfo> clipInfos;
 	ClipInfo currentClipInfo;
@@ -89,7 +97,6 @@ protected:
 	float attackTimer = 0.f;
 	int monsterCount = 0;
 	float damageTick = 0.f;
-	float bosspattern = 10.f;
 	// 상태변수
 	bool isHit = false;
 
@@ -102,6 +109,14 @@ protected:
 	MonsterBullet* monsterbullet = nullptr;
 	std::list<MonsterBullet*> monsterbullets;
 	float tick = 5.f;
+
+
+
+
+	float pattern3_1ShootTimer = 0.f;
+	float pattern3_2ShootTimer = 0.f;
+	float pattern3_1ShootInterval = 1.f; // 패턴3-1 총알 발사 간격
+	float pattern3_2ShootInterval = 0.5f; // 패턴3-2 총알 발사 간격
 
 public:
 	ObjectPool<Monster>* pool;
@@ -128,9 +143,20 @@ public:
 	void GetMap2(const sf::FloatRect& mapsize);
 	void Shoot();
 	void SpawnBullet(MonsterBullet::Types t);
+	void SpawnBullet2(int count, MonsterBullet::Types t);
 	void SetFlipX(bool filp);
 	bool GetFlipX() const;
 	void BossMove(float dt);
 	void MonsterDie(bool monsterdie);
+	void BossPattern3_1Shoot(float dt);
+	void SpawnBullet32(sf::Vector2f pos, int count, MonsterBullet::Types t);
+	void BossPattern1(float dt);
+	void BossPattern2(float dt);
+	void BossPattern3(float dt);
+	void BossPattern4(float dt);
+	void BossDefault(float dt);
+	void GoombaMove(float dt);
+	void Pattern3Bullet(MonsterBullet::Types t);
+	
 };
 

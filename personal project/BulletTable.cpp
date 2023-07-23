@@ -34,6 +34,7 @@ bool BulletTable::Load()
 		bulletinfo.damage = bulletDamage[i];
 		bulletinfo.attackRate = attactRate[i];
 		bulletinfo.bulletCount = bulletCount[i];
+		//table.insert({ bulletinfo.bulletType ,bulletinfo });
 		table.insert({ (MonsterBullet::Types)ids[i] ,bulletinfo });
 	}
 	return true;

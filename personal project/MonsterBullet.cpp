@@ -19,9 +19,12 @@ MonsterBullet::~MonsterBullet()
 
 void MonsterBullet::Init()
 {
+
 	SpriteGo::Init();
-	monsterbullet.AddClip(*RESOURCE_MGR.GetAnimationClip("tables/bossBullet.csv"));
-	monsterbullet.AddClip(*RESOURCE_MGR.GetAnimationClip("tables/redBullet.csv"));
+	monsterbullet.AddClip(*RESOURCE_MGR.GetAnimationClip("tables/FireBall.csv"));
+	monsterbullet.AddClip(*RESOURCE_MGR.GetAnimationClip("tables/Pattern31Bullet.csv"));
+	monsterbullet.AddClip(*RESOURCE_MGR.GetAnimationClip("tables/Pattern32Bullet.csv"));	
+	monsterbullet.AddClip(*RESOURCE_MGR.GetAnimationClip("tables/Pattern4Bullet.csv"));
 
 
 	monsterbullet.SetTarget(&sprite);
@@ -38,7 +41,7 @@ void MonsterBullet::Release()
 void MonsterBullet::Reset()
 {
 
-	monsterbullet.Play("bossBullet");
+	//monsterbullet.Play("FireBall");
 	SetPosition(0.f, 0.f);
 	damage = 1;
 	speed = 0.f;
@@ -57,10 +60,14 @@ void MonsterBullet::Update(float dt)
 	monsterbullet.Update(dt);
 	//SetPlayer(player->GetPlayer());
 		tick -= dt;
-		if (bullettype == Types::Bossbullet)
+
+		if (bullettype == Types::FireBall)
 		{
-			sprite.setScale(2.0, 2.0);
-			SetType(Types::Bossbullet);
+			std::cout << "패턴 1 불릿" << std::endl;
+			if (monsterbullet.GetCurrentClipId() != "FireBall")
+			{
+				monsterbullet.Play("FireBall");
+			}
 			Move(dt);
 			attackTimer += dt;
 			if (attackTimer > attackRate)
@@ -68,9 +75,55 @@ void MonsterBullet::Update(float dt)
 				HitPlayer(dt);
 				attackTimer = 0.f;
 			}
-			//std::cout << "스피드" << speed << std::endl;
-			//std::cout << "공격력" << damage << std::endl;
-			//std::cout << "포지션" << GetPosition().x << GetPosition().y << std::endl;
+			tick = 2.f;
+		}
+		if (bullettype == Types::Pattern31)
+		{
+			std::cout << "패턴 3 불릿" << std::endl;
+			if (monsterbullet.GetCurrentClipId() != "Pattern31Bullet")
+			{
+				monsterbullet.Play("Pattern31Bullet");
+			}
+			Move(dt);
+			attackTimer += dt;
+			if (attackTimer > attackRate)
+			{
+				HitPlayer(dt);
+				attackTimer = 0.f;
+			}
+			tick = 2.f;
+		}
+		if (bullettype == Types::Pattern32)
+		{
+			if (monsterbullet.GetCurrentClipId() != "Pattern32Bullet")
+			{
+				monsterbullet.Play("Pattern32Bullet");
+			}
+			Move(dt);
+		
+			attackTimer += dt;
+			if (attackTimer > attackRate)
+			{
+				HitPlayer(dt);
+				attackTimer = 0.f;
+			}
+			tick = 2.f;
+		}
+		if (bullettype == Types::Pattern4)
+		{
+			//std::cout << "패턴 4 불릿" << std::endl;
+			if (monsterbullet.GetCurrentClipId() != "Pattern4Bullet")
+			{
+				monsterbullet.Play("Pattern4Bullet");
+			}
+			Move(dt);
+
+			attackTimer += dt;
+			if (attackTimer > attackRate)
+			{
+				HitPlayer(dt);
+				attackTimer = 0.f;
+			}
 			tick = 2.f;
 		}
 }
@@ -80,22 +133,23 @@ void MonsterBullet::Draw(sf::RenderWindow& window)
 	SpriteGo::Draw(window);
 }
 
-void MonsterBullet::SetDamage(int number)
-{
-}
+
+
+
 
 void MonsterBullet::SetType(Types t)
 {
 	const BulletInfo* info = DATATABLE_MGR.Get<BulletTable>(DataTable::Ids::MonsterBullet)->Get(t);
 
-	bullettype = info->bulletType;
+	bullettype = (MonsterBullet::Types)info->bulletType;
 	speed = info->speed;
 	bulletCount = info->bulletCount;
 	damage = info->damage;
 	attackRate = info->attackRate;
-
-	//std::cout << (int)t << std::endl;
+	//GetType(bullettype);
 }
+
+
 
 void MonsterBullet::Fire(const sf::Vector2f& pos, const sf::Vector2f& dir)
 {
@@ -103,6 +157,16 @@ void MonsterBullet::Fire(const sf::Vector2f& pos, const sf::Vector2f& dir)
 	SetPosition(pos);
 
 	direction = dir;
+}
+
+//void MonsterBullet::GetType(Types type)
+//{
+//	bullettype = type;
+//}
+
+MonsterBullet::Types MonsterBullet::ReturnType()
+{
+	return bullettype;
 }
 
 void MonsterBullet::Move(float dt)
@@ -121,8 +185,6 @@ void MonsterBullet::Move(float dt)
 
 void MonsterBullet::HitPlayer(float dt)
 {
-	//std::cout << this->player << std::endl;
-	//몬스터 리스트를 안가져오니 셋플레이어를 해야되나
 	if (player != nullptr)
 	{
 		if (sprite.getGlobalBounds().intersects(player->sprite.getGlobalBounds()))
@@ -143,10 +205,6 @@ void MonsterBullet::SetPlayer(Player* player)
 	this->player = player;
 }
 
-float MonsterBullet::GetAttacktimer()
-{
-	return attackTimer;
-}
 
 void MonsterBullet::SetMapSize(sf::FloatRect& mapsize)
 {

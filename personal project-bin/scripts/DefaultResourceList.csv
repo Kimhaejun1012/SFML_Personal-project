@@ -28,10 +28,7 @@
 3,playercsv/AttackUp.csv
 3,playercsv/AttackDown.csv
 3,playercsv/AttackRight.csv
-0,graphics/Naruto.png
 0,graphics/Boss.png
-3,tables/bossBullet.csv
-0,graphics/bossBullet.png
 3,tables/redBullet.csv
 0,graphics/redBullet.png
 0,graphics/home.png
@@ -59,3 +56,8 @@
 3,monstercsv/BossPattern3.csv
 3,monstercsv/BossPattern4.csv
 0,graphics/BossBullet.png
+0,graphics/FireBall.png
+3,tables/FireBall.csv
+3,tables/Pattern31Bullet.csv
+3,tables/Pattern32Bullet.csv
+3,tables/Pattern4Bullet.csv

@@ -17,7 +17,7 @@ protected:
 	std::unordered_map<MonsterBullet::Types, BulletInfo> table;
 
 public:
-	BulletTable() : DataTable(DataTable::Ids::Monster) {};
+	BulletTable() : DataTable(DataTable::Ids::MonsterBullet) {};
 	virtual ~BulletTable() override = default;
 
 	virtual bool Load() override;
