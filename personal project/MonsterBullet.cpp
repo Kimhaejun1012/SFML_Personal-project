@@ -22,6 +22,8 @@ void MonsterBullet::Init()
 	SpriteGo::Init();
 	monsterbullet.AddClip(*RESOURCE_MGR.GetAnimationClip("tables/bossBullet.csv"));
 	monsterbullet.AddClip(*RESOURCE_MGR.GetAnimationClip("tables/redBullet.csv"));
+
+
 	monsterbullet.SetTarget(&sprite);
 	//monster = new Monster("");
 	SetOrigin(Origins::MC);

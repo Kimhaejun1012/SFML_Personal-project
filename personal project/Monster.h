@@ -34,6 +34,15 @@ public:
 		bool flipX = false;
 		sf::Vector2f point;
 	};
+
+	enum class BossAttackPattern
+	{
+		Move,      
+		Pattern1,  
+		Pattern2,  
+		Pattern3   
+	};
+
 	static const int TotalTypes = 3;
 
 protected:
@@ -47,9 +56,11 @@ protected:
 	sf::Vector2f bossMoveDir;
 	float bossbulletRate;
 
+	BossAttackPattern currentAttackPattern;
+	bool bossMoving;
+
 	bool bossAlive = true;
 	int bosscount;
-	bool bossMoving = true;
 	bool monsterscale = true;
 	sf::Vector2f windowsize;
 	Types monsterType;

@@ -41,6 +41,15 @@ void Monster::Init()
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/BossMoveUp.csv"));
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/BossMoveUpRight.csv"));
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/BossPattern1.csv"));
+	//공격 애니매이션
+	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/BossPattern1.csv"));
+	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/BossPattern2.csv"));
+	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/BossPattern3.csv"));
+	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/BossPattern4.csv"));
+
+
+
+
 	monster.SetTarget(&sprite);
 
 	bossMoveDuration = 2.0f;
@@ -111,7 +120,7 @@ void Monster::Update(float dt)
 {
 	SpriteGo::Update(dt);
 	monster.Update(dt);
-	SetOrigin(Origins::MC);
+	SetOrigin(Origins::BC);
 
 	tick -= dt;
 	if (player == nullptr)
@@ -128,7 +137,7 @@ void Monster::Update(float dt)
 	if (monsterType == Types::Boss)
 	{
 		attackTimer += dt;
-		if(bossMoving)
+		//if(bossMoving)
 		BossMove(dt);
 		if (attackTimer > attackRate)
 		{
@@ -314,8 +323,9 @@ bool Monster::GetFlipX() const
 
 void Monster::BossMove(float dt)
 {
-	position += direction * speed * dt;
-	SetPosition(position);
+
+		position += direction * speed * dt;
+		SetPosition(position);
 	float distance = Utils::Distance(player->GetPosition(), position);
 	auto min = std::min_element(clipInfosboss.begin(), clipInfosboss.end(),
 		[this](const ClipInfoBoss& lhs, const ClipInfoBoss& rhs) {
