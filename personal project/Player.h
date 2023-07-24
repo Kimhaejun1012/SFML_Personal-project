@@ -41,7 +41,7 @@ protected:
 	Bullet* bullet;
 	ObjectPool<Bullet> poolBullets;
 	int bulletCount;
-	int bulletDamage = 1000;
+	int bulletDamage = 100;
 	bool attack;
 
 	sf::Vector2f monsterlook = { 0,0 };

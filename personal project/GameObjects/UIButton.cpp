@@ -56,6 +56,12 @@ void UIButton::Update(float dt)
 		if (OnClick != nullptr)
 			OnClick();
 	}
+
+	if (isHover)
+	{
+		if (OnMouse != nullptr)
+			OnMouse();
+	}
 }
 
 void UIButton::Draw(sf::RenderWindow& window)

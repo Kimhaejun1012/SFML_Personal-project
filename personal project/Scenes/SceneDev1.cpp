@@ -31,6 +31,11 @@ void SceneDev1::Init()
 	uiView.setSize(size);
 	uiView.setCenter(size * 0.5f);
 
+
+	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
+	sf::Vector2f centerPos = windowSize * 0.5f;
+
+
 	TextGo* sceneName = (TextGo*)AddGo(new TextGo("", "Scene Name"));
 	sceneName->sortLayer = 100;
 	sceneName->text.setCharacterSize(25);
@@ -68,6 +73,31 @@ void SceneDev1::Init()
 
 	element->SetOrigin(Origins::MC);
 	element->SetPosition(sf::Vector2f{ tileMap->GetPosition() });
+
+
+	//보스 체력바
+	bossHpbar = ((SpriteGo*)AddGo(new SpriteGo("graphics/BossHpBar.png", "BossHpBar")));
+	bossMaxHpBar = ((SpriteGo*)AddGo(new SpriteGo("graphics/BossHpBar.png", "BossHpBar")));
+	bossicon = ((SpriteGo*)AddGo(new SpriteGo("graphics/bossicon.png", "BossHpBar")));
+
+
+
+	bossHpbar->SetOrigin(Origins::ML);
+	bossHpbar->sortLayer = 100;
+	bossMaxHpBar->SetOrigin(Origins::ML);
+	bossMaxHpBar->sprite.setColor({ 0,0,0,100 });
+	bossMaxHpBar->sprite.setPosition(size.x * 0.22, size.y * 0.12);
+	bossHpbar->sprite.setPosition(size.x * 0.22, size.y * 0.12);
+	bossMaxHpBar->sortLayer = 100;
+
+	bossicon->SetOrigin(Origins::MC);
+	bossicon->sortLayer = 101;
+	bossicon->SetPosition(bossMaxHpBar->sprite.getGlobalBounds().left * 2.25 /*+ (bossMaxHpBar->sprite.getGlobalBounds().width * 2)*/, bossMaxHpBar->sprite.getGlobalBounds().top- 15);
+
+	bossicon->SetActive(false);
+	bossHpbar->SetActive(false);
+	bossMaxHpBar->SetActive(false);
+
 
 	tileSize = tileMap->vertexArray.getBounds();
 	mapmap->SetPosition(0, 0);
@@ -112,14 +142,12 @@ void SceneDev1::Release()
 void SceneDev1::Enter()
 {
 	Scene::Enter();
-	//SpawnMonsters(2, tileMap2->GetPosition());
 
 	wallBounds = mapmap->sprite.getGlobalBounds();
 	player->SetWallBounds(wallBounds);
 
+	SpawnMonsters(2, sf::Vector2f(0, 0), monsterType1);
 	SpawnMonsters(2, sf::Vector2f(0, 0), monsterType0);
-	//coin->SetPosition(player->GetPosition());
-	//coin->SetOrigin(Origins::MC);
 }
 
 void SceneDev1::Exit()
@@ -139,7 +167,25 @@ void SceneDev1::Update(float dt)
 	worldView.setCenter(player->GetPosition().x, player->GetPosition().y);
 	NextScene();
 	player->SetMonsterList(monsters);
-	
+
+	if (bosson <= 0 && !bossdie)
+	{
+		bossicon->SetActive(true);
+		bossHpbar->SetActive(true);
+		bossMaxHpBar->SetActive(true);
+		
+		sf::IntRect bosshprect(0, 0, (int)((static_cast<float>(bosshp) / static_cast<float>(bossmaxhp) * 500)), 100);
+
+		bossHpbar->sprite.setTextureRect(bosshprect);
+		//bossHpbar->sprite.setScale(((static_cast<float>(bosshp) / static_cast<float>(bossmaxhp))),1.f);
+	}
+	else
+	{
+		bossicon->SetActive(false);
+		bossHpbar->SetActive(false);
+		bossMaxHpBar->SetActive(false);
+	}
+
 	if (bosspattern2)
 	{
 		SpawnMonsters(3, bossPos, (Monster::Types)0);
@@ -160,6 +206,8 @@ void SceneDev1::Update(float dt)
 	}
 	if(INPUT_MGR.GetKeyDown(sf::Keyboard::Num5))
 	SCENE_MGR.ChangeScene(SceneId::Title);
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::F1))
+		SCENE_MGR.ChangeScene(SceneId::Menu);
 	for (int i = 0; i < coins.size(); ++i)
 	{
 		coinDir = Utils::Normalize(player->GetPosition() - coins[i]->sprite.getPosition());
@@ -186,7 +234,6 @@ void SceneDev1::Update(float dt)
 		clear->SetActive(true);
 		clearbutton->SetActive(true);
 		std::cout << "보스 죽음 클리어 메뉴 띄워라" << std::endl;
-		bossdie = false;
 	}
 
 
@@ -239,6 +286,9 @@ void SceneDev1::SpawnMonsters(int count, sf::Vector2f center, Monster::Types a)
 		} while (Utils::Distance(center, pos) < 200.f && 3 > 200.f);
 
 		monster->SetPosition(pos);
+
+		if (a == Monster::Types::Boss)
+			bosson -=1;
 
 		//zombies.push_back(zombie);
 		//zombie->Reset();
@@ -351,9 +401,14 @@ void SceneDev1::BossPattern2(bool bosspattern2)
 }
 
 
-void SceneDev1::SetBossPos(sf::Vector2f& BossPos)
+void SceneDev1::GetBossHp(int maxhp)
 {
-	bossPos = BossPos;
+	bosshp = maxhp;
+}
+
+void SceneDev1::GetBossMaxHp(int maxhp)
+{
+	bossmaxhp = maxhp;
 }
 
 void SceneDev1::NextScene()
@@ -367,3 +422,26 @@ void SceneDev1::NextScene()
 		nextScene = false;
 }
 
+void Monster::BossHpUI()
+{
+	Scene* scene = SCENE_MGR.GetCurrScene();
+	SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
+	bossHpbar = ((SpriteGo*)sceneDev1->AddGo(new SpriteGo("graphics/BossHpBar.png", "BossHpBar")));
+	bossMaxHpBar = ((SpriteGo*)sceneDev1->AddGo(new SpriteGo("graphics/BossHpBar.png", "BossHpBar")));
+
+
+
+
+	bossHpbar->SetOrigin(Origins::ML);
+	bossHpbar->sortLayer = 106;
+	bossMaxHpBar->SetOrigin(Origins::ML);
+	bossMaxHpBar->sprite.setColor({ 0,0,0,150 });
+	bossMaxHpBar->sprite.setPosition(windowsize.x * 0.5, windowsize.y * 0.5);
+	bossHpbar->sprite.setPosition(windowsize.x * 0.5, windowsize.y * 0.5);
+	bossMaxHpBar->sortLayer = 106;
+
+	bossHpbar->SetActive(true);
+	bossMaxHpBar->SetActive(true);
+
+	//bossHpbar->sprite.setSize({ (static_cast<float>(hp) / static_cast<float>(maxHp)) * 50.f, 7.f });
+}

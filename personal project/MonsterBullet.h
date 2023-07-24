@@ -17,6 +17,7 @@ public:
 		Pattern31,
 		Pattern32,
 		Pattern4,
+		Hammer,
 	};
 
 

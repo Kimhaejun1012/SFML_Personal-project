@@ -2,11 +2,10 @@
 #include "SceneTitle.h"
 #include "TextGo.h"
 #include "SpriteGo.h"
-#include "Framework.h"
 #include "StringTable.h"
 #include "Scene.h"
 
-SceneTitle::SceneTitle(SceneId id)
+SceneTitle::SceneTitle()
 	: Scene(SceneId::Title)
 {
 	resourceListPath = "scripts/DefaultResourceList.csv";

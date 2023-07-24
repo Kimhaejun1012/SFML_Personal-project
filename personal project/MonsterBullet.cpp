@@ -25,7 +25,7 @@ void MonsterBullet::Init()
 	monsterbullet.AddClip(*RESOURCE_MGR.GetAnimationClip("tables/Pattern31Bullet.csv"));
 	monsterbullet.AddClip(*RESOURCE_MGR.GetAnimationClip("tables/Pattern32Bullet.csv"));	
 	monsterbullet.AddClip(*RESOURCE_MGR.GetAnimationClip("tables/Pattern4Bullet.csv"));
-
+	monsterbullet.AddClip(*RESOURCE_MGR.GetAnimationClip("tables/HammerBullet.csv"));
 
 	monsterbullet.SetTarget(&sprite);
 	//monster = new Monster("");
@@ -63,7 +63,6 @@ void MonsterBullet::Update(float dt)
 
 		if (bullettype == Types::FireBall)
 		{
-			std::cout << "ÆÐÅÏ 1 ºÒ¸´" << std::endl;
 			if (monsterbullet.GetCurrentClipId() != "FireBall")
 			{
 				monsterbullet.Play("FireBall");
@@ -79,7 +78,6 @@ void MonsterBullet::Update(float dt)
 		}
 		if (bullettype == Types::Pattern31)
 		{
-			std::cout << "ÆÐÅÏ 3 ºÒ¸´" << std::endl;
 			if (monsterbullet.GetCurrentClipId() != "Pattern31Bullet")
 			{
 				monsterbullet.Play("Pattern31Bullet");
@@ -111,10 +109,25 @@ void MonsterBullet::Update(float dt)
 		}
 		if (bullettype == Types::Pattern4)
 		{
-			//std::cout << "ÆÐÅÏ 4 ºÒ¸´" << std::endl;
 			if (monsterbullet.GetCurrentClipId() != "Pattern4Bullet")
 			{
 				monsterbullet.Play("Pattern4Bullet");
+			}
+			Move(dt);
+
+			attackTimer += dt;
+			if (attackTimer > attackRate)
+			{
+				HitPlayer(dt);
+				attackTimer = 0.f;
+			}
+			tick = 2.f;
+		}
+		if (bullettype == Types::Hammer)
+		{
+			if (monsterbullet.GetCurrentClipId() != "HammerBullet")
+			{
+				monsterbullet.Play("HammerBullet");
 			}
 			Move(dt);
 

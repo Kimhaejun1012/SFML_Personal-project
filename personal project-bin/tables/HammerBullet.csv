@@ -1,0 +1,8 @@
+ID,FPS,LOOPTYPE,,
+HammerBullet,10,1,,
+,,,,
+TEXTURE ID,LEFT,TOP,WIDTH,HEIGHT
+graphics/Hammer.png,506,158,23,20
+graphics/Hammer.png,541,161,19,23
+graphics/Hammer.png,579,166,23,20
+graphics/Hammer.png,620,160,19,23

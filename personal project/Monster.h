@@ -14,7 +14,7 @@ public:
 	enum class Types
 	{
 		Monster1,
-		Monster2,
+		Hammer,
 		Boss,
 	};
 
@@ -31,6 +31,15 @@ public:
 		std::string move;
 		std::string run;
 		//std::string attack;
+		bool flipX = false;
+		sf::Vector2f point;
+	};
+
+	struct ClipInfoHammer
+	{
+		std::string move;
+		std::string attack;
+		std::string idle;
 		bool flipX = false;
 		sf::Vector2f point;
 	};
@@ -66,6 +75,9 @@ protected:
 	int randomPattern = 0;
 
 
+	int bossHp;
+	int bossMaxHp;
+
 
 	bool bossAlive = true;
 	int bosscount;
@@ -85,6 +97,9 @@ protected:
 
 	std::vector<ClipInfoBoss> clipInfosboss;
 	ClipInfoBoss currentClipInfoboss;
+
+	std::vector<ClipInfoHammer> clipInfosHammer;
+	ClipInfoHammer currentClipInfoHammer;
 	bool flipX = false;
 	// Ω∫≈»
 	//float plusespeed = 0;
@@ -110,8 +125,10 @@ protected:
 	std::list<MonsterBullet*> monsterbullets;
 	float tick = 5.f;
 
+	SpriteGo* bossHpbar;
+	SpriteGo* bossMaxHpBar;
 
-
+	float zero = 0.f;
 
 	float pattern3_1ShootTimer = 0.f;
 	float pattern3_2ShootTimer = 0.f;
@@ -120,7 +137,7 @@ protected:
 
 public:
 	ObjectPool<Monster>* pool;
-	Monster(const std::string n = "");
+	Monster(const std::string& textureId = "", const std::string& n = "");
 	virtual ~Monster() override;
 	virtual void Init() override;
 	virtual void Release() override;
@@ -157,6 +174,7 @@ public:
 	void BossDefault(float dt);
 	void GoombaMove(float dt);
 	void Pattern3Bullet(MonsterBullet::Types t);
-	
+	void BossHpUI();
+
 };
 

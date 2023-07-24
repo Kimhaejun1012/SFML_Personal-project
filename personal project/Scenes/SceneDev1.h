@@ -24,6 +24,8 @@ protected:
 	float speed = 80;
 	SpriteGo* tempCoin;
 
+	SpriteGo* bossHpbar;
+	SpriteGo* bossMaxHpBar;
 
 	std::vector<SpriteGo*> coins;
 	SpriteGo* coin;
@@ -40,12 +42,17 @@ protected:
 	SpriteGo* mapmap2;
 	sf::Vector2f size;
 
+	int bosshp = 0;
+	int bossmaxhp = 0;
+
+
 	Player* player;
 	Element* element;
 	bool nextScene;
 	Monster::Types monsterType;
 	Monster::Types monsterType0 = (Monster::Types)0;
 	Monster::Types monsterType1 = (Monster::Types)1;
+	Monster::Types monsterType2 = (Monster::Types)2;
 
 	Monster* monster;
 	MonsterBullet* monsterbullet;
@@ -61,15 +68,19 @@ protected:
 	UIButton* testbutton1;
 	UIButton* testbutton2;
 	UIButton* testbutton3;
+
+
 	SpriteGo* playerHp;
 	SpriteGo* playerMaxHp;
 	SpriteGo* expbar;
 	SpriteGo* maxexpbar;
+	SpriteGo* bossicon;
 
 public:
 	SceneDev1();
 	virtual ~SceneDev1() override;
 	bool bossdie = false;
+	int bosson = 1;
 	virtual void Init() override;
 	virtual void Release() override;
 
@@ -87,6 +98,7 @@ public:
 	void BossPattern2(bool bosspattern2);
 	
 	void SetBossPos(sf::Vector2f& BossPos);
+	void BossHpUI();
 
 	void NextScene();
 	template<typename T>
@@ -95,6 +107,12 @@ public:
 	void OnDieMonster(Monster* monster);
 	void GetCoin(std::vector<SpriteGo*> coin);
 	sf::FloatRect wallBounds;
+
+
+	void GetBossHp(int hp);
+	void GetBossMaxHp(int maxhp);
+
+
 };
 
 template<typename T>

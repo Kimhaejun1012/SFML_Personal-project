@@ -2,24 +2,20 @@
 #include "Scene.h"
 
 class SpriteGo;
-class SceneTitle : public Scene
+class UIButton;
+class SceneMenu : public Scene
 {
 protected:
 
-	sf::Color getColor;
-	int steps = 100;
-	int duration = 100;
-	int currentAlpha;
-	SpriteGo* title;
-	float speed;
+	SpriteGo* main;
+	UIButton* startbutton;
 
-	float fadeDuration = 0.009f;
-	float fadeTimer = 0.f;
+	bool isbutton = true;
 
 public:
 
-	SceneTitle();
-	virtual ~SceneTitle() override;
+	SceneMenu();
+	virtual ~SceneMenu() override;
 
 	virtual void Init() override;
 	virtual void Release() override;
@@ -30,3 +26,4 @@ public:
 	virtual void Update(float dt) override;
 	virtual void Draw(sf::RenderWindow& window) override;
 };
+

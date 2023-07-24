@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "SceneMgr.h"
-#include "SceneDev1.h"
 #include "SceneTitle.h"
+#include "SceneMenu.h"
+#include "SceneDev1.h"
+
 void SceneMgr::Init()
 {
 	if (!scenes.empty())
@@ -11,6 +13,8 @@ void SceneMgr::Init()
 
 	scenes.push_back(new SceneTitle());
 	scenes.push_back(new SceneDev1());
+	scenes.push_back(new SceneMenu());
+
 	for (auto scene : scenes)
 	{
 		scene->Init();

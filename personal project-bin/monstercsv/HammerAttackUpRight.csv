@@ -1,0 +1,27 @@
+ID,FPS,LOOPTYPE,,
+HammerAttackUpRight,10,1,,
+,,,,
+TEXTURE ID,LEFT,TOP,WIDTH,HEIGHT
+graphics/Hammer2.png,8,24,32,48
+graphics/Hammer2.png,71,24,33,48
+graphics/Hammer2.png,133,25,34,49
+graphics/Hammer2.png,196,26,34,50
+graphics/Hammer2.png,258,27,33,49
+graphics/Hammer2.png,320,25,30,51
+graphics/Hammer2.png,382,23,28,53
+graphics/Hammer2.png,442,27,33,49
+graphics/Hammer2.png,499,27,38,49
+graphics/Hammer2.png,561,28,38,48
+graphics/Hammer2.png,624,29,38,47
+graphics/Hammer2.png,694,26,33,50
+graphics/Hammer2.png,762,26,27,50
+graphics/Hammer2.png,87,127,43,53
+graphics/Hammer2.png,147,137,49,38
+graphics/Hammer2.png,211,135,42,41
+graphics/Hammer2.png,273,133,29,45
+graphics/Hammer2.png,331,132,31,46
+graphics/Hammer2.png,394,131,29,46
+graphics/Hammer2.png,457,130,29,48
+graphics/Hammer2.png,518,129,31,49
+graphics/Hammer2.png,580,129,31,49
+graphics/Hammer2.png,643,129,30,49

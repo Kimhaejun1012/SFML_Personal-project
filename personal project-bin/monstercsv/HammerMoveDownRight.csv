@@ -1,0 +1,14 @@
+ID,FPS,LOOPTYPE,,
+HammerMoveDownRight,10,1,,
+,,,,
+TEXTURE ID,LEFT,TOP,WIDTH,HEIGHT
+graphics/Hammer.png,7,198,26,45
+graphics/Hammer.png,45,199,27,44
+graphics/Hammer.png,83,200,27,45
+graphics/Hammer.png,121,201,27,46
+graphics/Hammer.png,159,199,26,48
+graphics/Hammer.png,197,198,27,45
+graphics/Hammer.png,235,199,29,47
+graphics/Hammer.png,273,200,29,45
+graphics/Hammer.png,310,201,27,43
+graphics/Hammer.png,349,199,24,46

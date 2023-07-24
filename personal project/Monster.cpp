@@ -9,8 +9,7 @@
 #include "UIButton.h"
 
 //std::cout << "들어옴" << std::endl;
-Monster::Monster(const std::string n)
-	: SpriteGo("", n)
+Monster::Monster(const std::string& textureId, const std::string& n) : SpriteGo(textureId, n)
 {
 }
 
@@ -35,6 +34,20 @@ void Monster::Init()
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/GoombaRunUp.csv"));
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/GoombaRunUpRight.csv"));
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/GoombaDie.csv"));
+
+	//해머
+	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/HammerMoveDown.csv"));
+	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/HammerMoveDownRight.csv"));
+	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/HammerMoveRight.csv"));
+	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/HammerMoveUp.csv"));
+	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/HammerMoveUpRight.csv"));
+	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/HammerAttackDown.csv"));
+	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/HammerAttackDownRight.csv"));
+	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/HammerAttackRight.csv"));
+	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/HammerAttackUp.csv"));
+	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/HammerAttackUpRight.csv"));
+	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/HammerIdle.csv"));
+
 
 	//보스 움직임
 	monster.AddClip(*RESOURCE_MGR.GetAnimationClip("monstercsv/BossMoveDown.csv"));
@@ -82,6 +95,18 @@ void Monster::Init()
 	clipInfos.push_back({ "GoombaMoveDown", "GoombaRunDown",true,{0.f, 1.f} });
 	clipInfos.push_back({ "GoombaMoveDownRight", "GoombaRunDownRight",false, Utils::Normalize({1.f, 1.f}) });
 
+	//해머
+	clipInfosHammer.push_back({ "HammerMoveUpRight", "HammerAttackUpRight" ,"HammerIdle",true, Utils::Normalize({-1.f, -1.f})});
+	clipInfosHammer.push_back({ "HammerMoveUp", "HammerAttackUp" ,"HammerIdle",true, {0.f, -1.f} });
+	clipInfosHammer.push_back({ "HammerMoveUpRight", "HammerAttackUpRight","HammerIdle",false, Utils::Normalize({1.f, -1.f}) });
+
+	clipInfosHammer.push_back({ "HammerMoveRight", "HammerAttackRight" ,"HammerIdle",true, {-1.f, 0.f} });
+	clipInfosHammer.push_back({ "HammerMoveRight", "HammerAttackRight" ,"HammerIdle",false, {1.f, 0.f} });
+
+	clipInfosHammer.push_back({ "HammerMoveDownRight", "HammerAttackDownRight" ,"HammerIdle",true, Utils::Normalize({-1.f, 1.f}) });
+	clipInfosHammer.push_back({ "HammerMoveDown", "HammerAttackDown","HammerIdle",true,{0.f, 1.f} });
+	clipInfosHammer.push_back({ "HammerMoveDownRight", "HammerAttackDownRight","HammerIdle",false, Utils::Normalize({1.f, 1.f}) });
+
 	//보스
 	clipInfosboss.push_back({ "BossMoveUpRight", "BossMoveUpRight" ,true, Utils::Normalize({-1.f, -1.f}) });
 	clipInfosboss.push_back({ "BossMoveUp", "BossMoveUp" ,true, {0.f, -1.f} });
@@ -106,6 +131,8 @@ void Monster::Release()
 void Monster::Reset()
 {
 	SpriteGo::Reset();
+	//BossHpUI();
+
 	monster.Play("BossMoveDown");
 	SetOrigin(origin);
 
@@ -117,6 +144,7 @@ void Monster::Reset()
 	poolBullets.Clear();
 	currentClipInfo = clipInfos[6];
 	currentClipInfoboss = clipInfosboss[6];
+	currentClipInfoHammer = clipInfosHammer[6];
 }
 
 void Monster::Update(float dt)
@@ -124,6 +152,8 @@ void Monster::Update(float dt)
 	SpriteGo::Update(dt);
 	monster.Update(dt);
 	SetOrigin(Origins::BC);
+
+
 
 	tick -= dt;
 	if (player == nullptr)
@@ -143,15 +173,11 @@ void Monster::Update(float dt)
 
 	if (monsterType == Types::Boss)
 	{
-		//std::cout << monster.GetTotalFrame() - monster.GetCurFrame() << std::endl;
-		//if(!isPattern)
-		//BossMove(dt);
-		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num6))
-		{
-			bosspattern += 1;
-			std::cout << "bosspattern : " << bosspattern << std::endl;
-			std::cout << "randomPattern : " << randomPattern << std::endl;
-		}
+		Scene* scene = SCENE_MGR.GetCurrScene();
+		SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
+		sceneDev1->GetBossHp(hp);
+		sceneDev1->GetBossMaxHp(maxHp);
+
 		if (randomPattern==0)
 		{
 			if (attackTimer > attackRate)
@@ -164,11 +190,31 @@ void Monster::Update(float dt)
 			bosspattern += dt;
 			attackTimer += dt;
 		}
-		if (bosspattern > bosscooltime/* && !isPattern*/)
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num6))
+		{
+			isPattern = true;
+
+			randomPattern = 1; // 랜덤 패턴 선택
+			bosspattern = 0;
+		}
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num7))
+		{
+			isPattern = true;
+			//randomPattern = Utils::RandomRange(1, 5); // 랜덤 패턴 선택
+			randomPattern =2; // 랜덤 패턴 선택
+			bosspattern = 0;
+		}
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num8))
 		{
 			isPattern = true;
 			//randomPattern = Utils::RandomRange(1, 5); // 랜덤 패턴 선택
 			randomPattern = 3; // 랜덤 패턴 선택
+			bosspattern = 0;
+		}
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num9))
+		{
+			isPattern = true;
+			randomPattern =4; 
 			bosspattern = 0;
 		}
 		if (randomPattern == 1)
@@ -210,88 +256,93 @@ void Monster::Update(float dt)
 		}
 		if (randomPattern == 4)
 		{
-			std::cout << monster.GetTotalFrame() << std::endl;
+			std::cout << monster.GetTotalFrame() - monster.GetCurFrame() << std::endl;
 			BossPattern4(dt);
-			if(isone)
+			if(monster.GetTotalFrame() - monster.GetCurFrame() <= 70)
 			{
-				SpawnBullet2(10,(MonsterBullet::Types)3);
-				isone = false;
-			}
-			if (monster.GetTotalFrame() - monster.GetCurFrame() <= 70)
-			{
-				isone = true;
-					if(isone)
-					{
-						SpawnBullet2(10, (MonsterBullet::Types)3);
-						isone = false;
-					}
-			}
-			if (isone && monster.GetTotalFrame() - monster.GetCurFrame() <= 60)
-			{
-				isone = true;
-				if (isone)
+				zero += dt;
+				float end = 0.5f;
+				if (zero >= end)
 				{
-					SpawnBullet2(10, (MonsterBullet::Types)3);
-					isone = false;
+					SpawnBullet2(5, (MonsterBullet::Types)3);
+					zero = 0.f;
 				}
 			}
-			if (isone && monster.GetTotalFrame() - monster.GetCurFrame() <= 50)
-			{
-				isone = true;
-				if (isone)
-				{
-					SpawnBullet2(10, (MonsterBullet::Types)3);
-					isone = false;
-				}
-			}
-			if (isone && monster.GetTotalFrame() - monster.GetCurFrame() <= 40)
-			{
-				isone = true;
-				if (isone)
-				{
-					SpawnBullet2(10, (MonsterBullet::Types)3);
-					isone = false;
-				}
-			}
-			if (isone && monster.GetTotalFrame() - monster.GetCurFrame() <= 30)
-			{
-				isone = true;
-				if (isone)
-				{
-					SpawnBullet2(10, (MonsterBullet::Types)3);
-					isone = false;
-				}
-			}
-			if (isone && monster.GetTotalFrame() - monster.GetCurFrame() <= 20)
-			{
-				isone = true;
-				if (isone)
-				{
-					SpawnBullet2(10, (MonsterBullet::Types)3);
-					isone = false;
-				}
-			}
+
 			if (monster.GetTotalFrame() - monster.GetCurFrame() <= 1)
 			{
-				isone = true;
-				if(isone)
-				{
-					randomPattern = 0;
-				isone = true;
+
+				randomPattern = 0;
 				std::cout << "프레임 끝" << std::endl;
 				}
-			}
 		}
 		bosspattern = 0;
 		isPattern = false;
-	}
+		}
+
 
 	if(monsterType == Types::Monster1)
 	{
 		GoombaMove(dt);
 	}
 
-}
+	if (monsterType == Types::Hammer)
+	{
+		if (monsterscale)
+		{
+			sprite.setScale(2.0f, 2.0f);
+			monsterscale = false;
+		}
+		float distance = Utils::Distance(player->GetPosition(), position);
+		auto min = std::min_element(clipInfosHammer.begin(), clipInfosHammer.end(),
+			[this](const ClipInfoHammer& lhs, const ClipInfoHammer& rhs) {
+				return Utils::Distance(lhs.point, direction) < Utils::Distance(rhs.point, direction);
+			});
+		currentClipInfoHammer = *min;
+		std::string clipId = distance <= 550 ? (distance <= 350 ? currentClipInfoHammer.attack : currentClipInfoHammer.move) : currentClipInfoHammer.idle;
+
+		if (GetFlipX() != currentClipInfoHammer.flipX)
+		{
+			SetFlipX(currentClipInfoHammer.flipX);
+		}
+
+		attackTimer += dt;
+
+			if (clipId == currentClipInfoHammer.attack)
+			{
+				if (monster.GetCurrentClipId() != clipId)
+				{
+					monster.Play(clipId);
+				}
+					if (attackTimer > attackRate)
+					{
+						SpawnBullet((MonsterBullet::Types)4);
+						attackTimer = 0;
+					}
+				
+			}
+			else if (clipId == currentClipInfoHammer.move)
+			{
+				if (monster.GetCurrentClipId() != clipId)
+				{
+					monster.Play(clipId);
+				}
+					position += direction * speed * dt;
+					SetPosition(position);
+
+			}
+			else if (clipId == currentClipInfoHammer.idle)
+			{
+				if (monster.GetCurrentClipId() != clipId)
+				{
+					monster.Play(clipId);
+				}
+					position += direction * 0.f * dt;
+					SetPosition(position);
+				}
+			}
+		}
+
 
 void Monster::BossPattern1(float dt)
 {
@@ -330,10 +381,12 @@ void Monster::BossPattern2(float dt)
 	if (monster.GetTotalFrame() - monster.GetCurFrame() <= 10)
 	{
 		if (isone)
-			sceneDev1->SpawnMonsters(3, BosPos, (Monster::Types)0);
-		isone = false;
+		{
+			sceneDev1->SpawnMonsters(2, BosPos, (Monster::Types)0);
+			sceneDev1->SpawnMonsters(1, BosPos, (Monster::Types)1);
+			isone = false;
+		}
 	}
-	//sceneDev1->SetBossPos(BosPos);
 }
 
 void Monster::BossPattern3(float dt)
@@ -446,7 +499,17 @@ void Monster::OnHitBullet(int damage)
 {
 	hp -= damage;
 
-	if (hp <= 0 && monsterType == Types::Boss)
+	if (hp <= 0 && monsterType != Types::Boss)
+	{
+		Scene* scene = SCENE_MGR.GetCurrScene();
+		SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
+
+		if (scene != nullptr)
+		{
+			sceneDev1->OnDieMonster(this);
+		}
+	}
+	else if (hp <= 0 && monsterType == Types::Boss)
 	{
 
 		Scene* scene = SCENE_MGR.GetCurrScene();
@@ -458,17 +521,7 @@ void Monster::OnHitBullet(int damage)
 			sceneDev1->bossdie = true;
 		}
 	}
-	else if (hp <= 0 && monsterType == Types::Monster1 /*&& monster.GetCurrentClipId() != "GoombaDie"*/)
-	{
-		Scene* scene = SCENE_MGR.GetCurrScene();
-		SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
 
-		if (scene != nullptr)
-		{
-			sceneDev1->OnDieMonster(this);
-		}
-
-	}
 }
 
 
@@ -544,7 +597,7 @@ void Monster::Pattern3Bullet(MonsterBullet::Types t)
 
 	if (t == MonsterBullet::Types::Pattern31)
 	{
-		SpawnBullet2(10, MonsterBullet::Types::Pattern32);
+		SpawnBullet2(50, MonsterBullet::Types::Pattern32);
 	}
 }
 
@@ -565,6 +618,7 @@ void Monster::SpawnBullet2(int count, MonsterBullet::Types t)
 		{
 			monsterbullet->Fire(sf::Vector2f(GetPosition().x, sprite.getGlobalBounds().top - 30), a);
 		}
+		else
 		monsterbullet->Fire(GetPosition(), a);
 		Scene* scene = SCENE_MGR.GetCurrScene();
 		SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
@@ -609,3 +663,27 @@ void Monster::SetFlipX(bool flip)
 	scale.x = !flipX ? abs(scale.x) : -abs(scale.x);
 	sprite.setScale(scale);
 }
+
+//void Monster::BossHpUI()
+//{
+//	Scene* scene = SCENE_MGR.GetCurrScene();
+//	SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
+//	bossHpbar = ((SpriteGo*)sceneDev1->AddGo(new SpriteGo("graphics/BossHpBar.png", "BossHpBar")));
+//	bossMaxHpBar = ((SpriteGo*)sceneDev1->AddGo(new SpriteGo("graphics/BossHpBar.png", "BossHpBar")));
+//
+//
+//
+//
+//	bossHpbar->SetOrigin(Origins::ML);
+//	bossHpbar->sortLayer = 106;
+//	bossMaxHpBar->SetOrigin(Origins::ML);
+//	bossMaxHpBar->sprite.setColor({ 0,0,0,150 });
+//	bossMaxHpBar->sprite.setPosition(windowsize.x *0.5, windowsize.y * 0.5);
+//	bossHpbar->sprite.setPosition(windowsize.x * 0.5, windowsize.y * 0.5);
+//	bossMaxHpBar->sortLayer = 106;
+//
+//	bossHpbar->SetActive(true);
+//	bossMaxHpBar->SetActive(true);
+//
+//	//bossHpbar->sprite.setSize({ (static_cast<float>(hp) / static_cast<float>(maxHp)) * 50.f, 7.f });
+//}

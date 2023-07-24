@@ -135,6 +135,9 @@ void Player::Update(float dt)
 	//SpriteGo::Update(dt);
 	Scene* scene = SCENE_MGR.GetCurrScene();
 
+	//std::cout <<"플레이어 경험치 바 :" << expbar->GetPosition().x << expbar->GetPosition().y << std::endl;
+
+
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num1))
 	attack = true;
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num2))

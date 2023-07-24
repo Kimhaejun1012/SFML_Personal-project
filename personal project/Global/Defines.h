@@ -37,6 +37,7 @@ enum class SceneId
 	None = -1,
 	Title,
 	Dev1,
+	Menu,
 	Dev2,
 	Boss,
 	Count,
