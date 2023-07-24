@@ -9,9 +9,9 @@ protected:
 
 	SpriteGo* main;
 	UIButton* startbutton;
-
+	SpriteGo* targetScale;
 	bool isbutton = true;
-
+	float tick = 0.4;
 public:
 
 	SceneMenu();

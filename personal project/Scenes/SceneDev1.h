@@ -45,6 +45,7 @@ protected:
 	int bosshp = 0;
 	int bossmaxhp = 0;
 
+	int stage = 1;
 
 	Player* player;
 	Element* element;

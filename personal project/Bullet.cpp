@@ -32,7 +32,7 @@ void Bullet::Release()
 void Bullet::Reset()
 {
 	SpriteGo::Reset();
-	damage = 100;
+	damage = 1000;
 	animation.Play("Bullet");
 	SetPosition(0.f, 0.f);
 	direction = { 0.f , 0.f };

@@ -136,6 +136,7 @@ void Monster::Reset()
 	monster.Play("BossMoveDown");
 	SetOrigin(origin);
 
+
 	for (auto bullet : poolBullets.GetUseList())
 	{
 		SCENE_MGR.GetCurrScene()->RemoveGo(bullet);
@@ -503,7 +504,6 @@ void Monster::OnHitBullet(int damage)
 	{
 		Scene* scene = SCENE_MGR.GetCurrScene();
 		SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
-
 		if (scene != nullptr)
 		{
 			sceneDev1->OnDieMonster(this);

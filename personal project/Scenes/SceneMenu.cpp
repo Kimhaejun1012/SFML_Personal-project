@@ -41,8 +41,9 @@ void SceneMenu::Init()
 	startbutton->sortLayer = 101;
 
 
-
-
+	startbutton->OnClick = []() {
+		SCENE_MGR.ChangeScene(SceneId::Dev1);
+	};
 
 }
 
@@ -70,17 +71,13 @@ void SceneMenu::Update(float dt)
 
 		startbutton->OnMouse = [this, dt]()
 		{
-			sf::Vector2f scale = { 0.4f,0.4f };// = startbutton->sprite.getScale();
+			sf::Vector2f scale = { 0.4f,0.4f };
 			sf::Vector2f targetScale = { 15.f, 15.f };
 			if (scale.x < targetScale.x)
-				scale += sf::Vector2f(1.f * dt, 1.f * dt);
+				scale += sf::Vector2f(10.f * dt, 10.f * dt);
 			else
-			scale -= sf::Vector2f(1.f * dt, 1.f * dt);
-
-			std::cout<<scale.x;
+			scale -= sf::Vector2f(10.f * dt, 10.f * dt);
 			startbutton->sprite.setScale(scale);
-			//startbutton->sprite.setScale({ std::min(scale.x, targetScale.x), std::min(scale.y, targetScale.y)});
-
 		};
 
 }

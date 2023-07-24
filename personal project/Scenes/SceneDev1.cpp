@@ -83,15 +83,15 @@ void SceneDev1::Init()
 
 
 	bossHpbar->SetOrigin(Origins::ML);
-	bossHpbar->sortLayer = 100;
 	bossMaxHpBar->SetOrigin(Origins::ML);
+	bossHpbar->sortLayer = 100;
 	bossMaxHpBar->sprite.setColor({ 0,0,0,100 });
-	bossMaxHpBar->sprite.setPosition(size.x * 0.22, size.y * 0.12);
 	bossHpbar->sprite.setPosition(size.x * 0.22, size.y * 0.12);
+	bossMaxHpBar->sprite.setPosition(bossHpbar->sprite.getPosition());
 	bossMaxHpBar->sortLayer = 100;
 
 	bossicon->SetOrigin(Origins::MC);
-	bossicon->sortLayer = 101;
+	bossicon->sortLayer = 103;
 	bossicon->SetPosition(bossMaxHpBar->sprite.getGlobalBounds().left * 2.25 /*+ (bossMaxHpBar->sprite.getGlobalBounds().width * 2)*/, bossMaxHpBar->sprite.getGlobalBounds().top- 15);
 
 	bossicon->SetActive(false);
@@ -102,9 +102,9 @@ void SceneDev1::Init()
 	tileSize = tileMap->vertexArray.getBounds();
 	mapmap->SetPosition(0, 0);
 	mapmap->SetOrigin(Origins::MC);
-	nextdoor->SetPosition(-19.f, tileSize.top - 37);
+	//nextdoor->SetPosition(-19.f, tileSize.top - 37);
 	nextdoor->SetOrigin(Origins::MC);
-	nextdoor->SetActive(false);
+
 
 	poolMonsters.OnCreate = [this](Monster* monster) {
 
@@ -118,10 +118,14 @@ void SceneDev1::Init()
 	clearbutton->OnClick = [this]() {
 
 		std::cout << "클리어 버튼 클릭" << std::endl;
-		SCENE_MGR.ChangeScene(SceneId::Title);
 		clear->SetActive(false);
 		clearbutton->SetActive(false);
-		//Release();
+		bossdie = false;
+		bossicon->SetActive(false);
+		bossHpbar->SetActive(false);
+		bossMaxHpBar->SetActive(false);
+		bosson = 1;
+		SCENE_MGR.ChangeScene(SceneId::Menu);
 	};
 	for (auto go : gameObjects)
 	{
@@ -145,17 +149,20 @@ void SceneDev1::Enter()
 
 	wallBounds = mapmap->sprite.getGlobalBounds();
 	player->SetWallBounds(wallBounds);
+	nextdoor->SetPosition(-19.f, wallBounds.top + 148);
+	SpawnMonsters(1, sf::Vector2f(0, 0), monsterType1);
+	SpawnMonsters(1, sf::Vector2f(0, 0), monsterType0);
 
-	SpawnMonsters(2, sf::Vector2f(0, 0), monsterType1);
-	SpawnMonsters(2, sf::Vector2f(0, 0), monsterType0);
+
 }
 
 void SceneDev1::Exit()
 {
 	//player->Release();
-	ClearObjectPool(poolMonsters);
+	//ClearObjectPool(poolMonsters);
 	player->Reset();
 	monster->Reset();
+	stage = 1;
 	//poolMonsters.Clear();
 	//poolMonsters.Release();
 	Scene::Exit();
@@ -167,7 +174,7 @@ void SceneDev1::Update(float dt)
 	worldView.setCenter(player->GetPosition().x, player->GetPosition().y);
 	NextScene();
 	player->SetMonsterList(monsters);
-
+	//std::cout << nextdoor->GetActive();
 	if (bosson <= 0 && !bossdie)
 	{
 		bossicon->SetActive(true);
@@ -192,22 +199,40 @@ void SceneDev1::Update(float dt)
 		bosspattern2 = false;
 	}
 
+
+
+	//std::cout << stage;
 	if (nextScene && player->sprite.getGlobalBounds().intersects(nextdoor->sprite.getGlobalBounds()))
 	{
-		wallBounds = mapmap2->sprite.getGlobalBounds();
+		stage++;
+		//wallBounds = mapmap2->sprite.getGlobalBounds();
+		switch (stage)
+		{
+		case 1:
+			wallBounds = mapmap->sprite.getGlobalBounds();
+			std::cout << "스위치 1" << std::endl;
+			break;
+		case 2:
+			wallBounds = mapmap2->sprite.getGlobalBounds();
+			std::cout << "스위치 2" << std::endl;
+			stage++;
+			break;
+		}
+
 		//monsterbullet->SetMapSize(mapmap2->sprite.getGlobalBounds());
 		monster->GetMap2(wallBounds);
 		SpawnMonsters(1, tileMap2->GetPosition(), (Monster::Types)2);
 		player->SetWallBounds(mapmap2->sprite.getGlobalBounds());
 		player->SetPosition(tileMap2->GetPosition().x, tileMap2->GetPosition().y + 700);
-		nextdoor->SetPosition(-19.f, tileMap2->vertexArray.getBounds().top - 37);
-		nextdoor->SetActive(false);
-
+		nextdoor->SetPosition(-19.f, wallBounds.top - 148);
 	}
+
 	if(INPUT_MGR.GetKeyDown(sf::Keyboard::Num5))
 	SCENE_MGR.ChangeScene(SceneId::Title);
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::F1))
 		SCENE_MGR.ChangeScene(SceneId::Menu);
+
+
 	for (int i = 0; i < coins.size(); ++i)
 	{
 		coinDir = Utils::Normalize(player->GetPosition() - coins[i]->sprite.getPosition());
@@ -233,7 +258,7 @@ void SceneDev1::Update(float dt)
 	{
 		clear->SetActive(true);
 		clearbutton->SetActive(true);
-		std::cout << "보스 죽음 클리어 메뉴 띄워라" << std::endl;
+		//std::cout << "보스 죽음 클리어 메뉴 띄워라" << std::endl;
 	}
 
 
@@ -419,29 +444,8 @@ void SceneDev1::NextScene()
 		nextdoor->SetActive(true);
 	}
 	else
+	{
 		nextScene = false;
-}
-
-void Monster::BossHpUI()
-{
-	Scene* scene = SCENE_MGR.GetCurrScene();
-	SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
-	bossHpbar = ((SpriteGo*)sceneDev1->AddGo(new SpriteGo("graphics/BossHpBar.png", "BossHpBar")));
-	bossMaxHpBar = ((SpriteGo*)sceneDev1->AddGo(new SpriteGo("graphics/BossHpBar.png", "BossHpBar")));
-
-
-
-
-	bossHpbar->SetOrigin(Origins::ML);
-	bossHpbar->sortLayer = 106;
-	bossMaxHpBar->SetOrigin(Origins::ML);
-	bossMaxHpBar->sprite.setColor({ 0,0,0,150 });
-	bossMaxHpBar->sprite.setPosition(windowsize.x * 0.5, windowsize.y * 0.5);
-	bossHpbar->sprite.setPosition(windowsize.x * 0.5, windowsize.y * 0.5);
-	bossMaxHpBar->sortLayer = 106;
-
-	bossHpbar->SetActive(true);
-	bossMaxHpBar->SetActive(true);
-
-	//bossHpbar->sprite.setSize({ (static_cast<float>(hp) / static_cast<float>(maxHp)) * 50.f, 7.f });
+		nextdoor->SetActive(false);
+	}
 }

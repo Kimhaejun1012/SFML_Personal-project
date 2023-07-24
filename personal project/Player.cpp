@@ -28,12 +28,7 @@ void Player::Init()
 	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("playercsv/AttackDown.csv"));
 	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("playercsv/AttackRight.csv"));
 
-	ObjectPool<Bullet>* ptr = &poolBullets;
-	poolBullets.OnCreate = [ptr](Bullet* bullet) {
-		//bullet->textureId = "tables/Bullet.csv";
-		bullet->pool = ptr;
-	};
-	poolBullets.Init();
+
 
 	animation.SetTarget(&sprite);
 	SetOrigin(Origins::BC);
@@ -60,12 +55,12 @@ void Player::Release()
 }
 void Player::Reset()
 {
+	SpriteGo::Reset();
 	Scene* scene = SCENE_MGR.GetCurrScene();
 	SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
 	PlayerReset();
 
 
-	SpriteGo::Reset();
 	PlayerUI();
 	animation.Play("IdleUp");
 	SetOrigin(origin);
@@ -79,9 +74,14 @@ void Player::Reset()
 	{
 		SCENE_MGR.GetCurrScene()->RemoveGo(bullet);
 	}
-	
-
 	poolBullets.Clear();
+
+	ObjectPool<Bullet>* ptr = &poolBullets;
+	poolBullets.OnCreate = [ptr](Bullet* bullet) {
+		//bullet->textureId = "tables/Bullet.csv";
+		bullet->pool = ptr;
+	};
+	poolBullets.Init();
 
 	currentClipInfo = clipInfos[6];
 
