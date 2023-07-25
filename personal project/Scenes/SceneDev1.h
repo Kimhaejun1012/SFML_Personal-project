@@ -31,15 +31,13 @@ protected:
 	SpriteGo* coin;
 	ObjectPool<Monster> poolMonsters;
 	sf::FloatRect tileSize;
-
+	sf::Vector2f position;
 	sf::Vector2f bossPos;
 
 	bool bosspattern2 = false;
 
 	TileMap* tileMap = nullptr;
-	TileMap* tileMap2 = nullptr;
 	SpriteGo* mapmap;
-	SpriteGo* mapmap2;
 	sf::Vector2f size;
 
 	sf::FloatRect tilesize;
@@ -50,7 +48,6 @@ protected:
 	int stage = 1;
 
 	Player* player;
-	Element* element;
 	bool nextScene;
 	Monster::Types monsterType;
 	Monster::Types monsterType0 = (Monster::Types)0;

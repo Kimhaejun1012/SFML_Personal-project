@@ -43,11 +43,10 @@ void SceneDev1::Init()
 	sceneName->text.setString(L"데브 1");
 
 	tileMap = (TileMap*)AddGo(new TileMap("mapsprite/tile.png", "Tile Map"));
-	tileMap2 = (TileMap*)AddGo(new TileMap("mapsprite/tile.png", "Tile Map"));
 	mapmap = (SpriteGo*)AddGo(new SpriteGo("mapstructure/mapmap.png", "mapmap"));
-	mapmap2 = (SpriteGo*)AddGo(new SpriteGo("mapstructure/mapmap.png", "mapmap"));
 	nextdoor = (SpriteGo*)AddGo(new SpriteGo("mapstructure/LayerDoor_1.png", "door"));
 	player = (Player*)AddGo(new Player());
+
 	clear = (SpriteGo*)AddGo(new SpriteGo("graphics/win.png", "win"));
 	clearbutton = (UIButton*)AddGo(new UIButton("graphics/home.png", "home"));
 
@@ -63,12 +62,7 @@ void SceneDev1::Init()
 
 	tileMap->Load("map/map1.csv");
 	tileMap->SetOrigin(Origins::TL);
-	tileMap->SetPosition(0,0);
-	tileMap2->Load("map/map2.csv");
-	tileMap2->SetOrigin(Origins::TL);
-	tileMap2->SetPosition(tileMap->GetPosition().x, tileMap->GetPosition().y - 3000);
-	mapmap2->SetPosition(tileMap2->GetPosition());
-	mapmap2->SetOrigin(Origins::MC);
+	tileMap->SetPosition(0, 0);
 
 
 
@@ -90,7 +84,7 @@ void SceneDev1::Init()
 
 	bossicon->SetOrigin(Origins::MC);
 	bossicon->sortLayer = 103;
-	bossicon->SetPosition(bossMaxHpBar->sprite.getGlobalBounds().left * 2.25 /*+ (bossMaxHpBar->sprite.getGlobalBounds().width * 2)*/, bossMaxHpBar->sprite.getGlobalBounds().top- 15);
+	bossicon->SetPosition(bossMaxHpBar->sprite.getGlobalBounds().left * 2.25 /*+ (bossMaxHpBar->sprite.getGlobalBounds().width * 2)*/, bossMaxHpBar->sprite.getGlobalBounds().top - 15);
 
 	bossicon->SetActive(false);
 	bossHpbar->SetActive(false);
@@ -102,7 +96,7 @@ void SceneDev1::Init()
 	mapmap->SetPosition(tileMap->vertexArray.getBounds().left + (tileMap->vertexArray.getBounds().width * 0.5), tileMap->vertexArray.getBounds().top + (tileMap->vertexArray.getBounds().height * 0.5));
 	//nextdoor->SetPosition(-19.f, tileSize.top - 37);
 	nextdoor->SetOrigin(Origins::MC);
-
+	nextdoor->sprite.setScale(1.1, 1.1);
 
 	poolMonsters.OnCreate = [this](Monster* monster) {
 
@@ -123,6 +117,9 @@ void SceneDev1::Init()
 		bossHpbar->SetActive(false);
 		bossMaxHpBar->SetActive(false);
 		bosson = 1;
+		stage = 1;
+		tileMap->Release();
+		tileMap->Load("map/map1.csv");
 		SCENE_MGR.ChangeScene(SceneId::Menu);
 	};
 	for (auto go : gameObjects)
@@ -147,9 +144,11 @@ void SceneDev1::Enter()
 {
 	Scene::Enter();
 
-	nextdoor->SetPosition(-19.f, wallBounds.top + 370);
-	SpawnMonsters(1, sf::Vector2f(0, 0), monsterType1);
-	SpawnMonsters(1, sf::Vector2f(0, 0), monsterType0);
+	nextdoor->SetPosition((wallBounds.left + wallBounds.width) * 0.477, wallBounds.top + 137);
+
+
+	SpawnMonsters(1, sf::Vector2f((wallBounds.left + wallBounds.width) * 0.5, (wallBounds.top + wallBounds.height) * 0.3), monsterType1);
+	SpawnMonsters(1, sf::Vector2f((wallBounds.left + wallBounds.width) * 0.5, (wallBounds.top + wallBounds.height) * 0.3), monsterType0);
 
 
 }
@@ -160,7 +159,7 @@ void SceneDev1::Exit()
 	//ClearObjectPool(poolMonsters);
 	player->Reset();
 	monster->Reset();
-	stage = 1;
+
 	//poolMonsters.Clear();
 	//poolMonsters.Release();
 	Scene::Exit();
@@ -178,7 +177,7 @@ void SceneDev1::Update(float dt)
 		bossicon->SetActive(true);
 		bossHpbar->SetActive(true);
 		bossMaxHpBar->SetActive(true);
-		
+
 		sf::IntRect bosshprect(0, 0, (int)((static_cast<float>(bosshp) / static_cast<float>(bossmaxhp) * 500)), 43);
 
 		bossHpbar->sprite.setTextureRect(bosshprect);
@@ -191,28 +190,58 @@ void SceneDev1::Update(float dt)
 		bossMaxHpBar->SetActive(false);
 	}
 
-	if (bosspattern2)
-	{
-		SpawnMonsters(3, bossPos, (Monster::Types)0);
-		bosspattern2 = false;
-	}
+	//타일에 렉트 넣어서
+	//sf::Rect
 
-
+	//texCoord
 
 	sf::Vector2i playerTileIndex = (sf::Vector2i)(player->GetPosition() / 100.f);
-
 	int tileSize = tileMap->tiles.size();
 	for (int i = 0; i < tileSize; i++)
 	{
-		if (tileMap->tiles[i].x == playerTileIndex.x && tileMap->tiles[i].y == playerTileIndex.y) // 인덱스가 같으면
-		{
 			// SpikeWall : 바로 죽음
+			/*if (tileMap->tiles[i].texIndex == 4)
+			{
+			}*/
+		if (tileMap->tiles[i].texIndex == 4 && tileMap->tiles[i].bound.intersects(player->sprite.getGlobalBounds()))
+		{
+			std::cout << "충돌 " << std::endl;
+			position = Utils::Clamp2(player->GetPosition(), sf::Vector2f(tileMap->tiles[i].bound.left, tileMap->tiles[i].bound.top), sf::Vector2f(tileMap->tiles[i].bound.left + tileMap->tiles[i].bound.width, tileMap->tiles[i].bound.top + tileMap->tiles[i].bound.height));
+
+
+			//position = Utils::Clamp(position, wallBoundsLT, wallBoundsRB);
+
+	
+			player->SetPosition(position.x - player->sprite.getGlobalBounds().height * 0.5f , position.y);
+		}
+			/*if (tileMap->tiles[i].texIndex == 4)
+			{
+				player->SetPosition(0, 0);
+			}
 			if (tileMap->tiles[i].texIndex == 4)
 			{
-				std::cout << "꽃꽃꽃꽃꽃꽃꽃꽃꽃꽃꽃꽃" << std::endl;
+				player->SetPosition(0, 0);
 			}
+			if (tileMap->tiles[i].texIndex == 4)
+			{
+				player->SetPosition(0, 0);
+			}
+			if (tileMap->tiles[i].texIndex == 4)
+			{
+				player->SetPosition(0, 0);
+			}
+			if (tileMap->tiles[i].texIndex == 4)
+			{
+				player->SetPosition(0, 0);
+			}
+			if (tileMap->tiles[i].texIndex == 4)
+			{
+				player->SetPosition(0, 0);
+			}*/
+
 		}
-	}
+
+	std::cout << playerTileIndex.y << std::endl;
 
 
 
@@ -221,33 +250,27 @@ void SceneDev1::Update(float dt)
 	if (nextScene && player->sprite.getGlobalBounds().intersects(nextdoor->sprite.getGlobalBounds()))
 	{
 		stage++;
-		//wallBounds = mapmap2->sprite.getGlobalBounds();
-		switch (stage)
-		{
-		case 1:
-			wallBounds = mapmap->sprite.getGlobalBounds();
-			std::cout << "스위치 1" << std::endl;
-			break;
-		case 2:
-			wallBounds = tileMap2->vertexArray.getBounds();
-			std::cout << "스위치 2" << std::endl;
-			stage++;
-			break;
+		//monster->ClearMonsterBulletPool(true);
+		//두 리스트 다 순회하면서 저 함수 다 호출
+		//몬스터풀에있는 두개 리스트 다 호출하면서
+		//유즈리스트랑 풀 리스트
+		if (stage == 3)
+		{	//이게 보스임
+			tileMap->Release();
+			tileMap->Load("map/map2.csv");
+			SpawnMonsters(1, sf::Vector2f((wallBounds.left + wallBounds.width) * 0.5, (wallBounds.top + wallBounds.height) * 0.3), (Monster::Types)2);
+			player->SetWallBounds(wallBounds);
+			player->SetPosition((wallBounds.left + wallBounds.width) * 0.5f, (wallBounds.top + wallBounds.height) * 0.9f);
 		}
-
-		//monsterbullet->SetMapSize(mapmap2->sprite.getGlobalBounds());
-		monster->GetMap2(wallBounds);
-		SpawnMonsters(1, tileMap2->GetPosition(), (Monster::Types)2);
-		player->SetWallBounds(wallBounds);
-		player->SetPosition(tileMap2->GetPosition().x, tileMap2->GetPosition().y + 700);
-		nextdoor->SetPosition(-19.f, wallBounds.top - 600);
+		if (stage == 2)
+		{
+			tileMap->Release();
+			tileMap->Load("map/map3.csv");
+			SpawnMonsters(10, sf::Vector2f((wallBounds.left + wallBounds.width) * 0.5, (wallBounds.top + wallBounds.height) * 0.3), (Monster::Types)1);
+			player->SetWallBounds(wallBounds);
+			player->SetPosition((wallBounds.left + wallBounds.width) * 0.5f, (wallBounds.top + wallBounds.height) * 0.9f);
+		}
 	}
-
-	if(INPUT_MGR.GetKeyDown(sf::Keyboard::Num5))
-	SCENE_MGR.ChangeScene(SceneId::Title);
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::F1))
-		SCENE_MGR.ChangeScene(SceneId::Menu);
-
 
 	for (int i = 0; i < coins.size(); ++i)
 	{
@@ -329,7 +352,7 @@ void SceneDev1::SpawnMonsters(int count, sf::Vector2f center, Monster::Types a)
 		monster->SetPosition(pos);
 
 		if (a == Monster::Types::Boss)
-			bosson -=1;
+			bosson -= 1;
 
 		//zombies.push_back(zombie);
 		//zombie->Reset();
@@ -438,7 +461,7 @@ const std::list<Monster*>* SceneDev1::GetMonsterList() const
 
 void SceneDev1::BossPattern2(bool bosspattern2)
 {
-	this ->bosspattern2 = bosspattern2;
+	this->bosspattern2 = bosspattern2;
 }
 
 

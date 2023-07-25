@@ -64,7 +64,7 @@ void Player::Reset()
 	PlayerUI();
 	animation.Play("IdleUp");
 	SetOrigin(origin);
-	SetPosition((wallBounds.left + wallBounds.width) * 0.5, wallBounds.top + (wallBounds.height * 0.5));
+	SetPosition((wallBounds.left + wallBounds.width) * 0.5, wallBounds.top + (wallBounds.height * 0.9));
 	SetFlipX(false);
 	sprite.setScale(2.f, 2.f);
 	Hp = MaxHp;
@@ -135,9 +135,6 @@ void Player::Update(float dt)
 	//SpriteGo::Update(dt);
 	Scene* scene = SCENE_MGR.GetCurrScene();
 
-	//std::cout <<"플레이어 경험치 바 :" << expbar->GetPosition().x << expbar->GetPosition().y << std::endl;
-
-
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num1))
 	attack = true;
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num2))
@@ -196,77 +193,13 @@ void Player::Draw(sf::RenderWindow& window)
 void Player::SetWallBounds(const sf::FloatRect& bounds)
 {
 	wallBounds = bounds;
-	wallBoundsLT = { wallBounds.left + 56 , wallBounds.top + 270 };
-	wallBoundsRB = { wallBounds.left + wallBounds.width - 56, wallBounds.top + wallBounds.height - 270};
+	wallBoundsLT = { wallBounds.left + 56 , wallBounds.top + 200 };
+	wallBoundsRB = { wallBounds.left + wallBounds.width - 56, wallBounds.top + wallBounds.height - 150};
 }
 
 sf::Vector2f Player::GetDirection()
 {
 	return direction;
-}
-
-void Player::Shoot()
-{
-	Scene* scene = SCENE_MGR.GetCurrScene();
-	SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
-	if (direction == sf::Vector2f(0.f, 0.f) && tick < 0.1f && !monsters.empty())
-	{
-		tick = 0.5f;
-		int count = 0;
-		while (count != bulletCount)
-		{
-			Bullet* bullet = poolBullets.Get();
-			if (increaseDamage)
-			{
-				increaseDamage = false;
-			}
-			bullet->SetDamage(bulletDamage);
-
-			float modifiedAngle = Utils::Angle(monsterlook);  // 기존 각도 계산
-			//float additionalAngle = (count % 2 == 1) ? 15.f * count : -15.f * count;  // 추가 각도 계산
-			//float additionalAngle = -5 + (30 / bulletCount * count); //(count == 0) ? 0.f : ((count % 2 == 1) ? 15.f * count : -15.f * count);
-			//float additionalAngle =  (360 / bulletCount * count);
-			float finalAngle = modifiedAngle; // + additionalAngle;  // 기존 각도와 추가 각도 합산
-			sf::Vector2f fireDirection = Utils::DirectionFromAngle(finalAngle);  // 총알 발사 각도 계산
-
-			bullet->Fire(GetPosition(), fireDirection, 800.f);
-
-			if (scene != nullptr)
-			{
-				bullet->SetMonsterList(sceneDev1->GetMonsterList());
-				sceneDev1->AddGo(bullet);
-			}
-			count++;
-		}
-	}
-}
-
-void Player::LookMonster()
-{
-	//플레이어에 있은 죽은 몬스터 빼줘야함
-	//auto minValue = *std::min_element(monsters.begin(), monsters.end());
-	//플레이어랑 몬스터랑 거리를 계산해서 작은값을 리턴해주는 람다식을 짜자
-	//sf::Vector2f playerScreenPos = SCENE_MGR.GetCurrScene()->WorldPosToScreen(position);
-	if (direction == sf::Vector2f(0.f, 0.f))
-	{
-		//float minValue = *std::min_element(monsters.begin(), monsters.end());
-		float closestDistance = std::numeric_limits<float>::max();
-		closestMonster = { 0.f, 0.f };
-		for (const auto& monster : monsters) {
-			float distance = Utils::Distance(monster->GetPosition(), GetPosition());
-			if (distance < closestDistance) {
-				closestMonster = monster->GetPosition();
-				closestDistance = distance;
-				//std::cout << closestDistance << std::endl;
-			}
-		}
-		monsterlook = Utils::Normalize(closestMonster - GetPosition());
-		//sprite.setRotation(Utils::Angle(closestMonster));
-	}
-	//else
-	//{
-	//	sprite.setRotation(0.f);
-	//}
 }
 
 void Player::ShootAndLook()
@@ -358,11 +291,11 @@ void Player::PlayerMove(float dt)
 		}
 		
 
-	//if (sprite.getGlobalBounds().intersects(wallBounds))
-	//{
-	//	//std::cout << "충돌함" << std::endl;
-	//	position = Utils::Clamp(position, wallBoundsLT, wallBoundsRB);
-	//}
+	if (sprite.getGlobalBounds().intersects(wallBounds))
+	{
+		//std::cout << "충돌함" << std::endl;
+		position = Utils::Clamp(position, wallBoundsLT, wallBoundsRB);
+	}
 
 }
 

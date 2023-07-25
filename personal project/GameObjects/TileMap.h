@@ -9,6 +9,7 @@ struct Tile
 	int x = 0;
 	int y = 0;
 	int texIndex = 0;
+	sf::FloatRect bound;
 };
 
 class TileMap : public VertexArrayGo
@@ -27,6 +28,8 @@ public:
 	virtual ~TileMap() override;
 
 	bool Load(const std::string& filePath);
+
+	void Release();
 
 	std::vector<Tile> tiles;
 };

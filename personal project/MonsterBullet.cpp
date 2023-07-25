@@ -139,6 +139,9 @@ void MonsterBullet::Update(float dt)
 			}
 			tick = 2.f;
 		}
+
+
+
 }
 
 void MonsterBullet::Draw(sf::RenderWindow& window)
@@ -252,6 +255,7 @@ void MonsterBullet::Move3(float dt)
 		pool->Return(this);
 	}
 }
+
 
 void MonsterBullet::HitPlayer(float dt)
 {

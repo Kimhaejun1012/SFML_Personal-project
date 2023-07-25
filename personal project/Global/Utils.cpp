@@ -67,6 +67,22 @@ float Utils::Clamp(float v, float min, float max)
 	return std::max(min, std::min(max, v));
 }
 
+float Utils::Clamp2(float v, float min, float max)
+{
+	if(v < max)
+		return std::min(min, std::min(min, v));
+	if(v > max)
+	return std::max(min, std::max(max, v));
+}
+
+float Utils::Clamp3(float v, float min, float max)
+{
+	if (v < min)
+		return std::min(min, std::min(max, v));
+	if (v > min)
+		return std::max(min, std::max(max, v));
+}
+
 sf::Vector2f Utils::Clamp(const sf::Vector2f& v, const sf::Vector2f& min, const sf::Vector2f& max)
 {
 	sf::Vector2f result;
@@ -74,6 +90,44 @@ sf::Vector2f Utils::Clamp(const sf::Vector2f& v, const sf::Vector2f& min, const 
 	result.y = Clamp(v.y, min.y, max.y);
 	return result;
 }
+
+sf::Vector2f Utils::Clamp2(const sf::Vector2f& Pos, const sf::Vector2f& LeftTop, const sf::Vector2f& RightBottom)
+{
+	
+		sf::Vector2f result;
+		if (Pos.x >= LeftTop.x)
+		{
+			if (Pos.x >= RightBottom.x)
+			{
+				result.x = RightBottom.x;
+			}
+			else if (Pos.x < RightBottom.x)
+			{
+				result.x = Pos.x;
+			}
+		}
+		else if (Pos.x < LeftTop.x)
+		{
+			result.x = LeftTop.x;
+		}
+
+		if (Pos.y >= LeftTop.y)
+		{
+			if (Pos.y >= RightBottom.y)
+			{
+				result.y = RightBottom.y;
+			}
+			else if(Pos.y < RightBottom.y)
+			result.y = Pos.y;
+		}
+		else if (Pos.y < LeftTop.y)
+		{
+			result.y = LeftTop.y;
+		}
+		return result;
+
+}
+
 
 float Utils::Lerp(float a, float b, float t, bool clamping)
 {

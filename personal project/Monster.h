@@ -131,7 +131,7 @@ protected:
 	SpriteGo* bossMaxHpBar;
 
 	float zero = 0.f;
-
+	bool clear = false;
 	float pattern3_1ShootTimer = 0.f;
 	float pattern3_2ShootTimer = 0.f;
 	float pattern3_1ShootInterval = 1.f; // 패턴3-1 총알 발사 간격
@@ -177,6 +177,9 @@ public:
 	void GoombaMove(float dt);
 	void Pattern3Bullet(MonsterBullet::Types t);
 	void BossHpUI();
+
+	void ClearMonsterBulletPool(bool clear);
+
 
 };
 

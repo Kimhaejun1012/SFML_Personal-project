@@ -8,12 +8,12 @@ protected:
 	std::list<T*> pool;
 	std::list<T*> useList;
 
-	void CreateObjs(int count = 100);
+	void CreateObjs(int count = 60);
 public:
 	ObjectPool() = default;
 	~ObjectPool();
 
-	void Init(int cacheSize = 100);
+	void Init(int cacheSize = 60);
 	void Release(); 
 	void Clear();	// pool로 전부 회수
 	void CreateObjs2(int a);
@@ -48,20 +48,6 @@ inline void ObjectPool<T>::CreateObjs(int count)
 	}
 }
 
-template<typename T>
-inline void ObjectPool<T>::CreateObjs2(int a)
-{
-	for (int i = 0; i < a; ++i)
-	{
-		T* obj = new T();
-		if (OnCreate != nullptr)
-		{
-			OnCreate(obj);
-		}
-		obj->Init();
-		pool.push_back(obj);
-	}
-}
 
 template<typename T>
 inline void ObjectPool<T>::Init(int cacheSize)

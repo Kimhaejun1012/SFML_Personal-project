@@ -46,6 +46,7 @@ protected:
 
 	bool isend = true;
 
+	bool clear = false;
 
 	Player* player = nullptr;
 	Monster* monster;
@@ -86,5 +87,7 @@ public:
 		return damage;
 	}
 	void SetType(Types t);
+
+	void ClearMonsterBulletPool(bool clear);
 };
 
