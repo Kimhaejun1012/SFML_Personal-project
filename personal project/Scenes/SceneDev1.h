@@ -42,6 +42,8 @@ protected:
 	SpriteGo* mapmap2;
 	sf::Vector2f size;
 
+	sf::FloatRect tilesize;
+
 	int bosshp = 0;
 	int bossmaxhp = 0;
 
@@ -70,6 +72,7 @@ protected:
 	UIButton* testbutton2;
 	UIButton* testbutton3;
 
+	sf::FloatRect wallBounds;
 
 	SpriteGo* playerHp;
 	SpriteGo* playerMaxHp;
@@ -107,7 +110,6 @@ public:
 	//void CreateMonster(int count);
 	void OnDieMonster(Monster* monster);
 	void GetCoin(std::vector<SpriteGo*> coin);
-	sf::FloatRect wallBounds;
 
 
 	void GetBossHp(int hp);

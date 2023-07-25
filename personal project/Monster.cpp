@@ -160,6 +160,19 @@ void Monster::Update(float dt)
 	if (player == nullptr)
 		return;
 
+	
+	//벽 밖으로 못나감
+		if (sprite.getGlobalBounds().intersects(mapsize))
+	{
+		//std::cout << "충돌함" << std::endl;
+		position = Utils::Clamp(position, mapsizeLT, mapsizeRB);
+	}
+
+
+
+
+
+
 	// 몬스터 패턴이 아닐경우 보스몬스터는 평소처럼 움직이면서 총알쏨
 	// 랜덤 숫자로 몬스터 패턴이 걸릴경우 움직임이랑 총알쏘는거 멈추고 패턴만 플레이함
 
@@ -240,6 +253,7 @@ void Monster::Update(float dt)
 		if (randomPattern == 3)
 		{
 			BossPattern3(dt);
+
 			if (monster.GetTotalFrame() - monster.GetCurFrame() <= 10)
 			{
 				if (isone)
@@ -396,6 +410,7 @@ void Monster::BossPattern3(float dt)
 	{
 		monster.Play("BossPattern3");
 	}
+
 }
 
 void Monster::BossPattern4(float dt)
@@ -552,6 +567,8 @@ void Monster::HitPlayer(float dt)
 void Monster::GetMap2(const sf::FloatRect& mapsize)
 {
 	this->mapsize = mapsize;
+	mapsizeLT = { mapsize.left + 56 , mapsize.top + 270 };
+	mapsizeRB = { mapsize.left + mapsize.width - 56, mapsize.top + mapsize.height - 270 };
 }
 
 
@@ -613,7 +630,7 @@ void Monster::SpawnBullet2(int count, MonsterBullet::Types t)
 		monsterbullets = poolBullets.GetUseList();
 		monsterbullet->SetType(t);
 		monsterbullet->SetMapSize(mapsize);
-
+		monsterbullet->Pattern3(7.f);
 		if (t == MonsterBullet::Types::Pattern4)
 		{
 			monsterbullet->Fire(sf::Vector2f(GetPosition().x, sprite.getGlobalBounds().top - 30), a);

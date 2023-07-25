@@ -78,6 +78,8 @@ protected:
 	int bossHp;
 	int bossMaxHp;
 
+	sf::Vector2f mapsizeLT;
+	sf::Vector2f mapsizeRB;
 
 	bool bossAlive = true;
 	int bosscount;
@@ -135,6 +137,7 @@ protected:
 	float pattern3_1ShootInterval = 1.f; // 패턴3-1 총알 발사 간격
 	float pattern3_2ShootInterval = 0.5f; // 패턴3-2 총알 발사 간격
 
+	bool isone2 = true;
 public:
 	ObjectPool<Monster>* pool;
 	Monster(const std::string& textureId = "", const std::string& n = "");
@@ -148,7 +151,6 @@ public:
 
 	void SetType(Types t);
 	Types GetType() const;
-
 	void SetPlayer(Player* player);
 
 	void HitMonsterBullet(int damage);

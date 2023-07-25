@@ -7,6 +7,8 @@
 class Monster;
 class UIButton;
 class SpriteGo;
+class TileMap;
+
 
 class Player : public SpriteGo
 {
@@ -38,6 +40,8 @@ protected:
 	UIButton* testbutton2;
 	UIButton* testbutton3;
 	
+
+
 	Bullet* bullet;
 	ObjectPool<Bullet> poolBullets;
 	int bulletCount;
@@ -50,6 +54,10 @@ protected:
 	int maxexp = 100;
 	int exp = 0;
 
+	TileMap* tilemap;
+
+
+	std::vector<TileMap*> tiles;
 
 	float accel = 500.f;
 	float speed = 3000.f;
@@ -113,5 +121,8 @@ public:
 	void OnDiePlayer();
 	Player* GetPlayer();
 	void PlayerReset();
+
+	/*void SetTile(Tile::tile);*/
+
 };
 

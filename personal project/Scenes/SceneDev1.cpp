@@ -3,13 +3,13 @@
 #include "TextGo.h"
 #include "TileMap.h"
 #include "Player.h"
-#include "Element.h"
 #include "DataTable.h"
 #include "DataTableMgr.h"
 #include "Monster.h"
 #include "Bullet.h"
 #include "UIButton.h"
 #include "MonsterBullet.h"
+#include "TileMap.h"
 
 SceneDev1::SceneDev1() : Scene(SceneId::Dev1)
 {
@@ -46,7 +46,6 @@ void SceneDev1::Init()
 	tileMap2 = (TileMap*)AddGo(new TileMap("mapsprite/tile.png", "Tile Map"));
 	mapmap = (SpriteGo*)AddGo(new SpriteGo("mapstructure/mapmap.png", "mapmap"));
 	mapmap2 = (SpriteGo*)AddGo(new SpriteGo("mapstructure/mapmap.png", "mapmap"));
-	element = (Element*)AddGo(new Element("mapsprite/element1.png", "element1"));
 	nextdoor = (SpriteGo*)AddGo(new SpriteGo("mapstructure/LayerDoor_1.png", "door"));
 	player = (Player*)AddGo(new Player());
 	clear = (SpriteGo*)AddGo(new SpriteGo("graphics/win.png", "win"));
@@ -63,16 +62,15 @@ void SceneDev1::Init()
 	clearbutton->SetActive(false);
 
 	tileMap->Load("map/map1.csv");
-	tileMap->SetOrigin(Origins::MC);
-	tileMap2->Load("map/map1.csv");
-	tileMap2->SetOrigin(Origins::MC);
+	tileMap->SetOrigin(Origins::TL);
+	tileMap->SetPosition(0,0);
+	tileMap2->Load("map/map2.csv");
+	tileMap2->SetOrigin(Origins::TL);
 	tileMap2->SetPosition(tileMap->GetPosition().x, tileMap->GetPosition().y - 3000);
 	mapmap2->SetPosition(tileMap2->GetPosition());
 	mapmap2->SetOrigin(Origins::MC);
 
 
-	element->SetOrigin(Origins::MC);
-	element->SetPosition(sf::Vector2f{ tileMap->GetPosition() });
 
 
 	//º¸½º Ã¼·Â¹Ù
@@ -100,8 +98,8 @@ void SceneDev1::Init()
 
 
 	tileSize = tileMap->vertexArray.getBounds();
-	mapmap->SetPosition(0, 0);
 	mapmap->SetOrigin(Origins::MC);
+	mapmap->SetPosition(tileMap->vertexArray.getBounds().left + (tileMap->vertexArray.getBounds().width * 0.5), tileMap->vertexArray.getBounds().top + (tileMap->vertexArray.getBounds().height * 0.5));
 	//nextdoor->SetPosition(-19.f, tileSize.top - 37);
 	nextdoor->SetOrigin(Origins::MC);
 
@@ -131,6 +129,8 @@ void SceneDev1::Init()
 	{
 		go->Init();
 	}
+	wallBounds = tileMap->vertexArray.getBounds();
+	player->SetWallBounds(wallBounds);
 }
 
 void SceneDev1::Release()
@@ -147,9 +147,7 @@ void SceneDev1::Enter()
 {
 	Scene::Enter();
 
-	wallBounds = mapmap->sprite.getGlobalBounds();
-	player->SetWallBounds(wallBounds);
-	nextdoor->SetPosition(-19.f, wallBounds.top + 148);
+	nextdoor->SetPosition(-19.f, wallBounds.top + 370);
 	SpawnMonsters(1, sf::Vector2f(0, 0), monsterType1);
 	SpawnMonsters(1, sf::Vector2f(0, 0), monsterType0);
 
@@ -181,7 +179,7 @@ void SceneDev1::Update(float dt)
 		bossHpbar->SetActive(true);
 		bossMaxHpBar->SetActive(true);
 		
-		sf::IntRect bosshprect(0, 0, (int)((static_cast<float>(bosshp) / static_cast<float>(bossmaxhp) * 500)), 100);
+		sf::IntRect bosshprect(0, 0, (int)((static_cast<float>(bosshp) / static_cast<float>(bossmaxhp) * 500)), 43);
 
 		bossHpbar->sprite.setTextureRect(bosshprect);
 		//bossHpbar->sprite.setScale(((static_cast<float>(bosshp) / static_cast<float>(bossmaxhp))),1.f);
@@ -201,6 +199,24 @@ void SceneDev1::Update(float dt)
 
 
 
+	sf::Vector2i playerTileIndex = (sf::Vector2i)(player->GetPosition() / 100.f);
+
+	int tileSize = tileMap->tiles.size();
+	for (int i = 0; i < tileSize; i++)
+	{
+		if (tileMap->tiles[i].x == playerTileIndex.x && tileMap->tiles[i].y == playerTileIndex.y) // ÀÎµ¦½º°¡ °°À¸¸é
+		{
+			// SpikeWall : ¹Ù·Î Á×À½
+			if (tileMap->tiles[i].texIndex == 4)
+			{
+				std::cout << "²É²É²É²É²É²É²É²É²É²É²É²É" << std::endl;
+			}
+		}
+	}
+
+
+
+
 	//std::cout << stage;
 	if (nextScene && player->sprite.getGlobalBounds().intersects(nextdoor->sprite.getGlobalBounds()))
 	{
@@ -213,7 +229,7 @@ void SceneDev1::Update(float dt)
 			std::cout << "½ºÀ§Ä¡ 1" << std::endl;
 			break;
 		case 2:
-			wallBounds = mapmap2->sprite.getGlobalBounds();
+			wallBounds = tileMap2->vertexArray.getBounds();
 			std::cout << "½ºÀ§Ä¡ 2" << std::endl;
 			stage++;
 			break;
@@ -222,9 +238,9 @@ void SceneDev1::Update(float dt)
 		//monsterbullet->SetMapSize(mapmap2->sprite.getGlobalBounds());
 		monster->GetMap2(wallBounds);
 		SpawnMonsters(1, tileMap2->GetPosition(), (Monster::Types)2);
-		player->SetWallBounds(mapmap2->sprite.getGlobalBounds());
+		player->SetWallBounds(wallBounds);
 		player->SetPosition(tileMap2->GetPosition().x, tileMap2->GetPosition().y + 700);
-		nextdoor->SetPosition(-19.f, wallBounds.top - 148);
+		nextdoor->SetPosition(-19.f, wallBounds.top - 600);
 	}
 
 	if(INPUT_MGR.GetKeyDown(sf::Keyboard::Num5))

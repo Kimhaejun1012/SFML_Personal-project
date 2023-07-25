@@ -5,7 +5,7 @@
 #include "Scene.h"
 #include "UIButton.h"
 #include "SpriteGo.h"
-
+#include "TileMap.h"
 
 Player::Player(const std::string& textureId, const std::string& n) : SpriteGo(textureId, n), attack(false)
 {
@@ -64,7 +64,7 @@ void Player::Reset()
 	PlayerUI();
 	animation.Play("IdleUp");
 	SetOrigin(origin);
-	SetPosition({ 0, 500 });
+	SetPosition((wallBounds.left + wallBounds.width) * 0.5, wallBounds.top + (wallBounds.height * 0.5));
 	SetFlipX(false);
 	sprite.setScale(2.f, 2.f);
 	Hp = MaxHp;
@@ -146,6 +146,9 @@ void Player::Update(float dt)
 		Hp += MaxHp;
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num4))
 		std::cout << "플레이어 HP : " << Hp << std::endl;
+
+
+
 
 	tick -= dt;
 	animation.Update(dt);

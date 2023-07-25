@@ -82,7 +82,7 @@ void MonsterBullet::Update(float dt)
 			{
 				monsterbullet.Play("Pattern31Bullet");
 			}
-			Move(dt);
+			Move31(dt);
 			attackTimer += dt;
 			if (attackTimer > attackRate)
 			{
@@ -97,7 +97,7 @@ void MonsterBullet::Update(float dt)
 			{
 				monsterbullet.Play("Pattern32Bullet");
 			}
-			Move(dt);
+			Move3(dt);
 		
 			attackTimer += dt;
 			if (attackTimer > attackRate)
@@ -188,6 +188,9 @@ void MonsterBullet::Move(float dt)
 
 	position += direction * speed * dt;
 	SetPosition(position);
+
+
+
 	if (!mapsize.contains(GetPosition()))
 	{
 		SCENE_MGR.GetCurrScene()->RemoveGo(this);
@@ -195,6 +198,60 @@ void MonsterBullet::Move(float dt)
 	}
 }
 
+void MonsterBullet::Move31(float dt)
+{
+
+	playerlook = Utils::Normalize(player->GetPosition() - GetPosition());
+	position += playerlook * speed * dt;
+	SetPosition(position);
+
+
+
+	if (!mapsize.contains(GetPosition()))
+	{
+		SCENE_MGR.GetCurrScene()->RemoveGo(this);
+		pool->Return(this);
+	}
+}
+
+void MonsterBullet::Move3(float dt)
+{
+	std::cout << tick3 << std::endl;
+
+	tick3 -= dt;
+	if(tick3 > 5.0f)
+	{
+		position += direction * speed * dt;
+		SetPosition(position);
+
+	}
+	else if(tick3 > 3.0f)
+	{
+		position += direction * 0.f * dt;
+		SetPosition(position);
+
+	}
+	else if(tick3 >= -30.f)
+	{
+		if(isone)
+		{
+			direction.x = Utils::RandomRange(-1.f, 1.f);
+			direction.y = Utils::RandomRange(-1.f, 1.f);
+			isone = false;
+			
+		}
+
+		position += direction * 1500.f * dt;
+	}
+
+	SetPosition(position);
+
+	if (!mapsize.contains(GetPosition()))
+	{
+		SCENE_MGR.GetCurrScene()->RemoveGo(this);
+		pool->Return(this);
+	}
+}
 
 void MonsterBullet::HitPlayer(float dt)
 {
@@ -222,4 +279,9 @@ void MonsterBullet::SetPlayer(Player* player)
 void MonsterBullet::SetMapSize(sf::FloatRect& mapsize)
 {
 	this->mapsize = mapsize;
+}
+
+void MonsterBullet::Pattern3(float tick)
+{
+	tick3 = tick;
 }

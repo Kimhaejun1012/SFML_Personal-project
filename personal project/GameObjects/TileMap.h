@@ -15,6 +15,8 @@ class TileMap : public VertexArrayGo
 {
 protected:
 
+
+	Tile tile;
 	Player* player;
 	SpriteGo* mapmap;
 	sf::FloatRect wallBounds;

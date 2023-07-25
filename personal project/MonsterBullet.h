@@ -27,17 +27,25 @@ protected:
 	AnimationController monsterbullet;
 	Types bullettype;
 	SceneDev1* scenedev1;
+
+	sf::Vector2f playerlook;
 	int damage = 0;
 	float speed = 0.f;
 	float attackRate = 0.f;
 	float attackTimer = 0.f;
 	int bulletCount = 0;
 	float tick;
+
+	float tick3 = 7.0f;
 	float range = 0.f;
 
 	bool isone = true;
 	sf::Vector2f direction;
 	sf::Vector2f attack = { 0.f,0.f };
+
+
+	bool isend = true;
+
 
 	Player* player = nullptr;
 	Monster* monster;
@@ -59,11 +67,13 @@ public:
 	void GetType(Types info);
 
 
+	void Pattern3(float tick);
 	void SetMapSize(sf::FloatRect& mapsize);
 	virtual void Init() override;
 	virtual void Release() override;
 	virtual void Reset() override;
-
+	void Move3(float dt);
+	void Move31(float dt);
 	virtual void Update(float dt) override;
 	virtual void Draw(sf::RenderWindow& window) override;
 	sf::Vector2f Get31Pos();
