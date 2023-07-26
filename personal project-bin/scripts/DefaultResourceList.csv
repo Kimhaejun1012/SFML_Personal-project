@@ -7,13 +7,6 @@
 0,graphics/mario.png
 0,mapstructure/LayerDoor_1.png
 0,graphics/coin.png
-0,upgrade/doubleArrow.png
-0,upgrade/doubleAttack.png
-0,upgrade/doubleHealth.png
-0,upgrade/doubleShotSpeed.png
-0,upgrade/doubleSpeed.png
-0,upgrade/extraLife.png
-0,upgrade/fullHealth.png
 0,graphics/Title.png
 0,graphics/ExpBar.png
 0,graphics/ExpBarmax.png
@@ -79,3 +72,13 @@
 0,graphics/bossicon.png
 0,graphics/main.png
 0,graphics/startbutton.png
+0,upgrade/attackUp.png
+0,upgrade/doubleArrow.png
+0,upgrade/fullHealth.png
+0,upgrade/healthUp.png
+0,upgrade/shootSpeed.png
+0,upgrade/speedUp.png
+0,graphics/levelupback.png
+0,graphics/lvtextbar.png
+1,fonts/Archero_Font/magic.ttf
+0,graphics/lose.png

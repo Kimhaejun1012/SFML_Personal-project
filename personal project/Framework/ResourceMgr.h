@@ -9,7 +9,7 @@ protected:
 	ResourceMgr() = default;
 	virtual ~ResourceMgr() override;
 	
-	std::string defaultFontId = "fonts/Noto_Sans_KR/NotoSansKR-Bold.otf";
+	std::string defaultFontId = "fonts/Archero_Font/magic.ttf";
 	sf::Font* defaultFont = nullptr;
 
 	std::map<std::string, std::tuple<sf::Texture*, bool>> mapTexture;

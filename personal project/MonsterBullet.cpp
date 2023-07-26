@@ -56,6 +56,9 @@ void MonsterBullet::Update(float dt)
 {
 	sprite.setOrigin(sprite.getGlobalBounds().width * 0.5f, sprite.getGlobalBounds().height * 0.5f);
 
+	if (!player->isPlaying())
+		return;
+		
 	SpriteGo::Update(dt);
 	monsterbullet.Update(dt);
 	//SetPlayer(player->GetPlayer());
@@ -69,11 +72,10 @@ void MonsterBullet::Update(float dt)
 			}
 			Move(dt);
 			attackTimer += dt;
-			if (attackTimer > attackRate)
-			{
+
 				HitPlayer(dt);
 				attackTimer = 0.f;
-			}
+
 			tick = 2.f;
 		}
 		if (bullettype == Types::Pattern31)
@@ -84,11 +86,10 @@ void MonsterBullet::Update(float dt)
 			}
 			Move31(dt);
 			attackTimer += dt;
-			if (attackTimer > attackRate)
-			{
+
 				HitPlayer(dt);
 				attackTimer = 0.f;
-			}
+
 			tick = 2.f;
 		}
 		if (bullettype == Types::Pattern32)
@@ -100,11 +101,10 @@ void MonsterBullet::Update(float dt)
 			Move3(dt);
 		
 			attackTimer += dt;
-			if (attackTimer > attackRate)
-			{
+
 				HitPlayer(dt);
 				attackTimer = 0.f;
-			}
+
 			tick = 2.f;
 		}
 		if (bullettype == Types::Pattern4)
@@ -115,12 +115,9 @@ void MonsterBullet::Update(float dt)
 			}
 			Move(dt);
 
-			attackTimer += dt;
-			if (attackTimer > attackRate)
-			{
+
 				HitPlayer(dt);
-				attackTimer = 0.f;
-			}
+
 			tick = 2.f;
 		}
 		if (bullettype == Types::Hammer)
@@ -131,12 +128,10 @@ void MonsterBullet::Update(float dt)
 			}
 			Move(dt);
 
-			attackTimer += dt;
-			if (attackTimer > attackRate)
-			{
+
 				HitPlayer(dt);
 				attackTimer = 0.f;
-			}
+
 			tick = 2.f;
 		}
 

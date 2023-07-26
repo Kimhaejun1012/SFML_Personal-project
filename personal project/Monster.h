@@ -7,6 +7,8 @@
 class UIButton;
 class Player;
 class Scene;
+class TileMap;
+
 
 class Monster : public SpriteGo
 {
@@ -56,13 +58,19 @@ public:
 
 protected:
 
+	TileMap* tilemap;
+
 	AnimationController monster;
 	ObjectPool<MonsterBullet> poolBullets;
+
+	sf::FloatRect monsterfl;
 
 	// 보스 정보
 	sf::Vector2f bossMoveDir;
 	float bossbulletRate;
 	
+
+	sf::Vector2f textmove;
 	//보스패턴보스패턴보스패턴보스패턴보스패턴
 	BossPattern currentBossPattern;
 	bool bossMoving = true;
@@ -74,7 +82,7 @@ protected:
 	float bossMoveDuration = 5.0f;
 	int randomPattern = 0;
 
-
+	sf::RectangleShape monstersrec;
 	int bossHp;
 	int bossMaxHp;
 
@@ -117,6 +125,7 @@ protected:
 	// 상태변수
 	bool isHit = false;
 
+	
 	Scene* scene;
 	Player* player = nullptr;
 	sf::FloatRect mapsize;
@@ -177,9 +186,9 @@ public:
 	void GoombaMove(float dt);
 	void Pattern3Bullet(MonsterBullet::Types t);
 	void BossHpUI();
-
+	void Settile(TileMap* tile);
 	void ClearMonsterBulletPool(bool clear);
-
+	void Setmonstersrec(sf::RectangleShape rec);
 
 };
 

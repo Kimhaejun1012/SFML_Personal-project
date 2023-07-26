@@ -35,33 +35,47 @@ protected:
 	Monster* monster;
 	sf::Vector2f closestMonster;
 
-	UIButton* uibutton;
-	UIButton* testbutton1;
-	UIButton* testbutton2;
-	UIButton* testbutton3;
-	
+	int level;
 
+	bool isone = true;
+	bool islev = true;
+
+	UIButton* uibutton;
+	int level1;
+	int level2;
+	int level3;
+
+	bool stop = false;
+
+
+	std::vector<UIButton*> upgradeButtons1;
+	std::vector<UIButton*> upgradeButtons2;
+	std::vector<UIButton*> upgradeButtons3;
+	std::vector<std::string> upgradeOptions;
+
+	float levelup = 0.07f;
+
+	float levelupgg = 4.0f;
 
 	Bullet* bullet;
 	ObjectPool<Bullet> poolBullets;
-	int bulletCount;
-	int bulletDamage = 334;
+
+	int bulletDamage;
+	
 	bool attack;
 
 	sf::Vector2f monsterlook = { 0,0 };
 	sf::FloatRect playerwall;
 	Player* player;
-	int maxexp = 100;
-	int exp = 0;
-
-	TileMap* tilemap;
 
 
-	std::vector<TileMap*> tiles;
+	TileMap* tilemap = nullptr;
 
-	float accel = 500.f;
-	float speed = 3000.f;
-	float tick = 0.5f;
+	//std::vector<TileMap*> tiles;
+
+	float tick = 0.1f;
+	float levtick = 0.07;
+
 	bool filpX = false;
 	bool increaseDamage;
 
@@ -69,11 +83,25 @@ protected:
 	sf::Vector2f wallBoundsLT;
 	sf::Vector2f wallBoundsRB;
 
+	sf::RectangleShape playerrec;
+	float damagetick = 0.f;
+
 	std::vector<ClipInfo> clipInfos;
 	ClipInfo currentClipInfo;
 
-	int MaxHp = 1000;
-	int Hp = 0;
+	bool playermove;
+
+	sf::Vector2f playerPos;
+	sf::FloatRect playertile;
+
+	int bulletCount;
+	float attackspeed;
+	float attackspeedfull = 1.0;
+	float speed;
+	float MaxHp;
+	float Hp;
+	int maxexp;
+	int exp = 0;
 
 	SpriteGo* playerHp;
 	SpriteGo* playerMaxHp;
@@ -122,7 +150,11 @@ public:
 	Player* GetPlayer();
 	void PlayerReset();
 
+	void SetTileMap(TileMap* tilemap);
+
+	sf::RectangleShape GetPlayerRec();
 	/*void SetTile(Tile::tile);*/
 
+	bool isPlaying();
 };
 

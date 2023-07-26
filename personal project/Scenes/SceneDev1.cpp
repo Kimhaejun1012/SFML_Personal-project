@@ -9,7 +9,7 @@
 #include "Bullet.h"
 #include "UIButton.h"
 #include "MonsterBullet.h"
-#include "TileMap.h"
+#include "TextGo.h"
 
 SceneDev1::SceneDev1() : Scene(SceneId::Dev1)
 {
@@ -36,6 +36,8 @@ void SceneDev1::Init()
 	sf::Vector2f centerPos = windowSize * 0.5f;
 
 
+
+
 	TextGo* sceneName = (TextGo*)AddGo(new TextGo("", "Scene Name"));
 	sceneName->sortLayer = 100;
 	sceneName->text.setCharacterSize(25);
@@ -45,15 +47,24 @@ void SceneDev1::Init()
 	tileMap = (TileMap*)AddGo(new TileMap("mapsprite/tile.png", "Tile Map"));
 	mapmap = (SpriteGo*)AddGo(new SpriteGo("mapstructure/mapmap.png", "mapmap"));
 	nextdoor = (SpriteGo*)AddGo(new SpriteGo("mapstructure/LayerDoor_1.png", "door"));
+	levelback = (SpriteGo*)AddGo(new SpriteGo("graphics/levelupback.png", "level"));
 	player = (Player*)AddGo(new Player());
-
+	lvtextbar = (SpriteGo*)AddGo(new SpriteGo("graphics/lvtextbar.png", "textbar"));
 	clear = (SpriteGo*)AddGo(new SpriteGo("graphics/win.png", "win"));
 	clearbutton = (UIButton*)AddGo(new UIButton("graphics/home.png", "home"));
+	lose = (SpriteGo*)AddGo(new SpriteGo("graphics/lose.png", "lose"));
+	playerhptex = (TextGo*)AddGo(new TextGo("", "lose"));
+
 
 	clear->SetOrigin(Origins::MC);
 	clear->SetPosition(size.x * 0.5, size.y * 0.5);
 	clear->sortLayer = 102;
 	clear->SetActive(false);
+
+	lose->SetOrigin(Origins::MC);
+	lose->SetPosition(size.x * 0.5, size.y * 0.5);
+	lose->sortLayer = 102;
+	lose->SetActive(false);
 
 	clearbutton->SetOrigin(Origins::MC);
 	clearbutton->SetPosition(size.x * 0.5, size.y * 0.8);
@@ -64,8 +75,39 @@ void SceneDev1::Init()
 	tileMap->SetOrigin(Origins::TL);
 	tileMap->SetPosition(0, 0);
 
+	levelback->SetOrigin(Origins::MC);
+	levelback->SetPosition(size * 0.5f);
+	levelback->sortLayer = 104;
+	levelback->SetActive(false);
+	levelback->sprite.setScale(4.0f, 8.0f);
+
+	sf::Color a;
+	a = levelback->sprite.getColor();
+	a.a = 103;
+	levelback->sprite.setColor(a);
+	
+	lvtextbar->SetOrigin(Origins::MC);
+	lvtextbar->SetPosition(sf::Vector2f(size.x * 0.5, size.y * 0.8));
+	lvtextbar->sortLayer = 104;
+	lvtextbar->sprite.setScale(2.0f, 2.0f);
+	lvtextbar->SetActive(false);
+
+	leveluptext = (TextGo*)AddGo(new TextGo("", "leveluptext"));
+	leveluptext->sortLayer = 105;
+	leveluptext->text.setCharacterSize(50);
+	leveluptext->text.setFillColor(sf::Color::Black);
+	leveluptext->text.setString(L"새로운 능력을 선택하세요!");
+	leveluptext->SetOrigin(Origins::MC);
+	leveluptext->SetPosition(lvtextbar->GetPosition().x, lvtextbar->GetPosition().y -30.f);
+	leveluptext->SetActive(false);
 
 
+	playerhptex->text.setCharacterSize(17);
+	playerhptex->text.setFillColor(sf::Color::Black);
+	playerhptex->text.setString(std::to_string(player->GetHp()));
+	//playerhptex->text.setString(std::to_string(player->GetHp()));
+
+	playerhptex->SetOrigin(Origins::MC);
 
 	//보스 체력바
 	bossHpbar = ((SpriteGo*)AddGo(new SpriteGo("graphics/BossHpBar.png", "BossHpBar")));
@@ -112,6 +154,7 @@ void SceneDev1::Init()
 		std::cout << "클리어 버튼 클릭" << std::endl;
 		clear->SetActive(false);
 		clearbutton->SetActive(false);
+		lose->SetActive(false);
 		bossdie = false;
 		bossicon->SetActive(false);
 		bossHpbar->SetActive(false);
@@ -120,6 +163,8 @@ void SceneDev1::Init()
 		stage = 1;
 		tileMap->Release();
 		tileMap->Load("map/map1.csv");
+		player->isAlive = true;
+		//playerhptex->SetActive(false);
 		SCENE_MGR.ChangeScene(SceneId::Menu);
 	};
 	for (auto go : gameObjects)
@@ -128,6 +173,7 @@ void SceneDev1::Init()
 	}
 	wallBounds = tileMap->vertexArray.getBounds();
 	player->SetWallBounds(wallBounds);
+
 }
 
 void SceneDev1::Release()
@@ -146,11 +192,9 @@ void SceneDev1::Enter()
 
 	nextdoor->SetPosition((wallBounds.left + wallBounds.width) * 0.477, wallBounds.top + 137);
 
-
-	SpawnMonsters(1, sf::Vector2f((wallBounds.left + wallBounds.width) * 0.5, (wallBounds.top + wallBounds.height) * 0.3), monsterType1);
-	SpawnMonsters(1, sf::Vector2f((wallBounds.left + wallBounds.width) * 0.5, (wallBounds.top + wallBounds.height) * 0.3), monsterType0);
-
-
+	SpawnMonsters(30, sf::Vector2f((wallBounds.left + wallBounds.width) * 0.5, (wallBounds.top + wallBounds.height) * 0.3), monsterType1);
+	SpawnMonsters(30, sf::Vector2f((wallBounds.left + wallBounds.width) * 0.5, (wallBounds.top + wallBounds.height) * 0.3), monsterType0);
+	player->SetTileMap(tileMap);
 }
 
 void SceneDev1::Exit()
@@ -168,7 +212,26 @@ void SceneDev1::Exit()
 void SceneDev1::Update(float dt)
 {
 	Scene::Update(dt);
-	worldView.setCenter(player->GetPosition().x, player->GetPosition().y);
+	worldView.setCenter((wallBounds.left + wallBounds.width)* 0.5, player->GetPosition().y);
+
+	if (!player->isPlaying())
+	{
+		levelback->SetActive(true);
+		lvtextbar->SetActive(true);
+		leveluptext->SetActive(true);
+	}
+	else
+	{
+		levelback->SetActive(false);
+		lvtextbar->SetActive(false);
+		leveluptext->SetActive(false);
+	}
+	if (!player->isAlive)
+	{
+		lose->SetActive(true);
+		clearbutton->SetActive(true);
+	}
+
 	NextScene();
 	player->SetMonsterList(monsters);
 	//std::cout << nextdoor->GetActive();
@@ -190,62 +253,10 @@ void SceneDev1::Update(float dt)
 		bossMaxHpBar->SetActive(false);
 	}
 
-	//타일에 렉트 넣어서
-	//sf::Rect
-
-	//texCoord
-
-	sf::Vector2i playerTileIndex = (sf::Vector2i)(player->GetPosition() / 100.f);
-	int tileSize = tileMap->tiles.size();
-	for (int i = 0; i < tileSize; i++)
-	{
-			// SpikeWall : 바로 죽음
-			/*if (tileMap->tiles[i].texIndex == 4)
-			{
-			}*/
-		if (tileMap->tiles[i].texIndex == 4 && tileMap->tiles[i].bound.intersects(player->sprite.getGlobalBounds()))
-		{
-			std::cout << "충돌 " << std::endl;
-			position = Utils::Clamp2(player->GetPosition(), sf::Vector2f(tileMap->tiles[i].bound.left, tileMap->tiles[i].bound.top), sf::Vector2f(tileMap->tiles[i].bound.left + tileMap->tiles[i].bound.width, tileMap->tiles[i].bound.top + tileMap->tiles[i].bound.height));
-
-
-			//position = Utils::Clamp(position, wallBoundsLT, wallBoundsRB);
-
 	
-			player->SetPosition(position.x - player->sprite.getGlobalBounds().height * 0.5f , position.y);
-		}
-			/*if (tileMap->tiles[i].texIndex == 4)
-			{
-				player->SetPosition(0, 0);
-			}
-			if (tileMap->tiles[i].texIndex == 4)
-			{
-				player->SetPosition(0, 0);
-			}
-			if (tileMap->tiles[i].texIndex == 4)
-			{
-				player->SetPosition(0, 0);
-			}
-			if (tileMap->tiles[i].texIndex == 4)
-			{
-				player->SetPosition(0, 0);
-			}
-			if (tileMap->tiles[i].texIndex == 4)
-			{
-				player->SetPosition(0, 0);
-			}
-			if (tileMap->tiles[i].texIndex == 4)
-			{
-				player->SetPosition(0, 0);
-			}*/
-
-		}
-
-	std::cout << playerTileIndex.y << std::endl;
-
-
-
-
+	playerhptex->SetPosition(player->GetPosition().x, player->sprite.getGlobalBounds().top - 30.f);
+	playerhptex->text.setString(std::to_string(player->GetHp()));
+	
 	//std::cout << stage;
 	if (nextScene && player->sprite.getGlobalBounds().intersects(nextdoor->sprite.getGlobalBounds()))
 	{
@@ -266,7 +277,7 @@ void SceneDev1::Update(float dt)
 		{
 			tileMap->Release();
 			tileMap->Load("map/map3.csv");
-			SpawnMonsters(10, sf::Vector2f((wallBounds.left + wallBounds.width) * 0.5, (wallBounds.top + wallBounds.height) * 0.3), (Monster::Types)1);
+			SpawnMonsters(1, sf::Vector2f((wallBounds.left + wallBounds.width) * 0.5, (wallBounds.top + wallBounds.height) * 0.3), (Monster::Types)1);
 			player->SetWallBounds(wallBounds);
 			player->SetPosition((wallBounds.left + wallBounds.width) * 0.5f, (wallBounds.top + wallBounds.height) * 0.9f);
 		}
@@ -300,7 +311,6 @@ void SceneDev1::Update(float dt)
 		//std::cout << "보스 죽음 클리어 메뉴 띄워라" << std::endl;
 	}
 
-
 }
 
 
@@ -308,19 +318,6 @@ void SceneDev1::Draw(sf::RenderWindow& window)
 {
 	Scene::Draw(window);
 }
-
-//void SceneDev1::Scene1MonsterSetting(int count)
-//{
-//	for (int i = 0; i < count; i++)
-//	{
-//		Monster::Types monsterType = (Monster::Types)0;
-//		monster->SetType(monsterType);
-//		monster->SetPlayer(player);
-//		monster->Init();
-//		//Zombie* zombie = poolZombies.Get();
-//		//zombie->SetActive(false);
-//	}
-//}
 
 void SceneDev1::SpawnMonsters(int count, sf::Vector2f center, Monster::Types a)
 {
@@ -341,6 +338,7 @@ void SceneDev1::SpawnMonsters(int count, sf::Vector2f center, Monster::Types a)
 		monsters = poolMonsters.GetUseList();
 		monster->SetType(a);
 		monster->GetMap2(wallBounds);
+		monster->Settile(tileMap);
 		//zombie->SetActive(true);
 		//이미지 2개를 두고 위에서 아래로 보낸다 일정 시간동안 보내다가 일정 시간이 지나면 사진 고정되게
 		sf::Vector2f pos;

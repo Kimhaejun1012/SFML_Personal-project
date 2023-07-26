@@ -28,11 +28,10 @@ void Player::Init()
 	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("playercsv/AttackDown.csv"));
 	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("playercsv/AttackRight.csv"));
 
-
+	windowsize = FRAMEWORK.GetWindowSize();
 
 	animation.SetTarget(&sprite);
 	SetOrigin(Origins::BC);
-	bulletCount = 1;
 
 
 	clipInfos.push_back({ "IdleRight", "MoveRightUp","AttackDown" ,true, Utils::Normalize({-1.f, -1.f})});
@@ -47,6 +46,12 @@ void Player::Init()
 	clipInfos.push_back({ "IdleRight", "MoveRightDown","AttackDown",false, Utils::Normalize({1.f, 1.f})});
 
 
+	playerrec.setOutlineColor(sf::Color::Yellow);
+	playerrec.setFillColor(sf::Color::Transparent);
+	playerrec.setOutlineThickness(3.f);
+	playerrec.setSize(sf::Vector2f(45.f, 30.f));
+	Utils::SetOrigin(playerrec, Origins::BC);
+
 }
 
 void Player::Release()
@@ -59,7 +64,7 @@ void Player::Reset()
 	Scene* scene = SCENE_MGR.GetCurrScene();
 	SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
 	PlayerReset();
-
+	
 
 	PlayerUI();
 	animation.Play("IdleUp");
@@ -67,8 +72,17 @@ void Player::Reset()
 	SetPosition((wallBounds.left + wallBounds.width) * 0.5, wallBounds.top + (wallBounds.height * 0.9));
 	SetFlipX(false);
 	sprite.setScale(2.f, 2.f);
+	level = 1;
+	MaxHp = 1;
 	Hp = MaxHp;
 	exp = 0;
+
+	bulletDamage = 1000;
+	bulletCount = 1;
+	attackspeed = 0.1;
+	speed = 1000.f;
+	maxexp = 10000;
+
 
 	for (auto bullet : poolBullets.GetUseList())
 	{
@@ -78,55 +92,46 @@ void Player::Reset()
 
 	ObjectPool<Bullet>* ptr = &poolBullets;
 	poolBullets.OnCreate = [ptr](Bullet* bullet) {
-		//bullet->textureId = "tables/Bullet.csv";
 		bullet->pool = ptr;
 	};
 	poolBullets.Init();
 
 	currentClipInfo = clipInfos[6];
 
-
-
-	testbutton1 = (UIButton*)sceneDev1->AddGo(new UIButton("upgrade/doubleArrow.png", "mouse"));
-	testbutton2 = (UIButton*)sceneDev1->AddGo(new UIButton("upgrade/doubleAttack.png", ""));
-	testbutton3 = (UIButton*)sceneDev1->AddGo(new UIButton("upgrade/doubleSpeed.png", ""));
-	testbutton1->SetOrigin(Origins::MC);
-	testbutton1->SetPosition(windowsize.x * 0.5, windowsize.y * 0.5);
-	testbutton1->sortLayer = 100;
-	testbutton1->SetActive(false);
-	testbutton2->SetOrigin(Origins::MC);
-	testbutton2->SetPosition(testbutton1->GetPosition().x - 300, testbutton1->GetPosition().y);
-	testbutton2->sortLayer = 100;
-	testbutton2->SetActive(false);
-	testbutton3->SetOrigin(Origins::MC);
-	testbutton3->SetPosition(testbutton1->GetPosition().x + 300, testbutton1->GetPosition().y);
-	testbutton3->sortLayer = 100;
-	testbutton3->SetActive(false);
-	testbutton1->OnClick = [this]() {
-		//testbutton1->SetPlayer(this);
-		//testbutton1->IncreaseBullet();
-		std::cout << "1클릭" << std::endl;
-		testbutton1->SetActive(false);
-		testbutton2->SetActive(false);
-		testbutton3->SetActive(false);
-	};
-	testbutton2->OnClick = [this]() {
-		//testbutton2->SetPlayer(this);
-		//testbutton2->IncreaseAttact();
-		std::cout << "2클릭" << std::endl;
-		testbutton1->SetActive(false);
-		testbutton2->SetActive(false);
-		testbutton3->SetActive(false);
+	upgradeOptions = {
+"upgrade/doubleArrow.png",
+"upgrade/attackUp.png",
+"upgrade/healthUp.png",
+"upgrade/shootSpeed.png",
+"upgrade/speedUp.png",
+"upgrade/fullHealth.png",
 	};
 
-	testbutton3->OnClick = [this]() {
-		//testbutton3->SetPlayer(this);
-		//testbutton3->IncreaseSpeed();
-		std::cout << "3클릭" << std::endl;
+
+
+	for (int i = 0; i < 6; ++i)
+	{
+		UIButton* testbutton1 = (UIButton*)sceneDev1->AddGo(new UIButton(upgradeOptions[i], std::to_string(i)));
+		UIButton* testbutton2 = (UIButton*)sceneDev1->AddGo(new UIButton(upgradeOptions[i], std::to_string(i)));
+		UIButton* testbutton3 = (UIButton*)sceneDev1->AddGo(new UIButton(upgradeOptions[i], std::to_string(i)));
+		testbutton1->SetOrigin(Origins::MC);
+		testbutton1->SetPosition(windowsize.x * 0.5, windowsize.y * 0.5);
+		testbutton1->sortLayer = 105;
 		testbutton1->SetActive(false);
+		upgradeButtons1.push_back(testbutton1);
+		upgradeButtons2.push_back(testbutton2);
+		upgradeButtons3.push_back(testbutton3);
+		testbutton2->SetOrigin(Origins::MC);
+		testbutton2->SetPosition(windowsize.x * 0.5, windowsize.y * 0.5);
+		testbutton2->sortLayer = 105;
 		testbutton2->SetActive(false);
+		testbutton3->SetOrigin(Origins::MC);
+		testbutton3->SetPosition(windowsize.x * 0.5, windowsize.y * 0.5);
+		testbutton3->sortLayer = 105;
 		testbutton3->SetActive(false);
-	};
+
+	}
+	
 
 }
 
@@ -134,6 +139,12 @@ void Player::Update(float dt)
 {
 	//SpriteGo::Update(dt);
 	Scene* scene = SCENE_MGR.GetCurrScene();
+
+	if (Hp <= 0)
+	{
+		isAlive = false;
+		std::cout << "플레이어 죽음!!!" << std::endl;
+	}
 
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num1))
 	attack = true;
@@ -144,27 +155,196 @@ void Player::Update(float dt)
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num4))
 		std::cout << "플레이어 HP : " << Hp << std::endl;
 
+	if (damagetick >= 0.f)
+	{
+		damagetick -= dt;
+	}
+	playerrec.setPosition(GetPosition());
 
-
-
+	attackspeedfull += dt;
 	tick -= dt;
 	animation.Update(dt);
-	SetOrigin(origin);
-	PlayerMove(dt);
-	ShootAndLook();
-	playerHp->rect.setPosition(GetPosition().x - 30, sprite.getGlobalBounds().top - 10.f);
-	playerMaxHp->rect.setPosition(GetPosition().x - 30,sprite.getGlobalBounds().top - 10.f);
+	//SetOrigin(origin);
+
+	if (isAlive)
+	{
+		PlayerMove(dt);
+		ShootAndLook();
+	}
+
+	playerHp->rect.setPosition(GetPosition().x - 20, sprite.getGlobalBounds().top - 10.f);
+	playerMaxHp->rect.setPosition(GetPosition().x - 20,sprite.getGlobalBounds().top - 10.f);
 	playerHp->rect.setSize({ (static_cast<float>(Hp) / static_cast<float>(MaxHp)) * 50.f, 7.f });
 	expbar->sprite.setScale({ (static_cast<float>(exp) / static_cast<float>(maxexp)), 1.f});
 
+
 	if (exp >= maxexp)
 	{
-		std::cout << "나 혼자만 레벨업" << std::endl;
-		testbutton1->SetActive(true);
-		testbutton2->SetActive(true);
-		testbutton3->SetActive(true);
-		exp -= maxexp;
-		maxexp *= 1.3;
+		isplaying = false;
+
+			levtick -= dt;
+
+
+			std::cout << levelupgg;
+		if(!stop)
+		{
+			std::cout << "stop";
+			levelupgg -= dt;
+			if (isone)
+			{
+				std::cout << "isone";
+				level1 = Utils::RandomRange(0, 6);
+				level2 = Utils::RandomRange(0, 6);
+				level3 = Utils::RandomRange(0 ,6);
+				upgradeButtons1[level1]->SetActive(true);
+				upgradeButtons1[level1]->SetPosition(windowsize.x * 0.15, 333);
+				upgradeButtons2[level2]->SetActive(true);
+				upgradeButtons2[level2]->SetPosition(windowsize.x * 0.5, 333);
+				upgradeButtons3[level3]->SetActive(true);
+				upgradeButtons3[level3]->SetPosition(windowsize.x * 0.85, 333);
+				isone = false;
+			}
+			if (levtick <= 0)
+			{
+				upgradeButtons1[level1]->SetActive(false);
+				upgradeButtons2[level2]->SetActive(false);
+				upgradeButtons3[level3]->SetActive(false);
+				levtick = 0.07;
+				isone = true;
+			}
+		}
+
+		if (levelupgg <= 0)
+		{
+			stop = true;
+		}
+
+		if(stop)
+		{
+			upgradeButtons1[level1]->OnClick = [this]() {
+				//testbutton1->SetPlayer(this);
+				std::cout << "업그레이드 : " << level2 << std::endl;
+				std::cout << "1클릭" << std::endl;
+
+				switch (level1)
+				{
+				case 0:
+					bulletCount++;
+					break;
+				case 1:
+					bulletDamage += 50;
+					break;
+				case 2:
+					Hp += 200;
+					MaxHp += 200;
+					break;
+				case 3:
+					attackspeed -= 0.5;
+					break;
+				case 4:
+					speed += 500.f;
+					break;
+				case 5:
+					Hp = MaxHp;
+					break;
+				}
+
+				upgradeButtons1[level1]->SetActive(false);
+				upgradeButtons2[level2]->SetActive(false);
+				upgradeButtons3[level3]->SetActive(false);
+				levelupgg = 4.0f;
+				isplaying = true;
+				stop = false;
+				exp -= maxexp;
+				maxexp *= 1.3;
+			};
+
+			upgradeButtons2[level2]->OnClick = [this]() {
+			
+				switch (level2)
+				{
+				case 0:
+					bulletCount++;
+					std::cout << bulletCount;
+					break;
+				case 1:
+					bulletDamage += 50;
+					std::cout << bulletDamage;
+					break;
+				case 2:
+					Hp += 200;
+					MaxHp += 200;
+					std::cout << Hp;
+					std::cout << MaxHp;
+					break;
+				case 3:
+					attackspeed -= 0.5;
+					std::cout << attackspeed;
+					break;
+				case 4:
+					speed += 500.f;
+					std::cout << speed;
+					break;
+				case 5:
+					Hp = MaxHp;
+					std::cout << Hp;
+					break;
+				}
+
+				upgradeButtons1[level1]->SetActive(false);
+				upgradeButtons2[level2]->SetActive(false);
+				upgradeButtons3[level3]->SetActive(false);
+				levelupgg = 4.0f;
+				isplaying = true;
+				stop = false;
+				exp -= maxexp;
+				maxexp *= 1.3;
+			};
+
+			upgradeButtons3[level3]->OnClick = [this]() {
+
+				switch (level3)
+				{
+				case 0:
+					bulletCount++;
+					break;
+				case 1:
+					bulletDamage += 50;
+					break;
+				case 2:
+					Hp += 200;
+					MaxHp += 200;
+					break;
+				case 3:
+					attackspeed -= 0.5;
+					break;
+				case 4:
+					speed += 500.f;
+					break;
+				case 5:
+					Hp = MaxHp;
+					break;
+				}
+				std::cout << "업그레이드 : " << level2 << std::endl;
+				std::cout << "3클릭" << std::endl;
+				upgradeButtons1[level1]->SetActive(false);
+				upgradeButtons2[level2]->SetActive(false);
+				upgradeButtons3[level3]->SetActive(false);
+				levelupgg = 4.0f;
+				isplaying = true;
+				stop = false;
+				exp -= maxexp;
+				maxexp *= 1.3;
+			};
+		}
+
+
+		//std::cout << "나 혼자만 레벨업" << std::endl;
+		//testbutton1->SetActive(true);
+		//testbutton2->SetActive(true);
+		//testbutton3->SetActive(true);
+		//exp -= maxexp;
+		//maxexp *= 1.3;
 	}
 	//std::cout << wallBounds.top << std::endl;
 }
@@ -187,6 +367,7 @@ void Player::SetFlipX(bool filp)
 void Player::Draw(sf::RenderWindow& window)
 {
 	SpriteGo::Draw(window);
+	window.draw(playerrec);
 }
 
 
@@ -218,12 +399,10 @@ void Player::ShootAndLook()
 		}
 	}
 	monsterlook = Utils::Normalize(closestMonster - GetPosition());
-	
 
-	//if (direction == sf::Vector2f(0.f, 0.f) && tick < 0.1f && !monsters.empty())
-	if (direction == sf::Vector2f(0.f, 0.f) && tick < 0.1f && attack)
+	if (direction == sf::Vector2f(0.f, 0.f) && attackspeed < attackspeedfull && !monsters.empty())
 	{
-		tick = 0.5f;
+
 		int count = 0;
 		while (count != bulletCount)
 		{
@@ -241,7 +420,7 @@ void Player::ShootAndLook()
 			//float finalAngle = modifiedAngle; // + additionalAngle;  // 기존 각도와 추가 각도 합산
 			//sf::Vector2f fireDirection = Utils::DirectionFromAngle(finalAngle);  // 총알 발사 각도 계산
 
-			bullet->Fire(GetPosition(), monsterlook, 800.f);
+			bullet->Fire(GetPosition() + sf::Vector2f{ 15.f * count, 15.f * count }, monsterlook, 800.f);
 
 			if (scene != nullptr)
 			{
@@ -250,22 +429,27 @@ void Player::ShootAndLook()
 			}
 			count++;
 		}
+		attackspeedfull = 0;
 	}
 }
 
 
 void Player::PlayerMove(float dt)
 {
+
 	direction.x = INPUT_MGR.GetAxis(Axis::Horizontal);
 	direction.y = INPUT_MGR.GetAxis(Axis::Vertical);
+
 	float magnitude = Utils::Magnitude(direction);
 	if (magnitude > 1.f)
 	{
 		direction /= magnitude;
 	}
-
+	SetOrigin(Origins::BC);
 	position += direction * speed * dt;
 	SetPosition(position);
+
+
 
 
 	if (direction.x != 0.f || direction.y != 0.f)
@@ -277,19 +461,19 @@ void Player::PlayerMove(float dt)
 		currentClipInfo = *min;
 	}
 
-		std::string clipId = magnitude == 0.f ?
+	std::string clipId = magnitude == 0.f ?
 		(monsters.empty() ? currentClipInfo.idle : closestMonster.y < GetPosition().y ? "AttackUp" : "AttackDown") : currentClipInfo.move;
 
-		if (GetFlipX() != currentClipInfo.flipX)
-		{
-			SetFlipX(currentClipInfo.flipX);
-		}
+	if (GetFlipX() != currentClipInfo.flipX)
+	{
+		SetFlipX(currentClipInfo.flipX);
+	}
 
-		if (animation.GetCurrentClipId() != clipId)
-		{
-			animation.Play(clipId);
-		}
-		
+	if (animation.GetCurrentClipId() != clipId)
+	{
+		animation.Play(clipId);
+	}
+
 
 	if (sprite.getGlobalBounds().intersects(wallBounds))
 	{
@@ -297,6 +481,42 @@ void Player::PlayerMove(float dt)
 		position = Utils::Clamp(position, wallBoundsLT, wallBoundsRB);
 	}
 
+	sf::Vector2i playerTileIndex = (sf::Vector2i)(GetPosition() / 100.f);
+	int tileSize = tilemap->tiles.size();
+	for (int i = 0; i < tileSize; i++)
+	{
+
+		if ((tilemap->tiles[i].texIndex == 2 || tilemap->tiles[i].texIndex == 3 || tilemap->tiles[i].texIndex == 5 || tilemap->tiles[i].texIndex == 6 || tilemap->tiles[i].texIndex == 7) && playerrec.getGlobalBounds().intersects(tilemap->tiles[i].bound, playertile))
+		{
+			if (playertile.width > playertile.height)
+			{
+				std::cout << "위아래충돌";
+				if (playerrec.getGlobalBounds().top < tilemap->tiles[i].bound.top) // bottom
+				{
+					SetPosition(GetPosition().x, playerrec.getGlobalBounds().top + playerrec.getGlobalBounds().height);
+				}
+				else if (playerrec.getGlobalBounds().top + playerrec.getGlobalBounds().height > tilemap->tiles[i].bound.top) // top
+				{
+					SetPosition(GetPosition().x, playerrec.getGlobalBounds().top + playerrec.getGlobalBounds().height + 5);
+				}
+			}
+			else if (playertile.width < playertile.height)
+			{
+				if (playerrec.getGlobalBounds().left < tilemap->tiles[i].bound.left)
+				{
+					SetPosition(playerrec.getGlobalBounds().left + 15, GetPosition().y);
+				}
+				else if (playerrec.getGlobalBounds().left + playerrec.getGlobalBounds().width > tilemap->tiles[i].bound.left) // left
+				{
+					SetPosition(playerrec.getGlobalBounds().left + playerrec.getGlobalBounds().width - 15, GetPosition().y);
+				}
+			}
+		}
+		if (tilemap->tiles[i].texIndex == 1 && sprite.getGlobalBounds().intersects(tilemap->tiles[i].bound))
+		{
+			Hp -= 0.1f;
+		}
+	}
 }
 
 void Player::ClearBullet()
@@ -329,13 +549,14 @@ void Player::OnHitted(int damage)
 {
 	if (!isAlive)
 		return;
-	Hp = std::max(Hp - damage, 0);
-	std::cout << Hp << std::endl;
-	if (Hp == 0)
+
+	if(damagetick <= 0.f)
 	{
-		isAlive = false;
-		std::cout << "플레이어 죽음!!!" << std::endl;
+		Hp = std::max(Hp - damage, 0.f);
+		std::cout << Hp << std::endl;
+		damagetick = 2.f;
 	}
+
 }
 
 int Player::GetHp() const
@@ -451,7 +672,21 @@ void Player::PlayerReset()
 	sceneDev1->RemoveGo(playerMaxHp);
 	sceneDev1->RemoveGo(expbar);
 	sceneDev1->RemoveGo(maxexpbar);
-	sceneDev1->RemoveGo(testbutton1);
-	sceneDev1->RemoveGo(testbutton2);
-	sceneDev1->RemoveGo(testbutton3);
+	//sceneDev1->RemoveGo(testbutton1);
+
+}
+
+void Player::SetTileMap(TileMap* tilemap)
+{
+	this->tilemap = tilemap;
+}
+
+sf::RectangleShape Player::GetPlayerRec()
+{
+	return playerrec;
+}
+
+bool Player::isPlaying()
+{
+	return isplaying;
 }

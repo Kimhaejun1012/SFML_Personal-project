@@ -43,13 +43,15 @@ void Bullet::Reset()
 
 void Bullet::Update(float dt)
 {
-	sprite.setOrigin(sprite.getGlobalBounds().width * 0.5f, sprite.getGlobalBounds().height * 0.5f);
 
-	SpriteGo::Update(dt);
-	animation.Update(dt);
+		sprite.setOrigin(sprite.getGlobalBounds().width * 0.5f, sprite.getGlobalBounds().height * 0.5f);
 
-	Move(dt);
-	HitMonster();
+		SpriteGo::Update(dt);
+		animation.Update(dt);
+
+		Move(dt);
+		HitMonster();
+
 
 }
 
@@ -74,11 +76,12 @@ void Bullet::Move(float dt)
 
 }
 
-void Bullet::Fire(const sf::Vector2f& pos, const sf::Vector2f& dir, float speed)
+void Bullet::Fire(const sf::Vector2f& pos, const sf::Vector2f& dir, float speed) // angle test
 {
 	//sprite.setRotation(Utils::Angle(dir));
 	SetPosition(pos);
 	direction = dir;
+
 	this->speed = speed;
 }
 

@@ -21,7 +21,7 @@ protected:
 	Monster* monster;
 	const std::list<Monster*>* monsters;
 	AnimationController animation;
-
+	Player* player;
 	int rotateAngle = 0;
 
 public:
@@ -32,7 +32,7 @@ public:
 
 	void SetMonsterList(const std::list<Monster*>* list);
 
-	void Fire(const sf::Vector2f& pos, const sf::Vector2f& dir, float speed);
+	void Fire(const sf::Vector2f& pos, const sf::Vector2f& dir, float speed);  // angle test
 
 	virtual void Init() override;
 	virtual void Release() override;

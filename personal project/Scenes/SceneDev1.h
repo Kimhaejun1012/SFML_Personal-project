@@ -10,6 +10,7 @@ class MapStructure;
 class SpriteGo;
 class UIButton;
 class MonsterBullet;
+class TextGo;
 
 class SceneDev1 : public Scene
 {
@@ -26,7 +27,10 @@ protected:
 
 	SpriteGo* bossHpbar;
 	SpriteGo* bossMaxHpBar;
+	SpriteGo* lose;
 
+	TextGo* leveluptext;
+	TextGo* playerhptex;
 	std::vector<SpriteGo*> coins;
 	SpriteGo* coin;
 	ObjectPool<Monster> poolMonsters;
@@ -35,7 +39,7 @@ protected:
 	sf::Vector2f bossPos;
 
 	bool bosspattern2 = false;
-
+	bool isone = true;
 	TileMap* tileMap = nullptr;
 	SpriteGo* mapmap;
 	sf::Vector2f size;
@@ -63,6 +67,10 @@ protected:
 	SpriteGo* nextdoor;
 	int monsterCount = 0;
 	std::list<Monster*> monsters;
+
+	SpriteGo* lvtextbar;
+
+	SpriteGo* levelback;
 
 	//플레이어 UI
 	UIButton* testbutton1;

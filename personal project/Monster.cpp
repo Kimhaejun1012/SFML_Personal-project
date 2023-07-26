@@ -7,6 +7,7 @@
 #include "MonsterTable.h"
 #include "Bullet.h"
 #include "UIButton.h"
+#include "TileMap.h"
 
 //std::cout << "들어옴" << std::endl;
 Monster::Monster(const std::string& textureId, const std::string& n) : SpriteGo(textureId, n)
@@ -68,9 +69,6 @@ void Monster::Init()
 
 	monster.SetTarget(&sprite);
 
-	bossMoveDuration = 2.0f;
-	bossMoveTimer = bossMoveDuration;
-	bossMoveDir = { 0.f,0.f };
 
 	ObjectPool<MonsterBullet>* ptr = &poolBullets;
 	poolBullets.OnCreate = [ptr, this](MonsterBullet* monsterbullet) {
@@ -120,6 +118,12 @@ void Monster::Init()
 	clipInfosboss.push_back({ "BossMoveDownRight", "BossMoveDownRight",false, Utils::Normalize({1.f, 1.f}) });
 
 
+	monstersrec.setOutlineColor(sf::Color::Yellow);
+	monstersrec.setFillColor(sf::Color::Transparent);
+	monstersrec.setOutlineThickness(3.f);
+	monstersrec.setSize(sf::Vector2f(45.f, 30.f));
+	Utils::SetOrigin(monstersrec, Origins::BC);
+
 }
 
 void Monster::Release()
@@ -150,18 +154,51 @@ void Monster::Reset()
 
 void Monster::Update(float dt)
 {
+
+	if (!player->isPlaying())
+		return;
 	SpriteGo::Update(dt);
 	monster.Update(dt);
 	SetOrigin(Origins::BC);
 
-
+	monstersrec.setPosition(GetPosition());
 
 	tick -= dt;
 	if (player == nullptr)
 		return;
 
+	int tileSize = tilemap->tiles.size();
+	for (int i = 0; i < tileSize; i++)
+	{
 
-	//벽 밖으로 못나감
+		if ((tilemap->tiles[i].texIndex == 2 || tilemap->tiles[i].texIndex == 3 || tilemap->tiles[i].texIndex == 5 || tilemap->tiles[i].texIndex == 6 || tilemap->tiles[i].texIndex == 7) && sprite.getGlobalBounds().intersects(tilemap->tiles[i].bound, monsterfl))
+		{
+			if (monsterfl.width > monsterfl.height)
+			{
+				if (monstersrec.getGlobalBounds().top < tilemap->tiles[i].bound.top) // bottom
+				{
+					SetPosition(GetPosition().x, monstersrec.getGlobalBounds().top + monstersrec.getGlobalBounds().height);
+				}
+				else if (monstersrec.getGlobalBounds().top + monstersrec.getGlobalBounds().height > tilemap->tiles[i].bound.top) // top
+				{
+					SetPosition(GetPosition().x, monstersrec.getGlobalBounds().top + monstersrec.getGlobalBounds().height + 5);
+				}
+			}
+			else if (monsterfl.width < monsterfl.height)
+			{
+				if (monstersrec.getGlobalBounds().left < tilemap->tiles[i].bound.left)
+				{
+					SetPosition(monstersrec.getGlobalBounds().left + 20, GetPosition().y);
+				}
+				else if (monstersrec.getGlobalBounds().left + monstersrec.getGlobalBounds().width > tilemap->tiles[i].bound.left) // left
+				{
+					SetPosition(monstersrec.getGlobalBounds().left + monstersrec.getGlobalBounds().width, GetPosition().y);
+				}
+			}
+		}
+	}
+
+
 	if (sprite.getGlobalBounds().intersects(mapsize))
 	{
 		//std::cout << "충돌함" << std::endl;
@@ -175,11 +212,6 @@ void Monster::Update(float dt)
 		poolBullets.Clear();
 		clear = false;
 	}
-
-
-
-	// 몬스터 패턴이 아닐경우 보스몬스터는 평소처럼 움직이면서 총알쏨
-	// 랜덤 숫자로 몬스터 패턴이 걸릴경우 움직임이랑 총알쏘는거 멈추고 패턴만 플레이함
 
 
 
@@ -208,6 +240,10 @@ void Monster::Update(float dt)
 			BossMove(dt);
 			bosspattern += dt;
 			attackTimer += dt;
+		}
+		if (bosspattern >= bosscooltime)
+		{
+			randomPattern = Utils::RandomRange(1, 5);
 		}
 		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num6))
 		{
@@ -291,7 +327,6 @@ void Monster::Update(float dt)
 
 			if (monster.GetTotalFrame() - monster.GetCurFrame() <= 1)
 			{
-
 				randomPattern = 0;
 				std::cout << "프레임 끝" << std::endl;
 			}
@@ -470,8 +505,9 @@ void Monster::GoombaMove(float dt)
 		}
 		else
 			speed = 40.f;
+
 		monster.Play(clipId);
-		if (distance <= 50.f)
+		if (distance <= 30.f)
 		{
 			HitPlayer(dt);
 		}
@@ -484,6 +520,7 @@ void Monster::GoombaMove(float dt)
 void Monster::Draw(sf::RenderWindow& window)
 {
 	SpriteGo::Draw(window);
+	window.draw(monstersrec);
 }
 
 void Monster::SetType(Types t)
@@ -555,13 +592,11 @@ void Monster::FollowPlayer(float dt)
 
 void Monster::HitPlayer(float dt)
 {
-	attackTimer += dt;
-	if (attackTimer > attackRate)
-	{
-		attackTimer = 0.f;
+
+
 		// 플레이어 피격
 		player->OnHitted(damage);
-	}
+
 
 }
 
@@ -619,6 +654,11 @@ void Monster::Pattern3Bullet(MonsterBullet::Types t)
 	{
 		SpawnBullet2(50, MonsterBullet::Types::Pattern32);
 	}
+}
+
+void Monster::Setmonstersrec(sf::RectangleShape rec)
+{
+	monstersrec = rec;
 }
 
 
@@ -687,4 +727,9 @@ void Monster::ClearMonsterBulletPool(bool clear)
 {
 	this->clear = clear;
 	std::cout << "받음";
+}
+
+void Monster::Settile(TileMap* tile)
+{
+	this->tilemap = tile;
 }
