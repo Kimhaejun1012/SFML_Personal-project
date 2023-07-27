@@ -192,8 +192,8 @@ void SceneDev1::Enter()
 
 	nextdoor->SetPosition((wallBounds.left + wallBounds.width) * 0.477, wallBounds.top + 137);
 
-	SpawnMonsters(1, sf::Vector2f((wallBounds.left + wallBounds.width) * 0.5, (wallBounds.top + wallBounds.height) * 0.3), monsterType1);
-	SpawnMonsters(1, sf::Vector2f((wallBounds.left + wallBounds.width) * 0.5, (wallBounds.top + wallBounds.height) * 0.3), monsterType0);
+	SpawnMonsters(3, sf::Vector2f((wallBounds.left + wallBounds.width) * 0.5, (wallBounds.top + wallBounds.height) * 0.3), monsterType1);
+	SpawnMonsters(3, sf::Vector2f((wallBounds.left + wallBounds.width) * 0.5, (wallBounds.top + wallBounds.height) * 0.3), monsterType0);
 	player->SetTileMap(tileMap);
 }
 
@@ -261,10 +261,7 @@ void SceneDev1::Update(float dt)
 	if (nextScene && player->sprite.getGlobalBounds().intersects(nextdoor->sprite.getGlobalBounds()))
 	{
 		stage++;
-		//monster->ClearMonsterBulletPool(true);
-		//두 리스트 다 순회하면서 저 함수 다 호출
-		//몬스터풀에있는 두개 리스트 다 호출하면서
-		//유즈리스트랑 풀 리스트
+
 		if (stage == 3)
 		{	//이게 보스임
 			tileMap->Release();
@@ -277,7 +274,8 @@ void SceneDev1::Update(float dt)
 		{
 			tileMap->Release();
 			tileMap->Load("map/map3.csv");
-			SpawnMonsters(1, sf::Vector2f((wallBounds.left + wallBounds.width) * 0.5, (wallBounds.top + wallBounds.height) * 0.3), (Monster::Types)1);
+			SpawnMonsters(5, sf::Vector2f((wallBounds.left + wallBounds.width) * 0.5, (wallBounds.top + wallBounds.height) * 0.3), (Monster::Types)1);
+			SpawnMonsters(5, sf::Vector2f((wallBounds.left + wallBounds.width) * 0.5, (wallBounds.top + wallBounds.height) * 0.3), (Monster::Types)0);
 			player->SetWallBounds(wallBounds);
 			player->SetPosition((wallBounds.left + wallBounds.width) * 0.5f, (wallBounds.top + wallBounds.height) * 0.9f);
 		}

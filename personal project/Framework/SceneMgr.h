@@ -14,7 +14,7 @@ protected:
 	SceneId currentSceneId = SceneId::None;
 	Scene* currentScene = nullptr;
 
-	SceneId startSceneId = SceneId::Menu;
+	SceneId startSceneId = SceneId::Title;
 
 public:
 	void Init();

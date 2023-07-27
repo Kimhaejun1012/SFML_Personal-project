@@ -118,7 +118,7 @@ void Monster::Init()
 	clipInfosboss.push_back({ "BossMoveDownRight", "BossMoveDownRight",false, Utils::Normalize({1.f, 1.f}) });
 
 
-	monstersrec.setOutlineColor(sf::Color::Yellow);
+	monstersrec.setOutlineColor(sf::Color::Transparent);
 	monstersrec.setFillColor(sf::Color::Transparent);
 	monstersrec.setOutlineThickness(3.f);
 	monstersrec.setSize(sf::Vector2f(45.f, 30.f));
@@ -224,11 +224,15 @@ void Monster::Update(float dt)
 
 	if (monsterType == Types::Boss)
 	{
+		if (bossscale)
+		{
+			sprite.setScale(1.0f, 1.0f);
+			bossscale = false;
+		}
 		Scene* scene = SCENE_MGR.GetCurrScene();
 		SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
 		sceneDev1->GetBossHp(hp);
 		sceneDev1->GetBossMaxHp(maxHp);
-
 		if (randomPattern == 0)
 		{
 			if (attackTimer > attackRate)
@@ -240,6 +244,7 @@ void Monster::Update(float dt)
 			BossMove(dt);
 			bosspattern += dt;
 			attackTimer += dt;
+			std::cout << bosspattern << std::endl;
 		}
 		if (bosspattern >= bosscooltime)
 		{
@@ -274,6 +279,7 @@ void Monster::Update(float dt)
 		}
 		if (randomPattern == 1)
 		{
+			bosspattern = 0;
 			BossPattern1(dt);
 
 			if (monster.GetTotalFrame() - monster.GetCurFrame() <= 1)
@@ -283,6 +289,7 @@ void Monster::Update(float dt)
 		if (randomPattern == 2)
 		{
 
+			bosspattern = 0;
 			BossPattern2(dt);
 			if (monster.GetTotalFrame() - monster.GetCurFrame() <= 1)
 			{
@@ -293,6 +300,7 @@ void Monster::Update(float dt)
 		}
 		if (randomPattern == 3)
 		{
+			bosspattern = 0;
 			BossPattern3(dt);
 
 			if (monster.GetTotalFrame() - monster.GetCurFrame() <= 10)
@@ -313,6 +321,7 @@ void Monster::Update(float dt)
 		if (randomPattern == 4)
 		{
 			std::cout << monster.GetTotalFrame() - monster.GetCurFrame() << std::endl;
+			bosspattern = 0;
 			BossPattern4(dt);
 			if (monster.GetTotalFrame() - monster.GetCurFrame() <= 70)
 			{
@@ -331,7 +340,6 @@ void Monster::Update(float dt)
 				std::cout << "프레임 끝" << std::endl;
 			}
 		}
-		bosspattern = 0;
 		isPattern = false;
 	}
 

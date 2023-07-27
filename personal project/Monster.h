@@ -76,12 +76,12 @@ protected:
 	bool bossMoving = true;
 	bool isPattern = false;
 	bool isone = true;
-	float bosscooltime = 1.f;
+	float bosscooltime = 5.0f;
 	float bosspattern = 0.f;
 	float bossMoveTimer = bossMoveDuration;
 	float bossMoveDuration = 5.0f;
 	int randomPattern = 0;
-
+	bool bossscale = true;
 	sf::RectangleShape monstersrec;
 	int bossHp;
 	int bossMaxHp;

@@ -46,7 +46,7 @@ void Player::Init()
 	clipInfos.push_back({ "IdleRight", "MoveRightDown","AttackDown",false, Utils::Normalize({1.f, 1.f})});
 
 
-	playerrec.setOutlineColor(sf::Color::Yellow);
+	playerrec.setOutlineColor(sf::Color::Transparent);
 	playerrec.setFillColor(sf::Color::Transparent);
 	playerrec.setOutlineThickness(3.f);
 	playerrec.setSize(sf::Vector2f(45.f, 30.f));
@@ -73,14 +73,14 @@ void Player::Reset()
 	SetFlipX(false);
 	sprite.setScale(2.f, 2.f);
 	level = 1;
-	MaxHp = 1;
+	MaxHp = 100;
 	Hp = MaxHp;
 	exp = 0;
 
-	bulletDamage = 100;
+	bulletDamage = 30;
 	bulletCount = 1;
 	attackspeed = 0.7;
-	speed = 500.f;
+	speed = 800.f;
 	maxexp = 100;
 
 
@@ -158,6 +158,14 @@ void Player::Update(float dt)
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num4))
 		std::cout << "플레이어 HP : " << Hp << std::endl;
 
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::G))
+		bulletDamage += 1000;
+
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::H))
+		bulletDamage -= 1000;
+
+
+
 	if (damagetick >= 0.f)
 	{
 		damagetick -= dt;
@@ -184,9 +192,6 @@ void Player::Update(float dt)
 	if (exp >= maxexp)
 	{
 		isplaying = false;
-
-
-			std::cout << levelupgg;
 
 		if(!stop)
 		{
@@ -238,11 +243,11 @@ void Player::Update(float dt)
 					bulletDamage += 50;
 					break;
 				case 2:
-					Hp += 200;
-					MaxHp += 200;
+					Hp += 30;
+					MaxHp += 30;
 					break;
 				case 3:
-					attackspeed -= 0.5;
+					attackspeed -= 0.2;
 					break;
 				case 4:
 					speed += 500.f;
@@ -259,7 +264,7 @@ void Player::Update(float dt)
 				isplaying = true;
 				stop = false;
 				exp -= maxexp;
-				maxexp *= 1.3;
+				maxexp *= 2;
 			};
 
 			upgradeButtons2[level2]->OnClick = [this]() {
@@ -275,13 +280,13 @@ void Player::Update(float dt)
 					std::cout << bulletDamage;
 					break;
 				case 2:
-					Hp += 200;
-					MaxHp += 200;
+					Hp += 30;
+					MaxHp += 30;
 					std::cout << Hp;
 					std::cout << MaxHp;
 					break;
 				case 3:
-					attackspeed -= 0.5;
+					attackspeed -= 0.2;
 					std::cout << attackspeed;
 					break;
 				case 4:
@@ -301,7 +306,7 @@ void Player::Update(float dt)
 				isplaying = true;
 				stop = false;
 				exp -= maxexp;
-				maxexp *= 1.3;
+				maxexp *= 2;
 			};
 
 			upgradeButtons3[level3]->OnClick = [this]() {
@@ -315,11 +320,11 @@ void Player::Update(float dt)
 					bulletDamage += 50;
 					break;
 				case 2:
-					Hp += 200;
-					MaxHp += 200;
+					Hp += 30;
+					MaxHp += 30;
 					break;
 				case 3:
-					attackspeed -= 0.5;
+					attackspeed -= 0.2;
 					break;
 				case 4:
 					speed += 500.f;
@@ -337,7 +342,7 @@ void Player::Update(float dt)
 				isplaying = true;
 				stop = false;
 				exp -= maxexp;
-				maxexp *= 1.3;
+				maxexp *= 2;
 			};
 		}
 
@@ -390,12 +395,12 @@ void Player::ShootAndLook()
 {
 	Scene* scene = SCENE_MGR.GetCurrScene();
 	SceneDev1* sceneDev1 = dynamic_cast<SceneDev1*>(scene);
-
+	float distance;
 	// 플레이어 주변에 있는 몬스터를 찾기 위한 로직
 	float closestDistance = std::numeric_limits<float>::max();
 	closestMonster = { 0.f, 0.f };
 	for (const auto& monster : monsters) {
-		float distance = Utils::Distance(monster->GetPosition(), GetPosition());
+		distance = Utils::Distance(monster->GetPosition(), GetPosition());
 		if (distance < closestDistance) {
 			closestMonster = monster->GetPosition();
 			closestDistance = distance;
@@ -403,7 +408,7 @@ void Player::ShootAndLook()
 	}
 	monsterlook = Utils::Normalize(closestMonster - GetPosition());
 
-	if (direction == sf::Vector2f(0.f, 0.f) && attackspeed < attackspeedfull && !monsters.empty())
+	if (direction == sf::Vector2f(0.f, 0.f) && attackspeed < attackspeedfull)
 	{
 
 		int count = 0;
@@ -517,7 +522,7 @@ void Player::PlayerMove(float dt)
 		}
 		if (tilemap->tiles[i].texIndex == 1 && sprite.getGlobalBounds().intersects(tilemap->tiles[i].bound))
 		{
-			Hp -= 0.1f;
+			Hp -= 0.01f;
 		}
 	}
 }
