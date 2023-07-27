@@ -31,9 +31,8 @@ void SceneMenu::Init()
 	startbutton = ((UIButton*)AddGo(new UIButton("graphics/startbutton.png", "main")));
 
 	main->SetPosition(centerPos);
-	main->SetOrigin(Origins::MC);
-	main->sprite.setScale(0.4,0.4);
-	main->sortLayer = 101;
+	main->SetOrigin(Origins::BL);
+	main->sprite.setScale(1.0,0.42);
 
 	startbutton->SetPosition(centerPos.x, centerPos.y * 1.6);
 	startbutton->SetOrigin(Origins::MC);

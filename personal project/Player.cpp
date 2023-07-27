@@ -77,11 +77,11 @@ void Player::Reset()
 	Hp = MaxHp;
 	exp = 0;
 
-	bulletDamage = 1000;
+	bulletDamage = 100;
 	bulletCount = 1;
-	attackspeed = 0.1;
-	speed = 1000.f;
-	maxexp = 10000;
+	attackspeed = 0.7;
+	speed = 500.f;
+	maxexp = 100;
 
 
 	for (auto bullet : poolBullets.GetUseList())
@@ -118,6 +118,9 @@ void Player::Reset()
 		testbutton1->SetPosition(windowsize.x * 0.5, windowsize.y * 0.5);
 		testbutton1->sortLayer = 105;
 		testbutton1->SetActive(false);
+		testbutton1->sprite.setScale(0.7, 0.7);
+		testbutton2->sprite.setScale(0.7, 0.7);
+		testbutton3->sprite.setScale(0.7, 0.7);
 		upgradeButtons1.push_back(testbutton1);
 		upgradeButtons2.push_back(testbutton2);
 		upgradeButtons3.push_back(testbutton3);
@@ -166,7 +169,7 @@ void Player::Update(float dt)
 	animation.Update(dt);
 	//SetOrigin(origin);
 
-	if (isAlive)
+	if (isAlive && isplaying)
 	{
 		PlayerMove(dt);
 		ShootAndLook();
@@ -182,13 +185,13 @@ void Player::Update(float dt)
 	{
 		isplaying = false;
 
-			levtick -= dt;
-
 
 			std::cout << levelupgg;
+
 		if(!stop)
 		{
 			std::cout << "stop";
+			levtick -= dt;
 			levelupgg -= dt;
 			if (isone)
 			{
@@ -209,8 +212,8 @@ void Player::Update(float dt)
 				upgradeButtons1[level1]->SetActive(false);
 				upgradeButtons2[level2]->SetActive(false);
 				upgradeButtons3[level3]->SetActive(false);
-				levtick = 0.07;
 				isone = true;
+				levtick = 0.07;
 			}
 		}
 

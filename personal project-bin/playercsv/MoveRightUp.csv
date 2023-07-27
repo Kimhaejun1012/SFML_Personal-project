@@ -1,5 +1,5 @@
 ID,FPS,LOOPTYPE,,
-MoveRightUp,10,1,,
+MoveRightUp,20,1,,
 ,,,,
 TEXTURE ID,LEFT,TOP,WIDTH,HEIGHT
 graphics/mario.png,26,988,25,44

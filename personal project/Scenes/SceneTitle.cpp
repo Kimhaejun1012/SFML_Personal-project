@@ -24,12 +24,14 @@ void SceneTitle::Init()
 	{
 		go->Init();
 	}
-
-	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
+	sf::Vector2f  windowSize = FRAMEWORK.GetWindowSize();
 	sf::Vector2f centerPos = windowSize * 0.5f;
-	title->sprite.setScale(1, 1);
-	title->SetOrigin(Origins::MC);
-	title->SetPosition(centerPos);
+	float x = static_cast<float>(windowSize.x / title->sprite.getGlobalBounds().width);
+	float y = static_cast<float>(windowSize.y / title->sprite.getGlobalBounds().height);
+
+	title->SetOrigin(Origins::TL);
+	title->SetPosition(0, 0);
+	title->sprite.setScale({ 1.751f,1.09f });
 	title->sortLayer = 100;
 	getColor = title->sprite.getColor();
 	getColor.a = 0;

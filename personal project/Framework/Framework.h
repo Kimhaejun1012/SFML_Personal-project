@@ -13,8 +13,8 @@ protected:
 	sf::RenderWindow window;
 	sf::Clock clock;
 
-	int screenWidth = 900;
-	int screenHeight = 920;
+	int screenWidth = 755;
+	int screenHeight = 890;
 	std::string title = "SFML Works!";
 
 public:
