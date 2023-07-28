@@ -40,6 +40,8 @@ void SceneMenu::Init()
 
 
 	startbutton->OnClick = []() {
+
+
 		SCENE_MGR.ChangeScene(SceneId::Dev1);
 	};
 
@@ -55,6 +57,7 @@ void SceneMenu::Release()
 
 void SceneMenu::Enter()
 {
+
 	Scene::Enter();
 }
 

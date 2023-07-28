@@ -362,7 +362,7 @@ void Monster::Update(float dt)
 				return Utils::Distance(lhs.point, direction) < Utils::Distance(rhs.point, direction);
 			});
 		currentClipInfoHammer = *min;
-		std::string clipId = distance <= 550 ? (distance <= 350 ? currentClipInfoHammer.attack : currentClipInfoHammer.move) : currentClipInfoHammer.idle;
+		std::string clipId = distance <= 1100 ? (distance <= 350 ? currentClipInfoHammer.attack : currentClipInfoHammer.move) : currentClipInfoHammer.idle;
 
 		if (GetFlipX() != currentClipInfoHammer.flipX)
 		{

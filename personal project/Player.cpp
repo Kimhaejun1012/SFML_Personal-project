@@ -408,7 +408,7 @@ void Player::ShootAndLook()
 	}
 	monsterlook = Utils::Normalize(closestMonster - GetPosition());
 
-	if (direction == sf::Vector2f(0.f, 0.f) && attackspeed < attackspeedfull)
+	if (direction == sf::Vector2f(0.f, 0.f) && attackspeed < attackspeedfull && !monsters.empty())
 	{
 
 		int count = 0;

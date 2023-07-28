@@ -164,6 +164,8 @@ void SceneDev1::Init()
 		tileMap->Release();
 		tileMap->Load("map/map1.csv");
 		player->isAlive = true;
+		poolMonsters.Clear();
+		monsterCount = 0;
 		//playerhptex->SetActive(false);
 		SCENE_MGR.ChangeScene(SceneId::Menu);
 	};
