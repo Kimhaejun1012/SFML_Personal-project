@@ -31,12 +31,8 @@ void SceneDev1::Init()
 	uiView.setSize(size);
 	uiView.setCenter(size * 0.5f);
 
-
 	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
 	sf::Vector2f centerPos = windowSize * 0.5f;
-
-
-
 
 	TextGo* sceneName = (TextGo*)AddGo(new TextGo("", "Scene Name"));
 	sceneName->sortLayer = 100;
@@ -151,7 +147,6 @@ void SceneDev1::Init()
 
 	clearbutton->OnClick = [this]() {
 
-		std::cout << "클리어 버튼 클릭" << std::endl;
 		clear->SetActive(false);
 		clearbutton->SetActive(false);
 		lose->SetActive(false);
@@ -356,7 +351,6 @@ void SceneDev1::SpawnMonsters(int count, sf::Vector2f center, Monster::Types a)
 		//zombie->Reset();
 		AddGo(monster);
 		monsterCount++;
-		std::cout << "몬스터 생성" << std::endl;
 
 	}
 }

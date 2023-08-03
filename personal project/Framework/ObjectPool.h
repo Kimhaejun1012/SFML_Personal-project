@@ -16,7 +16,6 @@ public:
 	void Init(int cacheSize = 60);
 	void Release(); 
 	void Clear();	// pool로 전부 회수
-	void CreateObjs2(int a);
 
 	T* Get();
 	void Return(T* obj);

@@ -208,7 +208,6 @@ void Monster::Update(float dt)
 
 	if (clear)
 	{
-		std::cout << "오브젝트풀클리어";
 		poolBullets.Clear();
 		clear = false;
 	}
@@ -244,7 +243,6 @@ void Monster::Update(float dt)
 			BossMove(dt);
 			bosspattern += dt;
 			attackTimer += dt;
-			std::cout << bosspattern << std::endl;
 		}
 		if (bosspattern >= bosscooltime)
 		{
@@ -284,7 +282,6 @@ void Monster::Update(float dt)
 
 			if (monster.GetTotalFrame() - monster.GetCurFrame() <= 1)
 				randomPattern = 0;
-			std::cout << "프레임 끝" << std::endl;
 		}
 		if (randomPattern == 2)
 		{
@@ -293,7 +290,6 @@ void Monster::Update(float dt)
 			BossPattern2(dt);
 			if (monster.GetTotalFrame() - monster.GetCurFrame() <= 1)
 			{
-				std::cout << "프레임 끝" << std::endl;
 				randomPattern = 0;
 				isone = true;
 			}
@@ -315,12 +311,10 @@ void Monster::Update(float dt)
 			{
 				randomPattern = 0;
 				isone = true;
-				std::cout << "프레임 끝" << std::endl;
 			}
 		}
 		if (randomPattern == 4)
 		{
-			std::cout << monster.GetTotalFrame() - monster.GetCurFrame() << std::endl;
 			bosspattern = 0;
 			BossPattern4(dt);
 			if (monster.GetTotalFrame() - monster.GetCurFrame() <= 70)
@@ -337,7 +331,7 @@ void Monster::Update(float dt)
 			if (monster.GetTotalFrame() - monster.GetCurFrame() <= 1)
 			{
 				randomPattern = 0;
-				std::cout << "프레임 끝" << std::endl;
+				
 			}
 		}
 		isPattern = false;
@@ -734,7 +728,6 @@ void Monster::SetFlipX(bool flip)
 void Monster::ClearMonsterBulletPool(bool clear)
 {
 	this->clear = clear;
-	std::cout << "받음";
 }
 
 void Monster::Settile(TileMap* tile)

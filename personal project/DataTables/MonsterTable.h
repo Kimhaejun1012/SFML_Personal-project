@@ -16,7 +16,7 @@ class MonsterTable : public DataTable
 protected:
 	MonsterInfo monsterinfo;
 	std::unordered_map<Monster::Types, MonsterInfo> table;
-
+	
 public:
 	MonsterTable() : DataTable(DataTable::Ids::Monster) {};
 	virtual ~MonsterTable() override = default;

@@ -49,6 +49,8 @@ protected:
 	int bosshp = 0;
 	int bossmaxhp = 0;
 
+	int sin;
+
 	int stage = 1;
 
 	Player* player;
@@ -106,8 +108,6 @@ public:
 
 	void BossPattern2(bool bosspattern2);
 	
-	void SetBossPos(sf::Vector2f& BossPos);
-	void BossHpUI();
 
 	void NextScene();
 	template<typename T>

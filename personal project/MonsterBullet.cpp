@@ -214,7 +214,6 @@ void MonsterBullet::Move31(float dt)
 
 void MonsterBullet::Move3(float dt)
 {
-	std::cout << tick3 << std::endl;
 
 	tick3 -= dt;
 	if(tick3 > 5.0f)

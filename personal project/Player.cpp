@@ -146,7 +146,6 @@ void Player::Update(float dt)
 	if (Hp <= 0)
 	{
 		isAlive = false;
-		std::cout << "플레이어 죽음!!!" << std::endl;
 	}
 
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Num1))
@@ -195,12 +194,10 @@ void Player::Update(float dt)
 
 		if(!stop)
 		{
-			std::cout << "stop";
 			levtick -= dt;
 			levelupgg -= dt;
 			if (isone)
 			{
-				std::cout << "isone";
 				level1 = Utils::RandomRange(0, 6);
 				level2 = Utils::RandomRange(0, 6);
 				level3 = Utils::RandomRange(0 ,6);
@@ -222,6 +219,7 @@ void Player::Update(float dt)
 			}
 		}
 
+		
 		if (levelupgg <= 0)
 		{
 			stop = true;
@@ -231,8 +229,6 @@ void Player::Update(float dt)
 		{
 			upgradeButtons1[level1]->OnClick = [this]() {
 				//testbutton1->SetPlayer(this);
-				std::cout << "업그레이드 : " << level2 << std::endl;
-				std::cout << "1클릭" << std::endl;
 
 				switch (level1)
 				{
@@ -273,29 +269,22 @@ void Player::Update(float dt)
 				{
 				case 0:
 					bulletCount++;
-					std::cout << bulletCount;
 					break;
 				case 1:
 					bulletDamage += 50;
-					std::cout << bulletDamage;
 					break;
 				case 2:
 					Hp += 30;
 					MaxHp += 30;
-					std::cout << Hp;
-					std::cout << MaxHp;
 					break;
 				case 3:
 					attackspeed -= 0.2;
-					std::cout << attackspeed;
 					break;
 				case 4:
 					speed += 500.f;
-					std::cout << speed;
 					break;
 				case 5:
 					Hp = MaxHp;
-					std::cout << Hp;
 					break;
 				}
 
@@ -333,8 +322,6 @@ void Player::Update(float dt)
 					Hp = MaxHp;
 					break;
 				}
-				std::cout << "업그레이드 : " << level2 << std::endl;
-				std::cout << "3클릭" << std::endl;
 				upgradeButtons1[level1]->SetActive(false);
 				upgradeButtons2[level2]->SetActive(false);
 				upgradeButtons3[level3]->SetActive(false);
@@ -498,7 +485,6 @@ void Player::PlayerMove(float dt)
 		{
 			if (playertile.width > playertile.height)
 			{
-				std::cout << "위아래충돌";
 				if (playerrec.getGlobalBounds().top < tilemap->tiles[i].bound.top) // bottom
 				{
 					SetPosition(GetPosition().x, playerrec.getGlobalBounds().top + playerrec.getGlobalBounds().height);
@@ -561,7 +547,6 @@ void Player::OnHitted(int damage)
 	if(damagetick <= 0.f)
 	{
 		Hp = std::max(Hp - damage, 0.f);
-		std::cout << Hp << std::endl;
 		damagetick = 2.f;
 	}
 

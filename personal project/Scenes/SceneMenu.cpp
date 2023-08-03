@@ -57,7 +57,6 @@ void SceneMenu::Release()
 
 void SceneMenu::Enter()
 {
-
 	Scene::Enter();
 }
 
